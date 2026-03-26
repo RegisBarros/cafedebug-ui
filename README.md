@@ -1,35 +1,290 @@
-# Cafedebug UI 
+# CafeDebug Platform
 
-🇺🇸 English | 🇧🇷 [Português](README.pt-BR.md)
+This repository is the planning and foundation space for the CafeDebug modernization effort.
 
-![image](https://user-images.githubusercontent.com/11943572/234849730-c6b41618-6c13-4a87-9b5e-5b9d16ba4474.png)
+CafeDebug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Framework-dotnet-blue"/> 
-  <img src="https://img.shields.io/badge/Framework%20version-dotnet%209-blue"/>
-  <img src="https://img.shields.io/badge/Language-C%23-blue"/> 
-  <img src="https://img.shields.io/badge/Status-development-green"/>
-</p>
+- the public website
+- the admin backoffice
+- the .NET REST API
 
-<p align="center">
-  <a href="https://github.com/JessicaNathany/cafedebug-backend.api/actions/workflows/ci-cd.yml">
-    <img src="https://github.com/JessicaNathany/cafedebug-backend.api/actions/workflows/ci-cd.yml/badge.svg?branch=main" alt="CI/CD Pipeline Status"/>
-  </a>
-  <a href="https://github.com/JessicaNathany/cafedebug-backend.api/releases">
-    <img src="https://img.shields.io/github/v/release/JessicaNathany/cafedebug-backend.api?display_name=tag" alt="Latest Release"/>
-  </a>
-  <a href="https://github.com/JessicaNathany/cafedebug-backend.api/pkgs/container/cafedebug-backend.api">
-    <img src="https://img.shields.io/badge/registry-GHCR-blue" alt="GitHub Container Registry"/>
-  </a>
-</p>
+## Status
 
- <h4 align="center"> 
-	🚧  Projeto 🚀 em construção...  🚧
- </h4>
+The repo is currently in the architecture and project-definition phase. The first goal is to document a solid foundation before scaffolding code.
 
-## About the project 📑
+## Current Context
 
-This repository contains the frontend code for the Café Debug UI project.
+The modernization plan is based on the current public assets and repositories:
 
-## Technologies
-...
+- live website: `https://cafedebug.com.br`
+- legacy frontend: `JessicaNathany/cafedebug.legacy`
+- backend API: `JessicaNathany/cafedebug-backend.api`
+
+What we confirmed from those sources:
+
+- the current site is a legacy ASP.NET Core website with Bootstrap, jQuery, Owl Carousel, and custom SCSS
+- the public brand is built around a dark charcoal header/footer and warm orange accents
+- the backend already exposes public/admin concerns for episodes, banners, images, auth, categories, team members, and users
+- the public website is SEO-sensitive because it is content-driven and episode pages need to be discoverable
+
+## Product Goals
+
+- modernize the website without losing the recognizable CafeDebug identity
+- create a separate admin app for episodes, banners, media, and related content
+- keep the website responsive on mobile and desktop
+- support white-label theming for colors, logo, and future brand variations
+- integrate with the existing REST API instead of rebuilding content management from scratch
+- keep SEO, analytics, testing, and clean architecture as first-class concerns
+- keep the repository open-source friendly and easy to contribute to
+
+## Tech Stack Decision
+
+| Area | Decision | Notes |
+| --- | --- | --- |
+| Monorepo | `pnpm` workspaces + `Turborepo` | Great fit for the two Next.js apps and shared packages. The .NET API can live in the same repo under `services/api` with its own lifecycle. |
+| Website | `Next.js` App Router + `TypeScript` | Server Components first, ISR/SSG for content pages, modern SEO support. |
+| Admin | `Next.js` App Router + `TypeScript` | Separate app with authenticated CRUD workflows. |
+| Styling | `Tailwind CSS v4` + CSS variables | Best fit for white-label design tokens and shared theming. |
+| Components | `shadcn/ui` + custom primitives | Use as a base layer, not as the visual identity. |
+| API contract | `openapi-typescript` + `openapi-fetch` | Generate typed API contracts from the backend Swagger/OpenAPI output. |
+| Data fetching | Server `fetch` by default on the website, `TanStack Query` in admin/client-heavy flows | Keep the public website SEO-first and the admin productivity-first. |
+| Forms | `React Hook Form` + `Zod` | Strong DX for admin forms and validation. |
+| Testing | `Vitest`, `React Testing Library`, `Playwright`, `MSW` | Unit, component, e2e, and API-mocking coverage. |
+| Quality | `ESLint`, `Prettier`, `Husky`, `lint-staged`, `commitlint` | Good defaults for an open-source repo. |
+| Containers | Multi-stage `Dockerfile` per app | Keep deployment consistent across apps. |
+| Hosting | AWS EC2 + Docker Swarm stack + reverse proxy | Recommended proxy: `Traefik` for multi-service routing in Swarm. |
+
+## Architecture Principles
+
+- Public website pages should be server-rendered by default.
+- SEO is part of the route definition, not an afterthought.
+- The admin app should optimize for content operations and authenticated workflows.
+- Shared logic should live in packages, not be copied between apps.
+- API contracts should be generated from Swagger, not handwritten twice.
+- Visual identity must come from tokens and theme config, never from hardcoded colors scattered across components.
+- Non-trivial work should start with a spec before implementation.
+
+## Monorepo Target Structure
+
+```text
+apps/
+  web/                    # Public website
+  admin/                  # Admin backoffice
+
+packages/
+  ui/                     # Shared components and primitives
+  api-client/             # Generated API types + fetch client
+  design-tokens/          # Brand tokens, theme CSS, logos metadata
+  config/                 # Shared site/admin runtime config
+  eslint-config/          # Shared lint config
+  tsconfig/               # Shared TS config
+
+
+infra/
+  docker/                 # Dockerfiles and local compose helpers
+  swarm/                  # Docker stack deploy manifests
+  scripts/                # Build/deploy/ops scripts
+
+docs/
+  CONTRIBUTING.md
+  design-system.md
+
+specs/
+  README.md
+  web/
+  admin/
+
+.github/
+  copilot-instructions.md
+
+AGENTS.md
+README.md
+```
+
+## App-Level Folder Shape
+
+Inside each Next.js app, prefer a feature-oriented structure:
+
+```text
+src/
+  app/                    # Routes, layouts, metadata, route handlers
+  components/             # App-specific composition components
+  features/               # Domain features such as episodes, banners, team
+  lib/                    # Utilities, adapters, config helpers
+  hooks/                  # App-specific hooks
+  styles/                 # Global CSS entry points
+```
+
+Keep reusable design primitives in `packages/ui`, not duplicated under both apps.
+
+## Website Modernization Direction
+
+The new website should preserve the recognizable CafeDebug feel while modernizing the UI:
+
+- keep the dark header/footer and warm orange brand accents
+- keep core sections like banners, latest episodes, team, and contact/community
+- replace fragile carousel-heavy interactions with accessible responsive layouts when possible
+- improve spacing, typography hierarchy, and mobile navigation
+- make episode discovery easier with stronger filtering, cards, and internal linking
+- prepare the layout so banners and sponsorship placements feel intentional, not bolted on
+
+## Initial Design Tokens
+
+The following values were extracted from the current site and legacy styles. They are a safe starting point for the design system:
+
+```css
+:root[data-brand="cafedebug"] {
+  --color-brand: #ed7d00;
+  --color-brand-hover: #e65100;
+  --color-accent: #eb9736;
+  --color-surface-dark: #2c2a2b;
+  --color-background: #ffffff;
+  --color-text: #2c2c2c;
+  --color-text-inverse: #ffffff;
+}
+```
+
+These tokens should feed both Tailwind theme aliases and any Figma variables. More detail lives in [docs/design-system.md](./docs/design-system.md).
+
+## White-Label Strategy
+
+White-label support should be based on configuration, not branching:
+
+- brand tokens in `packages/design-tokens`
+- logo and site metadata in a brand config file
+- Tailwind theme aliases that resolve to CSS variables
+- no app component should hardcode a CafeDebug-specific color or logo path
+
+## Website and Admin Scope
+
+### Public website
+
+- home page
+- episodes listing
+- episode details
+- team/community pages
+- banners and sponsorship placements
+- SEO metadata, Open Graph, sitemap, robots, analytics
+
+### Admin backoffice
+
+- login/authentication
+- episode CRUD
+- banner CRUD
+- team member/content management
+- image/media upload
+- category and supporting content management
+
+## Content and API Strategy
+
+The backend already separates public and admin controllers. That gives us a clean frontend split:
+
+- `apps/web` consumes public endpoints only
+- `apps/admin` consumes admin endpoints and authenticated flows
+- `packages/api-client` becomes the single typed client shared by both apps
+
+Because the API already exposes Swagger/OpenAPI, generate client types from the contract instead of maintaining manual request/response types in the frontends.
+
+### Endpoint Context (from `specs/admin/backend-openspec-api.json`)
+
+Use this split as the default API boundary between frontend apps.
+
+**`apps/admin` endpoints (authenticated backoffice + admin account flows):**
+
+- `POST /api/v1/admin/auth/token`
+- `POST /api/v1/admin/auth/refresh-token`
+- `POST /api/v1/accounts-admin/forgot-password`
+- `POST /api/v1/accounts-admin/change-password`
+- `POST /api/v1/accounts-admin/reset-password`
+- `POST /api/v1/accounts-admin/verify-email`
+- `GET|POST /api/v1/admin/episodes`
+- `GET|PUT|DELETE /api/v1/admin/episodes/{id}`
+- `GET|POST /api/v1/admin/banners`
+- `GET|PUT|DELETE /api/v1/admin/banners/{id}`
+- `GET|POST /api/v1/admin/categories`
+- `GET|PUT|DELETE /api/v1/admin/categories/{id}`
+- `GET|POST /api/v1/admin/team-members`
+- `GET|PUT|DELETE /api/v1/admin/team-members/{id}`
+- `POST /api/v1/admin/images/upload`
+- `POST /api/v1/admin/images/delete`
+
+**`apps/web` endpoints (public website reads):**
+
+- `GET /api/v1/public/episodes`
+- `GET /api/v1/public/episodes/{id}`
+- `GET /api/v1/public/banners`
+- `GET /api/v1/public/banners/{id}`
+- `GET /api/v1/public/banners/{bannerName}`
+
+## SEO and Analytics
+
+For the public website:
+
+- use the Next.js Metadata API for page title, description, Open Graph, and canonical URLs
+- generate `sitemap.xml` and `robots.txt`
+- add structured data for podcast and episode pages where useful
+- wire Google Analytics or Google Tag Manager through environment-driven configuration
+
+Analytics must stay optional by environment so local and preview deployments remain clean.
+
+## Deployment Direction
+
+Production target:
+
+- AWS EC2
+- Docker Swarm stack
+- one reverse proxy service
+- one service for `web`
+- one service for `admin`
+- one service for `api`
+
+Recommended approach:
+
+- local development with Docker Compose only where useful
+- multi-stage Docker builds for each app
+- GitHub Actions for CI, image build, and deployment
+- environment variables managed per service
+
+## AI, Specs, and Collaboration
+
+This project should be AI-friendly without becoming AI-dependent.
+
+- [AGENTS.md](./AGENTS.md) defines the shared rules for agent-based work
+- [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
+- [specs/README.md](./specs/README.md) defines the spec-driven workflow
+- [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) defines contribution expectations
+
+## Phased Plan
+
+1. Foundation
+   - finalize repo structure
+   - scaffold monorepo root
+   - create shared lint, TypeScript, and design token packages
+2. Website V1
+   - implement shell, home page, episode listing, episode detail, SEO, analytics
+   - integrate public API endpoints
+3. Admin V1
+   - implement login, episodes CRUD, banners CRUD, media upload
+   - integrate authenticated API endpoints
+4. Platform Consolidation
+   - move or mirror the backend into `services/api`
+   - finalize shared deployment and CI/CD flow
+5. Production Hardening
+   - tests, observability, performance passes, and deployment automation
+
+## Recommended Next Deliverables
+
+- scaffold the monorepo root with `pnpm` and `turbo`
+- create `apps/web` and `apps/admin`
+- create `packages/design-tokens` with the initial CafeDebug theme
+- define the first specs:
+  - `specs/web/homepage.md`
+  - `specs/web/episode-detail.md`
+  - `specs/admin/episodes-crud.md`
+  - `specs/platform/deployment.md`
+
+## References
+
+- live site: `https://cafedebug.com.br`
+- legacy repo: `https://github.com/JessicaNathany/cafedebug.legacy`
+- backend repo: `https://github.com/JessicaNathany/cafedebug-backend.api`

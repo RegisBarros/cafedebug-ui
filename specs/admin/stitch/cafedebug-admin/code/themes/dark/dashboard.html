@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CafeDebug - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=space-grotesk@400,500,600,700&amp;f[]=cabinet-grotesk@400,500,700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#FF6B35",
+          "background-light": "#0F0F11",
+          "surface-light": "#18181B",
+          "text-light": "#F4F4F5",
+          "muted-light": "#A1A1AA",
+          "border-light": "#27272A",
+        },
+        fontFamily: {
+          "display": ["Space Grotesk", "sans-serif"],
+          "body": ["Cabinet Grotesk", "sans-serif"],
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "md": "0.5rem",
+          "lg": "0.75rem",
+          "full": "9999px"
+        },
+        boxShadow: {
+          "soft": "0 8px 30px rgba(0, 0, 0, 0.2)",
+        }
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    background-color: #0F0F11;
+    color: #F4F4F5;
+  }
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  /* Scrollbar styling for dark mode */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0F0F11;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272A;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3F3F46;
+  }
+</style>
+</head>
+<body class="antialiased h-screen flex overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-[240px] bg-surface-light border-r border-border-light flex flex-col shrink-0 h-full">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 rounded bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="mic" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mic</span>
+</div>
+<span class="font-display font-bold text-xl tracking-tight text-text-light">CafeDebug</span>
+</div>
+<nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md bg-[rgba(255,107,53,0.1)] text-primary border-l-2 border-primary relative -ml-[2px] font-display font-medium text-sm transition-colors" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+      Dashboard</a>
+<!-- Inactive Items -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-muted-light hover:bg-[rgba(255,107,53,0.05)] hover:text-primary transition-colors border-l-2 border-transparent relative -ml-[2px] font-display font-medium text-sm" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="mic" data-weight="regular">mic</span>
+      Episodes</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-muted-light hover:bg-[rgba(255,107,53,0.05)] hover:text-primary transition-colors border-l-2 border-transparent relative -ml-[2px] font-display font-medium text-sm" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="ad_units" data-weight="regular">ad_units</span>
+      Banners</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-muted-light hover:bg-[rgba(255,107,53,0.05)] hover:text-primary transition-colors border-l-2 border-transparent relative -ml-[2px] font-display font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bug_report" data-weight="regular">bug_report</span>
+      Debuggers
+    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-md text-muted-light hover:bg-[rgba(255,107,53,0.05)] hover:text-primary transition-colors border-l-2 border-transparent relative -ml-[2px] font-display font-medium text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings" data-weight="regular">settings</span>
+      Settings
+    </a>
+</nav>
+<div class="p-4 border-t border-border-light">
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="size-8 rounded-full bg-border-light overflow-hidden shrink-0">
+<img alt="Admin user avatar" class="w-full h-full object-cover" data-alt="Admin user avatar smiling man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9B0fnwPQWbl2uKKLeuMj3-w07PDA2OVrow98TYHzDRHcUjmGAuzd7UNHfK0XdS42TLiwOsu2bu1p79RfSzKmUekQjI2OPNIuv1FmDkW3iiVXsi7Vb6G4OYcXOZRn8OIBAkrYWA3vnHXNywQ0M7oOQSb-HqLYJMtnAC111aZcRbPJ5C4xSdgQDURFoBjh99ctpp0ibK9IU-dAAcXHQiJaOXshSYIWLoYPrubPImrK9yk3ijBAGG_ZzxTZIh4nnc55XEvfx3_RtsmY"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-medium truncate text-text-light">Admin User</span>
+<span class="text-xs text-muted-light truncate">admin@cafedebug.com</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+<!-- Header -->
+<header class="h-[80px] bg-surface-light border-b border-border-light flex items-center justify-between px-8 shrink-0">
+<h1 class="font-display font-bold text-2xl text-text-light">Overview</h1>
+<div class="flex items-center gap-4">
+<button class="p-2 text-muted-light hover:text-primary hover:bg-[rgba(255,107,53,0.1)] rounded-md transition-all duration-200 group flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="dark_mode" data-weight="regular">dark_mode</span>
+</button>
+<button class="bg-primary text-white font-display font-semibold text-sm px-4 py-2 rounded-md hover:bg-[#e05c2d] transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="add" data-weight="regular">add</span>
+        New Episode
+      </button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-[1200px] mx-auto space-y-8 pb-12">
+<!-- Metrics Grid -->
+<section>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Metric Card 1 -->
+<div class="bg-surface-light rounded-md p-6 shadow-soft border border-border-light flex flex-col gap-2 relative overflow-hidden group hover:border-[#3F3F46] transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-sm text-muted-light font-medium">Total Listens</span>
+<span class="material-symbols-outlined text-muted-light/30 text-[20px]" data-icon="headphones" data-weight="regular">headphones</span>
+</div>
+<div class="font-display font-bold text-[32px] text-text-light leading-none mt-2">124,592</div>
+<div class="text-xs text-[#10B981] flex items-center gap-1 mt-1 font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up" data-weight="regular">trending_up</span>
+              +12.5% this month
+            </div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-light rounded-md p-6 shadow-soft border border-border-light flex flex-col gap-2 relative overflow-hidden group hover:border-[#3F3F46] transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-sm text-muted-light font-medium">Published Episodes</span>
+<span class="material-symbols-outlined text-muted-light/30 text-[20px]" data-icon="podcasts" data-weight="regular">podcasts</span>
+</div>
+<div class="font-display font-bold text-[32px] text-text-light leading-none mt-2">42</div>
+<div class="text-xs text-muted-light flex items-center gap-1 mt-1">
+              Last published 3 days ago
+            </div>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-surface-light rounded-md p-6 shadow-soft border border-border-light flex flex-col gap-2 relative overflow-hidden group hover:border-[#3F3F46] transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-sm text-muted-light font-medium">Avg. Listen Duration</span>
+<span class="material-symbols-outlined text-muted-light/30 text-[20px]" data-icon="timer" data-weight="regular">timer</span>
+</div>
+<div class="font-display font-bold text-[32px] text-text-light leading-none mt-2">34 <span class="text-lg text-muted-light font-medium">min</span></div>
+<div class="text-xs text-muted-light flex items-center gap-1 mt-1">
+              Across all platforms
+            </div>
+</div>
+</div>
+</section>
+<!-- Recent Drafts Section -->
+<section class="bg-surface-light rounded-md shadow-soft border border-border-light overflow-hidden">
+<div class="px-6 py-5 border-b border-border-light flex items-center justify-between">
+<h2 class="font-display font-bold text-lg text-text-light">Recent Drafts</h2>
+<a class="text-sm text-primary hover:text-[#e05c2d] font-medium transition-colors" href="#">View all</a>
+</div>
+<div class="divide-y divide-border-light">
+<!-- Draft Item 1 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-[#1C1C20] transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded bg-background-light border border-border-light flex items-center justify-center shrink-0 text-muted-light">
+<span class="material-symbols-outlined text-[20px]" data-icon="draft" data-weight="regular">draft</span>
+</div>
+<div>
+<h3 class="font-medium text-text-light text-base group-hover:text-primary transition-colors">Interview with Tech Lead Jane Doe</h3>
+<p class="text-xs text-muted-light mt-0.5">Last edited 2 hours ago</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-[rgba(255,107,53,0.1)] text-primary text-xs font-medium border border-[rgba(255,107,53,0.2)]">Draft</span>
+<button class="p-1.5 text-muted-light hover:text-primary rounded hover:bg-[rgba(255,107,53,0.05)] transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit" data-weight="regular">edit</span>
+</button>
+</div>
+</div>
+<!-- Draft Item 2 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-[#1C1C20] transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded bg-background-light border border-border-light flex items-center justify-center shrink-0 text-muted-light">
+<span class="material-symbols-outlined text-[20px]" data-icon="draft" data-weight="regular">draft</span>
+</div>
+<div>
+<h3 class="font-medium text-text-light text-base group-hover:text-primary transition-colors">Episode 43: The Future of Serverless</h3>
+<p class="text-xs text-muted-light mt-0.5">Last edited yesterday</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-[rgba(255,107,53,0.1)] text-primary text-xs font-medium border border-[rgba(255,107,53,0.2)]">Draft</span>
+<button class="p-1.5 text-muted-light hover:text-primary rounded hover:bg-[rgba(255,107,53,0.05)] transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit" data-weight="regular">edit</span>
+</button>
+</div>
+</div>
+<!-- Draft Item 3 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-[#1C1C20] transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded bg-background-light border border-border-light flex items-center justify-center shrink-0 text-muted-light">
+<span class="material-symbols-outlined text-[20px]" data-icon="draft" data-weight="regular">draft</span>
+</div>
+<div>
+<h3 class="font-medium text-text-light text-base group-hover:text-primary transition-colors">Q3 Q&amp;A Special</h3>
+<p class="text-xs text-muted-light mt-0.5">Last edited 4 days ago</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center px-2 py-1 rounded bg-[rgba(255,107,53,0.1)] text-primary text-xs font-medium border border-[rgba(255,107,53,0.2)]">Draft</span>
+<button class="p-1.5 text-muted-light hover:text-primary rounded hover:bg-[rgba(255,107,53,0.05)] transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit" data-weight="regular">edit</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Activity Section -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display font-bold text-lg text-text-light">Recent Activity</h2>
+<a class="text-sm text-primary hover:text-[#e05c2d] font-medium transition-colors" href="#">View all</a>
+</div>
+<div class="bg-surface-light rounded-md shadow-soft border border-border-light p-6">
+<div class="space-y-6">
+<!-- Activity Item 1 -->
+<div class="flex gap-4 items-start group">
+<div class="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+<div class="flex-1 flex justify-between items-start gap-4">
+<div>
+<p class="text-text-light font-medium group-hover:text-primary transition-colors cursor-pointer leading-tight">Episode 45: "Design Systems" was published.</p>
+<p class="text-muted-light text-xs mt-1">By Admin User</p>
+</div>
+<span class="text-muted-light text-xs whitespace-nowrap">2 hrs ago</span>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex gap-4 items-start group">
+<div class="mt-1.5 w-2 h-2 rounded-full bg-muted-light shrink-0"></div>
+<div class="flex-1 flex justify-between items-start gap-4">
+<div>
+<p class="text-text-light font-medium group-hover:text-primary transition-colors cursor-pointer leading-tight">Draft updated for Episode 46.</p>
+<p class="text-muted-light text-xs mt-1">By Sarah Jenkins</p>
+</div>
+<span class="text-muted-light text-xs whitespace-nowrap">4 hrs ago</span>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex gap-4 items-start group">
+<div class="mt-1.5 w-2 h-2 rounded-full bg-[#10B981] shrink-0"></div>
+<div class="flex-1 flex justify-between items-start gap-4">
+<div>
+<p class="text-text-light font-medium group-hover:text-primary transition-colors cursor-pointer leading-tight">New sponsorship deal added to settings.</p>
+<p class="text-muted-light text-xs mt-1">System Auto</p>
+</div>
+<span class="text-muted-light text-xs whitespace-nowrap">Yesterday</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</body></html>

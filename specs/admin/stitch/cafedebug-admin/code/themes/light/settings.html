@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - CafeDebug Podcast Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Cabinet+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FF6B35",
+                        "background-light": "#FAFAFA",
+                        "surface-light": "#FFFFFF",
+                        "text-light": "#1A1A1A",
+                        "muted-light": "#878787",
+                        "border-light": "#EAEAEA",
+                        "background-dark": "#0F0F11",
+                        "surface-dark": "#18181B",
+                        "text-dark": "#F4F4F5",
+                        "muted-dark": "#A1A1AA",
+                        "border-dark": "#27272A",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Cabinet Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 8px 30px rgba(0,0,0,0.04)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Cabinet Grotesk', sans-serif;
+            background-color: #FAFAFA;
+            color: #1A1A1A;
+        }
+        h1, h2, h3, button {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .radio-card:has(input:checked) {
+            border-color: #FF6B35;
+            background-color: rgba(255, 107, 53, 0.05);
+        }
+        .form-input:focus {
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Logic: Since Settings is a destination screen, we include the Shared Sidebar but adjusted for the design system. 
+             Note: Using the provided Sidebar structure as a read-only template with literal icons. -->
+<aside class="w-64 border-r border-border-light bg-surface-light flex flex-col h-full shrink-0">
+<div class="p-6 flex flex-col gap-8 h-full">
+<!-- Branding -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">terminal</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold text-text-light leading-tight">CafeDebug</h1>
+<p class="text-xs text-muted-light">Podcast Admin</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 text-text-light transition-colors" href="#"><div class="text-muted-light"><span class="material-symbols-outlined">home</span></div><p class="text-sm font-medium">Dashboard</p></a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 text-text-light transition-colors" href="#"><div class="text-muted-light"><span class="material-symbols-outlined">mic</span></div><p class="text-sm font-medium">Episodes</p></a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 text-text-light transition-colors" href="#"><div class="text-muted-light"><span class="material-symbols-outlined">ad_units</span></div><p class="text-sm font-medium">Banners</p></a><a class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 text-text-light transition-colors" href="#"><div class="text-muted-light"><span class="material-symbols-outlined">bug_report</span></div><p class="text-sm font-medium">Debuggers</p></a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md bg-[rgba(255,107,53,0.1)] border-l-2 border-primary text-primary" href="#"><div data-icon="Gear" data-weight="fill"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span></div><p class="text-sm font-semibold">Settings</p></a>
+</nav>
+<!-- User Quick Info -->
+<div class="flex items-center gap-3 pt-4 border-t border-border-light">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="portrait of a professional male software engineer wearing glasses in a clean modern studio setting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCIDh4N8ibmKCQ1Pq2ywjaJMlv1-9iSbXDo_aOcHli_AKjTFHakfXA3000xFos-LAZIYRTiDDCZaXny5bgMZ0eLJkGDHrR0it-DCm03VMhSqd9UxDOmigYsGmx9ADsK7VYWsZfCQpzF4U4ptEiUqpHIkeMGPjago7hhr7J02nvKt-pSSQDoBhalHrt-wfSaos_obQ0MB9VAJ26Xey_YNURMhF1W6awfUueYopH43a_Hgu_Yl514rvmYlnqJJtiNDM3DzBFPHgN6Q74')"></div>
+<div class="flex flex-col overflow-hidden">
+<p class="text-xs font-bold text-text-light truncate">Alex Rivera</p>
+<p class="text-[10px] text-muted-light truncate">Admin Role</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-light">
+<div class="max-w-[600px] mx-auto py-12 px-6">
+<!-- Header -->
+<header class="mb-12">
+<h1 class="text-3xl font-bold text-text-light tracking-tight mb-2">Settings</h1>
+<p class="text-muted-light">Manage your personal profile, podcast distribution, and interface preferences.</p>
+</header>
+<div class="flex flex-col gap-12">
+<!-- Profile Section -->
+<section>
+<h2 class="text-xl font-bold text-text-light mb-6">Profile</h2>
+<div class="space-y-6 bg-surface-light p-6 rounded-lg shadow-soft border border-border-light">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<div class="size-20 rounded-full bg-cover bg-center border-2 border-white shadow-md" data-alt="close-up of Alex Rivera, professional podcast host looking confident with soft daylight illumination" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrwD29GJ5dSN3HnTmARSUhR5k_EuRWOT7QsXAiHz6KbpW3II5aSQa7AG3Yh2GNq63UKoKKMtpprdxQKB3ESmCuhcDQdyRVp33PucJ5WRRSzPoeEYmCtUSIHAFaPxCdFYdW8hjQr7lxlGG2SSWJGzEJTg3GaInCPcTcM0ZOZlyW4qMvj80GgtD7noMnbGWaNXAwmjpZmXO_P_5pNYCtfMvVQanXlnjVwdzyLFA6UB4pCNbERlJwc0jkQXaO1tOMnBdqxY4CY8jE9fY')"></div>
+<button class="absolute bottom-0 right-0 bg-primary text-white size-7 rounded-full flex items-center justify-center border-2 border-white">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex flex-col">
+<p class="font-bold text-text-light">Alex Rivera</p>
+<p class="text-sm text-muted-light">alex@cafedebug.com</p>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div>
+<label class="block text-sm font-medium text-text-light mb-1.5">Full Name</label>
+<input class="form-input w-full px-4 py-2.5 rounded-md border-border-light bg-background-light text-sm outline-none transition-all" type="text" value="Alex Rivera"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-light mb-1.5">Email Address</label>
+<input class="form-input w-full px-4 py-2.5 rounded-md border-border-light bg-background-light text-sm outline-none transition-all" type="email" value="alex@cafedebug.com"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Podcast Metadata Section -->
+<section>
+<h2 class="text-xl font-bold text-text-light mb-6">Podcast Metadata</h2>
+<div class="space-y-6 bg-surface-light p-6 rounded-lg shadow-soft border border-border-light">
+<div>
+<label class="block text-sm font-medium text-text-light mb-1.5">Podcast Title</label>
+<input class="form-input w-full px-4 py-2.5 rounded-md border-border-light bg-background-light text-sm outline-none transition-all" type="text" value="CafeDebug"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-light mb-1.5">Global Description</label>
+<textarea class="form-input w-full px-4 py-2.5 rounded-md border-border-light bg-background-light text-sm outline-none transition-all" rows="3">A deep dive into the world of debugging, software architecture, and the human side of coding. New episodes every Tuesday.</textarea>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-light mb-1.5">RSS Feed URL</label>
+<div class="flex gap-2">
+<input class="form-input flex-1 px-4 py-2.5 rounded-md border-border-light bg-gray-50 text-muted-light text-sm outline-none" readonly="" type="text" value="https://feeds.cafedebug.com/main"/>
+<button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-text-light rounded-md text-sm font-semibold transition-colors">
+                                        Copy
+                                    </button>
+</div>
+<p class="text-[12px] text-muted-light mt-2">Use this URL to distribute your podcast to Apple, Spotify, and Google.</p>
+</div>
+</div>
+</section>
+<!-- Theme Preferences Section -->
+<section>
+<h2 class="text-xl font-bold text-text-light mb-6">Theme Preferences</h2>
+<div class="grid grid-cols-3 gap-4">
+<!-- System Radio Card -->
+<label class="radio-card cursor-pointer border-2 border-border-light rounded-lg p-4 flex flex-col items-center justify-center gap-3 transition-all">
+<input checked="" class="hidden" name="theme" type="radio" value="system"/>
+<div class="size-12 rounded-full bg-gray-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted-light">desktop_windows</span>
+</div>
+<span class="text-sm font-semibold text-text-light">System</span>
+</label>
+<!-- Light Radio Card -->
+<label class="radio-card cursor-pointer border-2 border-border-light rounded-lg p-4 flex flex-col items-center justify-center gap-3 transition-all">
+<input class="hidden" name="theme" type="radio" value="light"/>
+<div class="size-12 rounded-full bg-gray-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted-light">light_mode</span>
+</div>
+<span class="text-sm font-semibold text-text-light">Light</span>
+</label>
+<!-- Dark Radio Card -->
+<label class="radio-card cursor-pointer border-2 border-border-light rounded-lg p-4 flex flex-col items-center justify-center gap-3 transition-all">
+<input class="hidden" name="theme" type="radio" value="dark"/>
+<div class="size-12 rounded-full bg-gray-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-muted-light">dark_mode</span>
+</div>
+<span class="text-sm font-semibold text-text-light">Dark</span>
+</label>
+</div>
+</section>
+<!-- Form Actions -->
+<footer class="pt-6 border-t border-border-light flex justify-end gap-3">
+<button class="px-6 py-2.5 rounded-md text-muted-light font-semibold text-sm hover:bg-gray-100 transition-colors">
+                            Discard
+                        </button>
+<button class="px-8 py-2.5 rounded-md bg-primary text-white font-semibold text-sm shadow-md hover:opacity-90 transition-all flex items-center gap-2" id="saveBtn">
+                            Save Changes
+                        </button>
+</footer>
+</div>
+</div>
+</main>
+</div>
+<!-- Interaction Simulation (Instruction following for Saving... state) -->
+<script>
+        // Note: The prompt asked for interaction feedback "button text changing from 'Saving...' to 'Saved!'"
+        // Since I'm not allowed to add heavy JS, I'll include a small snippet only for this specific requirement.
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.addEventListener('click', () => {
+            const originalText = saveBtn.innerHTML;
+            saveBtn.disabled = true;
+            saveBtn.classList.add('opacity-50');
+            saveBtn.innerHTML = 'Saving...';
+            
+            setTimeout(() => {
+                saveBtn.innerHTML = 'Saved!';
+                saveBtn.classList.remove('bg-primary');
+                saveBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove('opacity-50', 'bg-green-600');
+                    saveBtn.classList.add('bg-primary');
+                    saveBtn.innerHTML = originalText;
+                }, 2000);
+            }, 1000);
+        });
+    </script>
+</body></html>

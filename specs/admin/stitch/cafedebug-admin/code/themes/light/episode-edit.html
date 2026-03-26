@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Episode Editor - CafeDebug</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Cabinet+Grotesk:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f56e3d",
+                        "background-light": "#f8f6f5",
+                        "background-dark": "#221510",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Cabinet Grotesk", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                    boxShadow: {
+                        'soft': '0 8px 30px rgba(0, 0, 0, 0.04)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Cabinet Grotesk', sans-serif; }
+        h1, h2, h3, h4, h5, h6, .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined[data-weight="fill"] { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-background-light text-slate-900 antialiased min-h-screen flex flex-col">
+<!-- Header / Back Navigation -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-6 py-4 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-4">
+<a class="text-slate-500 hover:text-slate-900 transition-colors p-2 rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="arrow_back">arrow_back</span>
+</a>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-slate-500 uppercase tracking-wider font-display">Episodes</span>
+<span class="text-sm font-medium text-slate-900">Editing Episode</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-100 text-amber-800">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Draft
+            </span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:flex-row max-w-[1600px] w-full mx-auto pb-24">
+<!-- Left Column (Main Editor) -->
+<div class="w-full md:w-[60%] lg:w-[68%] p-6 md:p-8 lg:p-12 flex flex-col gap-8">
+<!-- Title Input -->
+<div class="group relative">
+<input class="w-full bg-transparent border-0 border-b-2 border-transparent hover:border-slate-200 focus:border-primary focus:ring-0 text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 placeholder:text-slate-300 transition-colors py-2 px-0 shadow-none outline-none" placeholder="Episode Title..." type="text" value="Building Scalable Design Systems"/>
+</div>
+<!-- Markdown Editor -->
+<div class="flex flex-col gap-3 flex-1 min-h-[500px]">
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold text-slate-700 font-display">Show Notes</label>
+<div class="flex items-center bg-slate-100 rounded-lg p-1">
+<button class="px-3 py-1.5 text-xs font-medium bg-white text-slate-900 rounded-md shadow-sm ring-1 ring-slate-200/50" type="button">Write</button>
+<button class="px-3 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 rounded-md transition-colors" type="button">Preview</button>
+</div>
+</div>
+<div class="border border-slate-200 rounded-xl bg-white shadow-soft flex flex-col flex-1 overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
+<!-- Toolbar -->
+<div class="flex items-center gap-1 p-2 border-b border-slate-100 bg-slate-50/50 overflow-x-auto">
+<button aria-label="Bold" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="format_bold">format_bold</span>
+</button>
+<button aria-label="Italic" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="format_italic">format_italic</span>
+</button>
+<div class="w-px h-5 bg-slate-300 mx-1"></div>
+<button aria-label="Link" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="link">link</span>
+</button>
+<button aria-label="Quote" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="format_quote">format_quote</span>
+</button>
+<button aria-label="Code" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="code">code</span>
+</button>
+<div class="w-px h-5 bg-slate-300 mx-1"></div>
+<button aria-label="Bulleted List" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="format_list_bulleted">format_list_bulleted</span>
+</button>
+<button aria-label="Numbered List" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="format_list_numbered">format_list_numbered</span>
+</button>
+</div>
+<!-- Textarea -->
+<textarea class="flex-1 w-full p-4 border-0 focus:ring-0 resize-none font-mono text-sm leading-relaxed text-slate-700 bg-transparent placeholder:text-slate-400" placeholder="Write your show notes here using Markdown...">In this episode, we dive deep into the architecture of modern design systems...
+
+## Topics Covered
+- Semantic tokens vs Component tokens
+- Versioning design systems
+- The bridge between Figma and React
+
+## Links
+- [Linear Design](https://linear.app/design)
+- [Ghost CMS](https://ghost.org)</textarea>
+</div>
+</div>
+</div>
+<!-- Right Column (Sidebar/Form) -->
+<div class="w-full md:w-[40%] lg:w-[32%] bg-white border-l border-slate-200 p-6 md:p-8 flex flex-col gap-8 shadow-[-4px_0_24px_-12px_rgba(0,0,0,0.05)] overflow-y-auto">
+<!-- Cover Artwork -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-slate-900 font-display">Cover Artwork</label>
+<div class="group relative aspect-square w-full max-w-[240px] mx-auto bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 overflow-hidden flex flex-col items-center justify-center text-slate-400 hover:border-primary/50 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="image">image</span>
+<span class="text-xs font-medium">Click to upload cover</span>
+<p class="text-[10px] text-slate-400 mt-1">3000x3000px JPG/PNG</p>
+<input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+</div>
+<!-- Audio URL -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-900 font-display" for="audio-url">Audio URL</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]" data-icon="link">link</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all" id="audio-url" placeholder="https://omny.fm/shows/..." type="text"/>
+</div>
+</div>
+<!-- Category -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-900 font-display" for="category">Category</label>
+<select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer" id="category">
+<option value="">Select a category</option>
+<option selected="" value="design">Design</option>
+<option value="development">Development</option>
+<option value="product">Product</option>
+<option value="career">Career</option>
+</select>
+</div>
+<!-- Publish Date -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-900 font-display" for="publish-date">Publish Date</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_today">calendar_today</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-primary focus:border-primary transition-all" id="publish-date" type="datetime-local" value="2023-10-24T08:00"/>
+</div>
+</div>
+<!-- Tags -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-slate-900 font-display" for="tags-input">Tags</label>
+<div class="flex flex-wrap gap-2 mb-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium">
+                        Design
+                        <button class="hover:text-primary"><span class="material-symbols-outlined text-sm leading-none" data-icon="close">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium">
+                        Architecture
+                        <button class="hover:text-primary"><span class="material-symbols-outlined text-sm leading-none" data-icon="close">close</span></button>
+</span>
+</div>
+<input class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all" id="tags-input" placeholder="Add a tag and press enter..." type="text"/>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Actions -->
+<div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200 p-4 z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+<div class="max-w-[1600px] mx-auto flex items-center justify-between px-2 md:px-4">
+<button class="text-sm font-medium text-slate-500 hover:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button">
+                Cancel
+            </button>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all font-display shadow-sm" type="button">
+                    Save Draft
+                </button>
+<button class="px-6 py-2.5 text-sm font-medium text-white bg-primary rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all font-display shadow-sm flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
+                    Publish
+                </button>
+</div>
+</div>
+</div>
+</body></html>
