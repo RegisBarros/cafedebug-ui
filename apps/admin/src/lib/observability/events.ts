@@ -1,0 +1,18 @@
+export const observabilityEvents = Object.freeze({
+  authLoginValidationFailed: "auth.login.validation_failed",
+  authLoginFailed: "auth.login.failed",
+  authLoginSuccess: "auth.login.success",
+  authLoginServiceUnavailable: "auth.login.service_unavailable",
+  authRefreshFailed: "auth.refresh.failed",
+  authRefreshMissingToken: "auth.refresh.missing_token",
+  authRefreshSuccess: "auth.refresh.success",
+  authSessionProbeAuthenticated: "auth.session_probe.authenticated",
+  authSessionProbeFailed: "auth.session_probe.failed",
+  authLogout: "auth.logout",
+  middlewareSessionRedirect: "middleware.session.redirect",
+  middlewareSessionValidationError: "middleware.session.validation_error",
+  apiRequestFailed: "api.request.failed",
+  episodesFetchFailed: "episodes.fetch.failed",
+  episodesActionExecuted: "episodes.action.executed",
+  errorBoundaryTriggered: "ui.error_boundary.triggered"
+});

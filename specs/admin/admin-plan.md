@@ -62,6 +62,11 @@ Implementation teams must be able to build login, dashboard, episodes list/edit,
 - `/episodes/[id]/edit`
 - `/settings`
 
+V1 navigation contract:
+
+- `/dashboard` and `/settings` stay routable for direct access and QA coverage
+- sidebar menu entries for those routes are intentionally disabled and labeled as coming soon
+
 ### 3.1.1 Route Grouping
 
 - `(auth)` group: `/login` only, no admin shell
@@ -96,7 +101,7 @@ Implementation teams must be able to build login, dashboard, episodes list/edit,
 - clear auth failure message at form level
 - submit disabled while request is pending
 - Enter key submits
-- successful login redirects to `/dashboard`
+- successful login redirects to `/episodes`
 
 ## 3.2.2 `/dashboard`
 
@@ -150,13 +155,13 @@ Implementation teams must be able to build login, dashboard, episodes list/edit,
 
 ### Data dependencies
 
-- `GET /api/v1/admin/episodes` with query params for pagination/search/filter/sort
-- row navigation to `/episodes/[id]/edit`
+- `GET /api/v1/admin/episodes` with query params for pagination/sort (`page`, `pageSize`, `sortBy`, `descending`)
+- row action link to `/episodes/[id]/edit`
 - create CTA to `/episodes/new`
 
 ### Interaction patterns
 
-- search input debounced query
+- search input debounced local filtering (current V1 behavior filters the fetched page client-side)
 - sortable or consistently ordered columns
 - row hover/focus state
 - empty list and error recovery actions
@@ -174,8 +179,8 @@ Implementation teams must be able to build login, dashboard, episodes list/edit,
 ### Key components
 
 - large title field
-- markdown editor toolbar + write/preview toggle
-- cover upload tile
+- long-form description textarea (backend field supports markdown content; toolbar/write-preview is pending)
+- cover image URL input (upload tile integration is pending)
 - audio URL input
 - category select
 - publish datetime input
@@ -187,8 +192,8 @@ Implementation teams must be able to build login, dashboard, episodes list/edit,
 - `GET /api/v1/admin/episodes/{id}` (edit only)
 - `POST /api/v1/admin/episodes` (new)
 - `PUT /api/v1/admin/episodes/{id}` (edit)
-- `POST /api/v1/admin/images/upload` (cover)
-- optional `POST /api/v1/admin/images/delete` for replacement cleanup
+- `POST /api/v1/admin/images/upload` (cover) — planned, not yet wired in current editor UI
+- optional `POST /api/v1/admin/images/delete` for replacement cleanup — planned alongside upload integration
 
 ### Interaction patterns
 
@@ -311,6 +316,7 @@ All components must be implemented as reusable contracts in `packages/ui` (or ap
 - active state derived from route segment
 - keyboard-navigable links
 - collapsed/overlay retains route parity and accessibility labels
+- V1 disabled entries (`Dashboard`, `Settings`) must use `aria-disabled`, be removed from tab order, and expose "coming soon" text while preserving direct route accessibility
 
 ## 5.2 Header
 
@@ -514,20 +520,22 @@ UI mapping:
 - table rows map paginated `items[]`
 - status chip maps `active/published` fields
 - pagination controls map cursor/page metadata
+- search input debounces client-side filtering over the fetched page (no backend search param in current API contract)
 
 ## Episode Edit/New
 
 - `GET /api/v1/admin/episodes/{id}`
 - `POST /api/v1/admin/episodes`
 - `PUT /api/v1/admin/episodes/{id}`
-- `POST /api/v1/admin/images/upload`
-- optional `POST /api/v1/admin/images/delete`
+- `POST /api/v1/admin/images/upload` (planned integration)
+- optional `POST /api/v1/admin/images/delete` (planned integration)
 
 UI mapping:
 
 - left editor fields map content payload
 - right metadata fields map `EpisodeRequest` attributes
 - sticky footer actions trigger save/publish mutations
+- cover currently maps to direct `imageUrl` entry in form; upload/delete API integration is deferred
 
 ## Settings
 
@@ -623,7 +631,7 @@ No broad global state library required beyond Query + lightweight context/hooks.
 
 - middleware protects all `(admin)` routes
 - unauthenticated access redirects to `/login`
-- authenticated access to `/login` redirects to `/dashboard`
+- authenticated access to `/login` redirects to `/episodes`
 
 ## 9.3 Security UX Rules
 
@@ -678,6 +686,20 @@ Error surfaces should carry/record trace correlation (`traceId`) when available 
 
 Each error UI shown to users must have a corresponding logged event with module/action context.
 
+## 11.5 Validation Gates (CI-Enforced)
+
+Admin delivery must pass root validation gates before merging:
+
+- `pnpm gate:contract`:
+  - runs `@cafedebug/api-client` `contract:check`
+  - fails if `specs/admin/backend-openspec-api.json` and `packages/api-client/src/generated/schema.ts` are out of sync
+- `pnpm gate:quality`:
+  - runs monorepo `lint`, `typecheck`, and `build`
+- `pnpm gate:states`:
+  - runs `apps/admin` state-coverage tests for required list states (`loading`, `empty`, `error`)
+- `pnpm gate:validation` (and CI alias `pnpm ci:validation`):
+  - executes all gates deterministically in sequence
+
 ---
 
 ## 12. Monorepo & Architecture
@@ -701,6 +723,25 @@ Each error UI shown to users must have a corresponding logged event with module/
 - server-aware theme bootstrap using cookie to prevent flash/mismatch
 - Tailwind theme values map to semantic CSS variables
 - client components used only where interactivity requires
+
+## 12.4 Docker Local + Production Contract (Admin)
+
+- Docker artifacts live under `infra/docker`:
+  - `infra/docker/admin/Dockerfile` (multi-stage with `dev` and `production` targets)
+  - `infra/docker/docker-compose.admin.yml` (local admin workflow)
+- Local compose is optimized for hot reload:
+  - source bind mount
+  - container `next dev` on `0.0.0.0:${ADMIN_CONTAINER_PORT}` and host mapping via `ADMIN_PORT`
+  - explicit host/container API URL split (`ADMIN_API_BASE_URL` vs `ADMIN_API_BASE_URL_DOCKER`)
+- Production image is immutable at runtime:
+  - no source bind mounts
+  - container starts with `next start`
+  - environment variables are injected at runtime by deployment platform
+- Cookie/session env contract must stay aligned with auth section:
+  - `ADMIN_COOKIE_DOMAIN`
+  - `ADMIN_COOKIE_SAMESITE`
+  - `ADMIN_COOKIE_SECURE`
+  - production HTTPS should enforce secure cookie settings
 
 ---
 

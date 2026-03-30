@@ -1,0 +1,123 @@
+import { appRoutes } from "../../lib/routes.js";
+
+const normalizePathname = (pathname) => {
+  if (typeof pathname !== "string") {
+    return "/";
+  }
+
+  const trimmedPathname = pathname.trim();
+
+  if (!trimmedPathname || trimmedPathname === "/") {
+    return "/";
+  }
+
+  return trimmedPathname.endsWith("/")
+    ? trimmedPathname.slice(0, -1)
+    : trimmedPathname;
+};
+
+const matchesRoutePrefix = (pathname, prefix) =>
+  pathname === prefix || pathname.startsWith(`${prefix}/`);
+
+export const ADMIN_SHELL_NAV_ITEMS = Object.freeze([
+  Object.freeze({
+    href: appRoutes.episodes,
+    label: "Episodes",
+    disabled: false
+  }),
+  Object.freeze({
+    href: appRoutes.dashboard,
+    label: "Dashboard",
+    disabled: true,
+    statusLabel: "Coming soon"
+  }),
+  Object.freeze({
+    href: appRoutes.settings,
+    label: "Settings",
+    disabled: true,
+    statusLabel: "Coming soon"
+  })
+]);
+
+export const DISABLED_NAV_ENTRY_LABEL = "Disabled in V1 navigation";
+
+const ADMIN_SHELL_ROUTE_CONTEXTS = Object.freeze([
+  Object.freeze({
+    href: appRoutes.episodes,
+    title: "Episodes",
+    description: "Manage episode content and workflow placeholders for V1."
+  }),
+  Object.freeze({
+    href: appRoutes.dashboard,
+    title: "Dashboard",
+    description:
+      "Dashboard analytics are intentionally disabled for V1 and will be enabled once summary endpoints and metrics widgets are finalized.",
+    disabledInV1: true
+  }),
+  Object.freeze({
+    href: appRoutes.settings,
+    title: "Settings",
+    description:
+      "Settings is a deliberate V1 placeholder. Profile and SEO settings forms will be introduced in a later milestone.",
+    disabledInV1: true
+  })
+]);
+
+export const isAdminShellNavItemActive = (item, pathname) => {
+  const normalizedPathname = normalizePathname(pathname);
+  return matchesRoutePrefix(normalizedPathname, item.href);
+};
+
+export const resolveAdminShellNavInteraction = (item) => {
+  if (item.disabled) {
+    return Object.freeze({
+      ariaDisabled: true,
+      tabIndex: -1,
+      interactive: false
+    });
+  }
+
+  return Object.freeze({
+    ariaDisabled: undefined,
+    tabIndex: undefined,
+    interactive: true
+  });
+};
+
+export const resolveAdminShellRouteContext = (pathname) => {
+  const normalizedPathname = normalizePathname(pathname);
+
+  for (const routeContext of ADMIN_SHELL_ROUTE_CONTEXTS) {
+    if (matchesRoutePrefix(normalizedPathname, routeContext.href)) {
+      return routeContext;
+    }
+  }
+
+  return Object.freeze({
+    href: normalizedPathname,
+    title: "Admin",
+    description: "Authenticated admin area.",
+    disabledInV1: false
+  });
+};
+
+/**
+ * @typedef {Object} AdminShellRouteContext
+ * @property {string} href
+ * @property {string} title
+ * @property {string} description
+ * @property {boolean} disabledInV1
+ */
+
+/**
+ * @param {string} pathname
+ * @returns {AdminShellRouteContext}
+ */
+export const getAdminShellRouteContext = (pathname) => {
+  const resolvedContext = resolveAdminShellRouteContext(pathname);
+
+  return {
+    ...resolvedContext,
+    disabledInV1: Boolean(resolvedContext.disabledInV1)
+  };
+};

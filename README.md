@@ -245,6 +245,60 @@ Recommended approach:
 - GitHub Actions for CI, image build, and deployment
 - environment variables managed per service
 
+### Admin Docker Local + Production Strategy
+
+The admin app Docker strategy lives under `infra/docker` and follows a dev/prod split:
+
+- `infra/docker/admin/Dockerfile`
+  - `dev` stage: workspace-mounted local development with hot reload
+  - `production` stage: immutable runtime image (`pnpm start`)
+- `infra/docker/docker-compose.admin.yml`
+  - local compose workflow for admin only
+  - host/container env bridging and predictable port mapping
+
+#### Local workflow
+
+1. Copy env contract:
+   - `cp .env.example .env`
+2. Validate compose config:
+   - `pnpm docker:admin:config`
+3. Start admin dev container:
+   - `pnpm docker:admin:dev`
+4. Stop:
+   - `pnpm docker:admin:down`
+
+#### Production image sanity build
+
+- `pnpm docker:admin:build`
+
+This command builds the production target from the multi-stage Dockerfile without running a container.
+
+#### Environment contract (admin-focused)
+
+Use `.env.example` as the source of truth for admin-related variables:
+
+- `ADMIN_PORT` / `ADMIN_CONTAINER_PORT`: host/container ports and collision avoidance
+- `ADMIN_PUBLIC_URL`: browser-facing admin origin
+- `ADMIN_API_BASE_URL`: host-run API URL
+- `ADMIN_API_BASE_URL_DOCKER`: container-run API URL (`host.docker.internal` pattern)
+- cookie/session hints:
+  - `ADMIN_COOKIE_DOMAIN`
+  - `ADMIN_COOKIE_SAMESITE`
+  - `ADMIN_COOKIE_SECURE`
+
+Dev vs prod expectations:
+
+- **Development (Compose):**
+  - mounted source + hot reload
+  - installs dependencies inside the container on first boot if `/app/node_modules` volume is empty
+  - Next dev server binds `0.0.0.0:${ADMIN_CONTAINER_PORT}` inside container and is published to `localhost:${ADMIN_PORT}`
+  - permissive local cookie settings are expected (usually `Secure=false` over HTTP)
+- **Production (image/runtime):**
+  - immutable container filesystem and startup command
+  - Next runtime binds `0.0.0.0:${PORT}` (default 3000), with no source bind mount
+  - cookie settings must be hardened for HTTPS deployments (`Secure=true`, appropriate `SameSite`, domain/path alignment)
+  - runtime environment should be injected by deployment platform, not baked into image layers
+
 ## AI, Specs, and Collaboration
 
 This project should be AI-friendly without becoming AI-dependent.
@@ -253,6 +307,15 @@ This project should be AI-friendly without becoming AI-dependent.
 - [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
 - [specs/README.md](./specs/README.md) defines the spec-driven workflow
 - [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) defines contribution expectations
+
+## Validation Gates (Root + CI)
+
+Use the root validation commands before merge and in CI:
+
+- `pnpm gate:contract` → verifies OpenAPI generated client is up to date (`openapi-typescript --check`)
+- `pnpm gate:quality` → runs `lint`, `typecheck`, and `build`
+- `pnpm gate:states` → runs admin loading/empty/error state coverage checks
+- `pnpm gate:validation` (or `pnpm ci:validation`) → executes all gates in order
 
 ## Phased Plan
 

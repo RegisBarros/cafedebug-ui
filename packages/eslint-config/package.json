@@ -1,0 +1,23 @@
+{
+  "name": "@cafedebug/eslint-config",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js"
+  },
+  "scripts": {
+    "build": "node -e \"console.log('@cafedebug/eslint-config build placeholder')\"",
+    "lint": "node -e \"console.log('@cafedebug/eslint-config lint placeholder')\"",
+    "test": "node -e \"console.log('@cafedebug/eslint-config test placeholder')\"",
+    "typecheck": "node -e \"console.log('@cafedebug/eslint-config typecheck placeholder')\"",
+    "clean": "node -e \"console.log('@cafedebug/eslint-config clean placeholder')\""
+  },
+  "dependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.32.0"
+  }
+}

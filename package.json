@@ -1,0 +1,31 @@
+{
+  "name": "cafedebug-ui",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CafeDebug platform monorepo foundation",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "gate:contract": "pnpm --filter @cafedebug/api-client run contract:check",
+    "gate:quality": "pnpm lint && pnpm typecheck && pnpm build",
+    "gate:states": "pnpm --filter @cafedebug/admin run test:states",
+    "gate:validation": "pnpm gate:contract && pnpm gate:quality && pnpm gate:states",
+    "ci:validation": "pnpm gate:validation",
+    "clean": "turbo run clean",
+    "docker:admin:config": "docker compose -f infra/docker/docker-compose.admin.yml --env-file .env config",
+    "docker:admin:dev": "docker compose -f infra/docker/docker-compose.admin.yml --env-file .env up --build admin",
+    "docker:admin:down": "docker compose -f infra/docker/docker-compose.admin.yml --env-file .env down --remove-orphans",
+    "docker:admin:build": "docker build -f infra/docker/admin/Dockerfile --target production -t cafedebug/admin:local ."
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
+}
