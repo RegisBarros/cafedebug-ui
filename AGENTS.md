@@ -15,7 +15,7 @@ Modernize CafeDebug into a maintainable monorepo with:
 Before making non-trivial changes, read:
 
 1. `README.md`
-2. the relevant spec under `specs/`
+2. the relevant spec under `.specs/`
 3. `docs/design-system.md` for UI work
 4. `.github/copilot-instructions.md` if you are running inside GitHub Copilot
 
@@ -63,7 +63,7 @@ Examples of work that require specs:
 - authentication or session changes
 - deployment architecture changes
 
-Use the format described in `specs/README.md`.
+Use the format described in `.specs/README.md`.
 
 ## Design System Rules
 

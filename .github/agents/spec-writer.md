@@ -14,7 +14,7 @@ You transform feature requests into clear, implementation-ready specifications.
 
 Create or update:
 
-specs/{domain}/{feature}.md
+.specs/{domain}/{feature}.md
 
 ## Specification Structure
 
@@ -30,7 +30,7 @@ specs/{domain}/{feature}.md
 
 ## Rules
 
-- Follow existing spec patterns in specs/
+- Follow existing spec patterns in .specs/
 - Align with backend OpenAPI contract
 - Do NOT invent backend behavior (mark gaps clearly)
 - Use design system tokens (no hardcoded UI decisions)

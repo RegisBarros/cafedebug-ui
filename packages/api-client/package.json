@@ -8,8 +8,8 @@
     "./generated": "./src/generated/schema.ts"
   },
   "scripts": {
-    "generate": "openapi-typescript ../../specs/admin/backend-openspec-api.json --output src/generated/schema.ts",
-    "contract:check": "openapi-typescript ../../specs/admin/backend-openspec-api.json --check --output src/generated/schema.ts",
+    "generate": "openapi-typescript ../../.specs/admin/backend-openspec-api.json --output src/generated/schema.ts",
+    "contract:check": "openapi-typescript ../../.specs/admin/backend-openspec-api.json --check --output src/generated/schema.ts",
     "build": "pnpm run generate && pnpm run typecheck",
     "lint": "eslint .",
     "test": "node -e \"console.log('@cafedebug/api-client test placeholder')\"",

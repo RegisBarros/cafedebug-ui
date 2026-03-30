@@ -1,6 +1,6 @@
 # Design System Specification: Editorial Tech-Forward Management
 
-> Note: `specs/admin/DESIGN_SYSTEM.md` is the canonical design-system specification for implementation. This file preserves Stitch creative-direction source guidance.
+> Note: `.specs/admin/DESIGN_SYSTEM.md` is the canonical design-system specification for implementation. This file preserves Stitch creative-direction source guidance.
 
 ## 1. Overview & Creative North Star
 ### The Creative North Star: "The Digital Curator"

@@ -1,6 +1,6 @@
 # CafeDebug Admin Design Handoff (Figma -> Frontend)
 
-> Note: `specs/admin/DESIGN_SYSTEM.md` is the canonical design-system specification. This file is a Figma implementation handoff/reference document.
+> Note: `.specs/admin/DESIGN_SYSTEM.md` is the canonical design-system specification. This file is a Figma implementation handoff/reference document.
 
 ## Summary
 
@@ -8,7 +8,7 @@ This document is the admin-only frontend design handoff for the CafeDebug Figma 
 
 It translates the Figma source into implementation guidance for `apps/admin`, aligned with:
 
-- `specs/admin/admin-plan.md`
+- `.specs/admin/admin-plan.md`
 - `docs/design-system.md`
 - token-first rules (`packages/design-tokens`)
 

@@ -23,7 +23,7 @@ You coordinate the full lifecycle:
 - Ensure alignment with:
   - README.md
   - AGENTS.md
-  - specs/*
+  - .specs/*
   - design system
   - OpenAPI contract
 

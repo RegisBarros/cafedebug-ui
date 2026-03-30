@@ -5,8 +5,8 @@
 This specification defines the implementation-ready contract for `apps/admin` by merging:
 
 - the architectural baseline from the previous admin platform spec
-- the final UI/UX intent from Stitch artifacts (`specs/admin/stitch/cafedebug-admin/`)
-- existing handoff guidance in `specs/admin/Design.md` and `specs/admin/DESIGN_SYSTEM.md`
+- the final UI/UX intent from Stitch artifacts (`.specs/admin/stitch/cafedebug-admin/`)
+- existing handoff guidance in `.specs/admin/Design.md` and `.specs/admin/DESIGN_SYSTEM.md`
 
 The result is a single system definition for Next.js App Router + Tailwind + token-driven theming, with explicit UI, data, and behavior rules.
 
@@ -15,7 +15,7 @@ The result is a single system definition for Next.js App Router + Tailwind + tok
 1. Stitch visual artifacts (screens and layout intent)
 2. This platform specification (engineering contract)
 3. Design system tokens (`packages/design-tokens`) and shared primitives (`packages/ui`)
-4. OpenAPI contract (`specs/admin/backend-openspec-api.json`) for API behavior
+4. OpenAPI contract (`.specs/admin/backend-openspec-api.json`) for API behavior
 
 ### 1.2 Primary Outcome
 
@@ -692,7 +692,7 @@ Admin delivery must pass root validation gates before merging:
 
 - `pnpm gate:contract`:
   - runs `@cafedebug/api-client` `contract:check`
-  - fails if `specs/admin/backend-openspec-api.json` and `packages/api-client/src/generated/schema.ts` are out of sync
+  - fails if `.specs/admin/backend-openspec-api.json` and `packages/api-client/src/generated/schema.ts` are out of sync
 - `pnpm gate:quality`:
   - runs monorepo `lint`, `typecheck`, and `build`
 - `pnpm gate:states`:

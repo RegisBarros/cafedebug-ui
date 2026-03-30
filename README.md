@@ -89,7 +89,7 @@ docs/
   CONTRIBUTING.md
   design-system.md
 
-specs/
+.specs/
   README.md
   web/
   admin/
@@ -185,7 +185,7 @@ The backend already separates public and admin controllers. That gives us a clea
 
 Because the API already exposes Swagger/OpenAPI, generate client types from the contract instead of maintaining manual request/response types in the frontends.
 
-### Endpoint Context (from `specs/admin/backend-openspec-api.json`)
+### Endpoint Context (from `.specs/admin/backend-openspec-api.json`)
 
 Use this split as the default API boundary between frontend apps.
 
@@ -305,7 +305,7 @@ This project should be AI-friendly without becoming AI-dependent.
 
 - [AGENTS.md](./AGENTS.md) defines the shared rules for agent-based work
 - [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
-- [specs/README.md](./specs/README.md) defines the spec-driven workflow
+- [.specs/README.md](./.specs/README.md) defines the spec-driven workflow
 - [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) defines contribution expectations
 
 ## Validation Gates (Root + CI)
@@ -341,10 +341,10 @@ Use the root validation commands before merge and in CI:
 - create `apps/web` and `apps/admin`
 - create `packages/design-tokens` with the initial CafeDebug theme
 - define the first specs:
-  - `specs/web/homepage.md`
-  - `specs/web/episode-detail.md`
-  - `specs/admin/episodes-crud.md`
-  - `specs/platform/deployment.md`
+  - `.specs/web/homepage.md`
+  - `.specs/web/episode-detail.md`
+  - `.specs/admin/episodes-crud.md`
+  - `.specs/platform/deployment.md`
 
 ## References
 

@@ -7,7 +7,7 @@ Specs help keep humans, Copilot, and other agents aligned before code starts mov
 ## Where Specs Live
 
 ```text
-specs/
+.specs/
   web/         # Public website pages and flows
   admin/       # Admin backoffice screens and workflows
   platform/    # Monorepo, CI/CD, deployment, shared packages
@@ -76,8 +76,8 @@ Use this structure:
 
 ## Suggested First Specs
 
-- `specs/web/homepage.md`
-- `specs/web/episode-detail.md`
-- `specs/admin/episodes-crud.md`
-- `specs/admin/banners-crud.md`
-- `specs/platform/deployment.md`
+- `.specs/web/homepage.md`
+- `.specs/web/episode-detail.md`
+- `.specs/admin/episodes-crud.md`
+- `.specs/admin/banners-crud.md`
+- `.specs/platform/deployment.md`

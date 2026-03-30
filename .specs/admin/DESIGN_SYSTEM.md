@@ -2,7 +2,7 @@
 
 **Status:** Canonical specification  
 **Scope:** `apps/admin`, `packages/ui`, `packages/design-tokens`  
-**Supersedes for system decisions:** `specs/admin/Design.md`, `specs/admin/stitch/Stitch-DESIGN.md`
+**Supersedes for system decisions:** `.specs/admin/Design.md`, `.specs/admin/stitch/Stitch-DESIGN.md`
 
 ---
 

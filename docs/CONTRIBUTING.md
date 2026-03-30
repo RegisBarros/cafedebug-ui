@@ -30,7 +30,7 @@ Right now the repository is still in the architecture and planning phase. Until 
 ## Suggested Contribution Flow
 
 1. Open or pick an issue.
-2. Confirm whether a spec already exists under `specs/`.
+2. Confirm whether a spec already exists under `.specs/`.
 3. Create or update the relevant spec before implementation.
 4. Align design and API assumptions.
 5. Implement the smallest useful change.
@@ -50,7 +50,7 @@ Examples:
 - deployment changes
 - auth/session flows
 
-Use [specs/README.md](../specs/README.md) as the format reference.
+Use [.specs/README.md](../.specs/README.md) as the format reference.
 
 ## Branches and Commits
 
