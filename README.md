@@ -245,6 +245,100 @@ Recommended approach:
 - GitHub Actions for CI, image build, and deployment
 - environment variables managed per service
 
+### Run `apps/admin` on Your Machine
+
+Use this section when you want to run the admin app locally as a contributor.
+
+#### Prerequisites
+
+- Node.js `>= 20`
+- pnpm `>= 10`
+- a running backend API reachable by `ADMIN_API_BASE_URL` (default `http://localhost:8080`)
+
+#### 1. Install dependencies
+
+From repository root:
+
+```bash
+pnpm install
+```
+
+#### 2. Create your local environment file
+
+From repository root:
+
+```bash
+cp .env.example .env
+```
+
+If you run admin directly on host (`pnpm --filter @cafedebug/admin dev`), also create an app-local env file:
+
+```bash
+cp .env.example apps/admin/.env.local
+```
+
+Why this is needed:
+
+- Docker Compose reads the root `.env`.
+- Next.js host-run reads `apps/admin/.env.local` (app directory).
+
+Then confirm these values in `.env` for local development:
+
+- `ADMIN_PORT=3010`
+- `ADMIN_PUBLIC_URL=http://localhost:3010`
+- `ADMIN_API_BASE_URL=http://localhost:8080`
+- `ADMIN_COOKIE_DOMAIN=localhost`
+- `ADMIN_COOKIE_SAMESITE=Lax`
+- `ADMIN_COOKIE_SECURE=false`
+
+Notes:
+
+- If your API runs on another port/host, change `ADMIN_API_BASE_URL`.
+- Example for local .NET HTTPS API: `ADMIN_API_BASE_URL=https://localhost:7211`
+- `ADMIN_API_BASE_URL_DOCKER` is only for Docker-based runs.
+
+#### 3. Start admin directly on host (recommended for daily coding)
+
+From repository root:
+
+```bash
+pnpm --filter @cafedebug/admin dev
+```
+
+Open `http://localhost:3001`.
+
+Why `3001`?
+
+- The app script is `next dev --port 3001` in `apps/admin/package.json`.
+- `ADMIN_PORT` is used by Docker Compose mapping, not by this host command.
+
+#### 4. Alternative: start all apps in the monorepo
+
+From repository root:
+
+```bash
+pnpm dev
+```
+
+This runs all workspace `dev` scripts in parallel via Turborepo.
+
+#### 5. Run admin in Docker (if you prefer containerized local dev)
+
+From repository root:
+
+```bash
+pnpm docker:admin:config
+pnpm docker:admin:dev
+```
+
+Open `http://localhost:${ADMIN_PORT}` (default `http://localhost:3010`).
+
+To stop:
+
+```bash
+pnpm docker:admin:down
+```
+
 ### Admin Docker Local + Production Strategy
 
 The admin app Docker strategy lives under `infra/docker` and follows a dev/prod split:
