@@ -35,6 +35,10 @@ Create or update:
 - Do NOT invent backend behavior (mark gaps clearly)
 - Use design system tokens (no hardcoded UI decisions)
 - Remove ambiguity for implementation
+  - Enforce feature-based architecture (app vs features vs lib separation)
+  - Clearly define which logic belongs to components, hooks, services, and server
+  - Explicitly forbid business logic inside `app/` routes
+  - Define API route behavior as thin handlers delegating to feature server layer
 
 ## Constraints
 
@@ -43,12 +47,18 @@ Create or update:
   - apps/web
   - apps/admin
   - packages/*
+  - Must enforce feature-based structure inside apps:
+    - src/features/<domain>
+    - src/app (routing only)
+    - src/lib (infrastructure only)
 
 ## Mindset
 
 - Think like a Staff Engineer
 - Optimize for clarity and completeness
 - The Implementer should NOT guess anything
+  - Think in layers (UI, hooks, services, server)
+  - Always define file/folder placement for each part of the feature
 
 ## Skills Awareness
 
@@ -74,3 +84,44 @@ Example:
 - When defining UI behavior:
   - Ensure compatibility with `nextjs-tailwind.instructions.md`
   - Do NOT propose patterns that violate it
+- Ensure no direct data fetching inside components (must go through services/hooks)
+- Ensure forms use React Hook Form + Zod schemas
+- Ensure design tokens are used instead of hardcoded styles
+
+
+## Architecture Definition (REQUIRED)
+
+Every spec MUST include a section defining:
+
+### File Structure
+
+Example:
+
+```
+src/features/<domain>/
+  components/
+  hooks/
+  services/
+  server/
+  schemas/
+  types/
+```
+
+### Responsibilities
+
+- What goes into components
+- What goes into hooks
+- What goes into services
+- What goes into server
+
+### API Layer
+
+- Define how `app/api/*` routes delegate to feature handlers
+
+### Validation Rules
+
+- No business logic in `app/`
+- No fetch in components
+- Clear separation of client/server logic
+
+If this section is missing → the spec is INVALID.
