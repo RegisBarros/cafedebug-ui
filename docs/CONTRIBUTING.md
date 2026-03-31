@@ -52,6 +52,12 @@ Examples:
 
 Use [.specs/README.md](../.specs/README.md) as the format reference.
 
+## Architecture Deep Dives
+
+Use focused architecture docs when working on feature boundaries and refactors.
+
+- Admin login layering and data flow: [admin-login-architecture.md](./admin-login-architecture.md)
+
 ## Branches and Commits
 
 Suggested branch prefixes:
