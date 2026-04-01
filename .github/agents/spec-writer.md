@@ -19,23 +19,67 @@ You transform feature requests into clear, implementation-ready specifications.
 
 Create or update:
 
-.specs/{domain}/{feature}.md
+.specs/{domain}/{feature}/
+  - spec.md
+  - design.md
+  - tasks.md
 
-## Specification Structure
+## Spec-Driven Development Structure
+
+Follow the SDD lifecycle strictly:
+
+1. spec.md (Specify)
+2. design.md (Design)
+3. tasks.md (Tasks)
+
+---
+
+### spec.md (Specify)
 
 1. Overview
-2. Goals
-3. Non-goals
-4. Architecture decisions
-5. Data contracts (API mapping)
-6. UI/UX behavior
+2. Problem
+3. Goals
+4. Non-goals
+5. Users and Use Cases
+6. User Flows
+7. Routes or Screens
+8. Success Criteria
+
+---
+
+### design.md (Design)
+
+1. Overview
+2. Architecture decisions
+3. UI/UX structure
+4. Components
+5. Data flow (UI → hooks → services → server → API)
+6. API contracts (mapping to OpenAPI)
 7. State management
 8. Edge cases
-9. Acceptance criteria
+9. Accessibility and responsiveness
+
+---
+
+### tasks.md (Tasks)
+
+1. Setup phase
+2. Core feature implementation
+3. UI integration
+4. Validation and testing
+5. Polish
+
+Rules:
+- Tasks must be atomic and testable
+- Each phase must not break the application
+- Each phase must be validated before proceeding
 
 ## Rules
 
+- Enforce Spec → Design → Tasks lifecycle before implementation
+- Do NOT generate a single-file spec
 - Follow existing spec patterns in .specs/
+- Each feature MUST live in its own folder under .specs/{domain}/{feature}/
 - Align with backend OpenAPI contract
 - Do NOT invent backend behavior (mark gaps clearly)
 - Use design system tokens (no hardcoded UI decisions)
@@ -96,6 +140,8 @@ Example:
 
 ## Architecture Definition (REQUIRED)
 
+This section MUST be included inside design.md (NOT spec.md).
+
 Every spec MUST include a section defining:
 
 ### File Structure
@@ -130,3 +176,20 @@ src/features/<domain>/
 - Clear separation of client/server logic
 
 If this section is missing → the spec is INVALID.
+
+## Validation Checklist
+
+A spec is INVALID if:
+
+- It is created as a single file instead of spec/design/tasks
+- It mixes product definition with technical design
+- It does not define file structure and responsibilities
+- It allows ambiguity for implementation
+- It does not follow feature-based architecture
+
+A spec is VALID only if:
+
+- spec.md defines WHAT and WHY
+- design.md defines HOW
+- tasks.md defines EXECUTION steps
+- The implementation can be done without guessing
