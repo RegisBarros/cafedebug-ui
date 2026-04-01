@@ -263,9 +263,27 @@ Before broad implementation, align on a single body font token for admin to avoi
 - Keep business logic in feature modules, not route page files.
 - Avoid hardcoded values for colors/logo/base URLs.
 
-## Known Gaps / Clarifications Needed
+## Stitch HTML/CSS Reference (Mandatory)
 
-- Body font usage is inconsistent across frames (`Liberation Sans` vs `Cabinet Grotesk`).
-- Orange token appears as two close values (`#ff6b35` and `#f56e3d`).
-- Dark mode token extraction should be verified against Figma variables before final token freeze.
-- If a final design-system node exists in Figma, map it directly to `packages/design-tokens` in a follow-up pass.
+The implementation MUST follow the structural HTML and CSS patterns provided by the Stitch artifacts as the baseline layout reference.
+
+### Source paths
+
+- `.specs/admin/stitch/cafedebug-admin/code/themes/*`
+- `.specs/admin/stitch/cafedebug-admin/images/themes/*`
+
+### Rules
+
+- Treat Stitch HTML structure as the **layout source of truth** for spacing, grouping, and composition.
+- Recreate layouts using React components, but preserve the same DOM hierarchy semantics where possible.
+- Use Stitch CSS as a **visual reference**, not as production CSS:
+  - Do NOT copy raw CSS directly into the app.
+  - Translate styles into design tokens (`packages/design-tokens`) and Tailwind utilities.
+- All images, icons, and visual assets from Stitch must be mapped to the corresponding theme-aware asset system (no hardcoded paths).
+- When discrepancies exist between Figma and Stitch:
+  - Prefer **Stitch for layout and spacing behavior**.
+  - Prefer **Design System tokens for colors, typography, and theming**.
+
+### Goal
+
+Ensure pixel-level fidelity of layout and composition while maintaining token-driven, scalable frontend architecture.
