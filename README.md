@@ -417,28 +417,20 @@ Use the root validation commands before merge and in CI:
    - finalize repo structure
    - scaffold monorepo root
    - create shared lint, TypeScript, and design token packages
-2. Website V1
-   - implement shell, home page, episode listing, episode detail, SEO, analytics
-   - integrate public API endpoints
-3. Admin V1
+
+2. Admin V1
    - implement login, episodes CRUD, banners CRUD, media upload
    - integrate authenticated API endpoints
+
+3. Website V1
+   - implement shell, home page, episode listing, episode detail, SEO, analytics
+   - integrate public API endpoints
+
 4. Platform Consolidation
    - move or mirror the backend into `services/api`
    - finalize shared deployment and CI/CD flow
 5. Production Hardening
    - tests, observability, performance passes, and deployment automation
-
-## Recommended Next Deliverables
-
-- scaffold the monorepo root with `pnpm` and `turbo`
-- create `apps/web` and `apps/admin`
-- create `packages/design-tokens` with the initial CafeDebug theme
-- define the first specs:
-  - `.specs/web/homepage.md`
-  - `.specs/web/episode-detail.md`
-  - `.specs/admin/episodes-crud.md`
-  - `.specs/platform/deployment.md`
 
 ## References
 
