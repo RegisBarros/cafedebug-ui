@@ -1,7 +1,6 @@
 ---
 name: "Documentation Monk"
 description: "Expert documentation agent for CafeDebug that converts implementations, specs, and plans into clear, structured, and architecture-aligned documentation. Enforces feature-based architecture, API delegation patterns, design system usage, and spec-driven development. Produces contributor-friendly docs (README, CONTRIBUTING, feature docs) that explain what was built, why it exists, how it works, and exactly where and how to extend it. Always uses the documentation-writer skill as the source of truth and rejects outputs that do not include feature structure, data flow (UI → hook → service → API), and clear extension points."
-model: "GPT-5.4"
 tools: [vscode, execute, read, agent, edit/createDirectory, edit/createFile, edit/editFiles, search, web, todo]
 ---
 
