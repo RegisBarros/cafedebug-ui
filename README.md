@@ -128,23 +128,19 @@ The new website should preserve the recognizable CafeDebug feel while modernizin
 - make episode discovery easier with stronger filtering, cards, and internal linking
 - prepare the layout so banners and sponsorship placements feel intentional, not bolted on
 
-## Initial Design Tokens
+## Design System Rules
 
-The following values were extracted from the current site and legacy styles. They are a safe starting point for the design system:
-
-```css
-:root[data-brand="cafedebug"] {
-  --color-brand: #ed7d00;
-  --color-brand-hover: #e65100;
-  --color-accent: #eb9736;
-  --color-surface-dark: #2c2a2b;
-  --color-background: #ffffff;
-  --color-text: #2c2c2c;
-  --color-text-inverse: #ffffff;
-}
-```
-
-These tokens should feed both Tailwind theme aliases and any Figma variables. More detail lives in [docs/design-system.md](./docs/design-system.md).
+- never hardcode visual values (colors, spacing, radii, shadows, typography) in feature components — use tokens from `packages/design-tokens`
+- never use inline `style={{ }}` attributes to set visual properties; use Tailwind classes backed by CSS variables
+- no direct logo references outside brand config or token packages
+- preserve the dark header/footer and warm orange accent palette — do not change primary brand colors without updating design tokens
+- do not import random UI kits or page templates that break the brand
+- prefer `packages/ui` primitives before creating new feature-level components
+- modernize by improving spacing, hierarchy, accessibility, and responsiveness — not by replacing the brand identity
+- for admin work: use `.specs/admin/DESIGN_SYSTEM.md` as the source of truth for design decisions
+- for admin work: use `.specs/admin/stitch/cafedebug-admin/code/*` as the reference for HTML and CSS patterns
+- for admin work: compare implementations against `.specs/admin/stitch/cafedebug-admin/images/*` design mockups
+- for web work: use `.specs/web/DESIGN_SYSTEM.md` as the source of truth when it exists; fall back to `packages/design-tokens` and the website modernization direction above
 
 ## White-Label Strategy
 
@@ -400,7 +396,6 @@ This project should be AI-friendly without becoming AI-dependent.
 - [AGENTS.md](./AGENTS.md) defines the shared rules for agent-based work
 - [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
 - [.specs/README.md](./.specs/README.md) defines the spec-driven workflow
-- [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) defines contribution expectations
 
 ## Validation Gates (Root + CI)
 

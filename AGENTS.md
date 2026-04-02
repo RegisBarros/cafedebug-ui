@@ -16,7 +16,7 @@ Before making non-trivial changes, read:
 
 1. `README.md`
 2. the relevant spec under `.specs/`
-3. `docs/design-system.md` for UI work
+3. `.specs/admin/DESIGN_SYSTEM.md` for UI work
 4. `.github/copilot-instructions.md` if you are running inside GitHub Copilot
 
 ## Core Rules
@@ -72,6 +72,9 @@ Use the format described in `.specs/README.md`.
 - keep the current CafeDebug identity recognizable
 - modernize by improving spacing, hierarchy, accessibility, and responsiveness
 - do not import random UI kits or page templates that break the brand
+- use .specs/admin/DESIGN_SYSTEM.md as the source of truth for design decisions
+- use .specs/admin/stitch/cafedebug-admin/code/* for the source of truth for implementation html and CSS patterns
+- use .specs/admin/stitch/cafedebug-admin/images/* to compare the implementation with the design mockups
 
 ## Figma MCP Workflow
 
@@ -83,30 +86,6 @@ When Figma assets exist:
 4. record relevant Figma links in the corresponding spec
 
 Use Figma MCP for design inspection and validation, not as a replacement for architecture decisions.
-
-## Skills Workflow
-
-Planned project-specific skills should live under `ai/skills/`.
-
-Suggested skills:
-
-- `frontend.md`
-- `admin.md`
-- `api-contracts.md`
-- `seo.md`
-- `design-system.md`
-- `testing.md`
-- `deployment.md`
-
-Each skill should answer:
-
-- when to use it
-- required inputs
-- expected outputs
-- decisions to keep consistent
-- pitfalls to avoid
-
-If a skill does not exist yet, follow the repo docs and spec instead of inventing a new pattern.
 
 ## Definition of Done
 
