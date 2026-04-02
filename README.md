@@ -103,19 +103,23 @@ README.md
 
 ## App-Level Folder Shape
 
-Inside each Next.js app, prefer a feature-oriented structure:
+Inside each Next.js app, prefer feature-based structure with strict domain boundaries:
 
 ```text
 src/
   app/                    # Routes, layouts, metadata, route handlers
-  components/             # App-specific composition components
-  features/               # Domain features such as episodes, banners, team
+  features/
+    <domain>/
+      components/
+      hooks/
+      services/
+      server/
+      schemas/
+      types/
   lib/                    # Utilities, adapters, config helpers
-  hooks/                  # App-specific hooks
-  styles/                 # Global CSS entry points
 ```
 
-Keep reusable design primitives in `packages/ui`, not duplicated under both apps.
+Keep reusable design primitives in `packages/ui`, not duplicated under both apps. For implementation constraints and anti-patterns, see `.github/copilot-instructions.md`.
 
 ## Website Modernization Direction
 
@@ -130,17 +134,13 @@ The new website should preserve the recognizable CafeDebug feel while modernizin
 
 ## Design System Rules
 
-- never hardcode visual values (colors, spacing, radii, shadows, typography) in feature components — use tokens from `packages/design-tokens`
-- never use inline `style={{ }}` attributes to set visual properties; use Tailwind classes backed by CSS variables
-- no direct logo references outside brand config or token packages
-- preserve the dark header/footer and warm orange accent palette — do not change primary brand colors without updating design tokens
-- do not import random UI kits or page templates that break the brand
+- never hardcode visual values in feature components; use tokens from `packages/design-tokens`
+- preserve the dark header/footer and warm orange accent palette unless design tokens are intentionally updated
 - prefer `packages/ui` primitives before creating new feature-level components
-- modernize by improving spacing, hierarchy, accessibility, and responsiveness — not by replacing the brand identity
-- for admin work: use `.specs/admin/DESIGN_SYSTEM.md` as the source of truth for design decisions
-- for admin work: use `.specs/admin/stitch/cafedebug-admin/code/*` as the reference for HTML and CSS patterns
-- for admin work: compare implementations against `.specs/admin/stitch/cafedebug-admin/images/*` design mockups
-- for web work: use `.specs/web/DESIGN_SYSTEM.md` as the source of truth when it exists; fall back to `packages/design-tokens` and the website modernization direction above
+- modernize via spacing, hierarchy, accessibility, and responsiveness while preserving brand identity
+
+For execution-level enforcement and anti-patterns, use `.github/copilot-instructions.md`.
+For admin visual implementation references, use `.specs/admin/DESIGN_SYSTEM.md` and `.specs/admin/stitch/cafedebug-admin/*`.
 
 ## White-Label Strategy
 
@@ -183,34 +183,12 @@ Because the API already exposes Swagger/OpenAPI, generate client types from the 
 
 ### Endpoint Context (from `.specs/admin/backend-openspec-api.json`)
 
-Use this split as the default API boundary between frontend apps.
+Use this split as the default API boundary between frontend apps:
 
-**`apps/admin` endpoints (authenticated backoffice + admin account flows):**
+- `apps/admin`: authenticated backoffice and admin account flows
+- `apps/web`: public read-only website flows
 
-- `POST /api/v1/admin/auth/token`
-- `POST /api/v1/admin/auth/refresh-token`
-- `POST /api/v1/accounts-admin/forgot-password`
-- `POST /api/v1/accounts-admin/change-password`
-- `POST /api/v1/accounts-admin/reset-password`
-- `POST /api/v1/accounts-admin/verify-email`
-- `GET|POST /api/v1/admin/episodes`
-- `GET|PUT|DELETE /api/v1/admin/episodes/{id}`
-- `GET|POST /api/v1/admin/banners`
-- `GET|PUT|DELETE /api/v1/admin/banners/{id}`
-- `GET|POST /api/v1/admin/categories`
-- `GET|PUT|DELETE /api/v1/admin/categories/{id}`
-- `GET|POST /api/v1/admin/team-members`
-- `GET|PUT|DELETE /api/v1/admin/team-members/{id}`
-- `POST /api/v1/admin/images/upload`
-- `POST /api/v1/admin/images/delete`
-
-**`apps/web` endpoints (public website reads):**
-
-- `GET /api/v1/public/episodes`
-- `GET /api/v1/public/episodes/{id}`
-- `GET /api/v1/public/banners`
-- `GET /api/v1/public/banners/{id}`
-- `GET /api/v1/public/banners/{bannerName}`
+For the current endpoint catalog, see `.specs/admin/backend-openspec-api.json`.
 
 ## SEO and Analytics
 
@@ -389,13 +367,13 @@ Dev vs prod expectations:
   - cookie settings must be hardened for HTTPS deployments (`Secure=true`, appropriate `SameSite`, domain/path alignment)
   - runtime environment should be injected by deployment platform, not baked into image layers
 
-## AI, Specs, and Collaboration
+## Code Generation and Multi-Agent Coordination
 
 This project should be AI-friendly without becoming AI-dependent.
 
-- [AGENTS.md](./AGENTS.md) defines multi-agent governance and phase handoff rules
-- [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
-- [.specs/README.md](./.specs/README.md) defines the spec-driven workflow
+1. [AGENTS.md](./AGENTS.md) defines governance, lifecycle, and handoff rules.
+2. [.github/copilot-instructions.md](./.github/copilot-instructions.md) defines executable coding constraints.
+3. [.specs/README.md](./.specs/README.md) defines the spec-driven workflow and required deliverables.
 
 ## Validation Gates (Root + CI)
 

@@ -1,6 +1,20 @@
 # GitHub Copilot Instructions
 
-- Read `README.md`, the relevant file under `.specs/`, and `AGENTS.md` (for multi-agent governance/handoffs) before generating non-trivial code.
+## Quick Orientation
+
+Before generating code, use these documents in this order:
+
+1. [AGENTS.md](../AGENTS.md) for governance, lifecycle, and handoff policy.
+2. [README.md](../README.md) for product goals, architecture decisions, and stack truth.
+3. [.specs/README.md](../.specs/README.md) for spec-driven workflow.
+4. This file for executable coding constraints and anti-patterns.
+
+For strategic context while applying these rules:
+
+- Monorepo and platform decisions: [README.md](../README.md#monorepo-target-structure)
+- API boundary strategy: [README.md](../README.md#content-and-api-strategy)
+- Design-system strategy: [README.md](../README.md#design-system-rules)
+
 - This repository is a monorepo with `apps/web`, `apps/admin`, `services/api`, and shared `packages/*`.
 - Use Next.js App Router and TypeScript for frontend work.
 - Default to Server Components in `apps/web`.
@@ -33,6 +47,8 @@ NEVER mix responsibilities.
 ---
 
 ## 📁 2. Folder Responsibilities
+
+This section is the canonical folder rule for implementation work.
 
 ### ✅ `src/app/`
 

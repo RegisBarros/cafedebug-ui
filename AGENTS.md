@@ -23,8 +23,8 @@ Before non-trivial work:
 | Topic | Source |
 | --- | --- |
 | Product, architecture, stack decisions | `README.md` |
+| Code generation rules and architectural constraints | `.github/copilot-instructions.md` |
 | Spec format and delivery lifecycle | `.specs/README.md` |
-| Copilot implementation constraints | `.github/copilot-instructions.md` |
 | Multi-agent orchestration and handoffs | `AGENTS.md` |
 
 ## Required Lifecycle
