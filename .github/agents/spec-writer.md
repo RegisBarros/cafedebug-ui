@@ -13,7 +13,7 @@ You transform feature requests into clear, implementation-ready specifications.
 - Feature request
 - Existing specs
 - README.md
-- AGENTS.md
+- AGENTS.md (governance and handoff policy)
 
 ## Output
 

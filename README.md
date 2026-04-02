@@ -393,7 +393,7 @@ Dev vs prod expectations:
 
 This project should be AI-friendly without becoming AI-dependent.
 
-- [AGENTS.md](./AGENTS.md) defines the shared rules for agent-based work
+- [AGENTS.md](./AGENTS.md) defines multi-agent governance and phase handoff rules
 - [.github/copilot-instructions.md](./.github/copilot-instructions.md) gives GitHub Copilot a compact project brief
 - [.specs/README.md](./.specs/README.md) defines the spec-driven workflow
 

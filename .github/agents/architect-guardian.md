@@ -33,7 +33,7 @@ You coordinate the full lifecycle:
 - Prevent skipping steps
 - Ensure alignment with:
   - README.md
-  - AGENTS.md
+  - AGENTS.md (governance and lifecycle handoff policy)
   - .specs/*
   - design system
   - OpenAPI contract
