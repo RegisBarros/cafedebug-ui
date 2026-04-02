@@ -42,9 +42,11 @@
   --color-primary-strong: #f56e3d;
   --color-primary-container: #ffb59d;
   --color-on-primary: #ffffff;
+  --color-on-primary-container: #3c1206;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #d8f3fb;
+  --color-on-tertiary-container: #10313c;
 
   --color-success: #10b981;
   --color-warning: #f59e0b;
@@ -69,9 +71,11 @@
   --color-primary-strong: #f56e3d;
   --color-primary-container: #5e2411;
   --color-on-primary: #fff3ee;
+  --color-on-primary-container: #ffd8cb;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #143844;
+  --color-on-tertiary-container: #d1f4ff;
 
   --color-success: #34d399;
   --color-warning: #fbbf24;
