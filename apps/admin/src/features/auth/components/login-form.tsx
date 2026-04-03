@@ -145,7 +145,7 @@ export function LoginForm() {
           type="submit"
           aria-busy={isSubmitting}
         >
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? "Signing in..." : "Sign In"}
         </button>
 
         {isSubmitting ? (
@@ -160,6 +160,19 @@ export function LoginForm() {
         <p className="text-center text-xs text-on-surface-variant">
           Secure access for authorized administrators only.
         </p>
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <span
+            className="material-symbols-outlined text-base text-on-surface-variant"
+            aria-hidden="true"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
+            mic
+          </span>
+          <span className="select-none text-xs text-on-surface-variant/50">|</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+            CafeDebug
+          </span>
+        </div>
       </div>
     </section>
   );

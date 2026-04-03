@@ -38,8 +38,8 @@
   --color-on-surface: #1f1a18;
   --color-on-surface-variant: #6a5d57;
 
-  --color-primary: #ff6b35;
-  --color-primary-strong: #f56e3d;
+  --color-primary: #ea580c;
+  --color-primary-strong: #c2410c;
   --color-primary-container: #ffb59d;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #3c1206;
@@ -53,7 +53,7 @@
   --color-danger: #dc2626;
 
   --color-outline-variant: rgb(31 26 24 / 16%);
-  --color-focus-ring: rgb(255 107 53 / 45%);
+  --color-focus-ring: rgb(234 88 12 / 45%);
 }
 
 :root[data-theme="dark"] {

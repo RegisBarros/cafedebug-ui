@@ -53,7 +53,7 @@ The admin should feel premium and editorial, but never ambiguous or difficult to
 
 | Conflict | Source A | Source B | Unified decision |
 | --- | --- | --- | --- |
-| Primary orange values | `#ff6b35` | `#f56e3d` | Keep both with explicit roles: `--color-primary` and `--color-primary-strong`. |
+| Primary orange values | `#ff6b35` (light) / `#ff6b35` (dark) | `#ea580c` (stitch reference) | Light theme uses `#ea580c` (`--color-primary`) and `#c2410c` (`--color-primary-strong`); dark theme retains `#ff6b35` / `#f56e3d`. |
 | Body font family | Plus Jakarta Sans | Liberation Sans / Cabinet Grotesk mix | Standardize body/UI to **Plus Jakarta Sans**. |
 | Spacing values | Editorial token rhythm | Observed raw values incl. `18` and `25` | Normalize to Tailwind-friendly scale; deprecate `18` and `25`. |
 | Boundary treatment | No-line tonal separation | Frequent bordered surfaces | Default to tonal layering; allow low-contrast outline token only when needed. |
@@ -98,8 +98,8 @@ Use semantic tokens in app code. Foundation tokens stay internal to `packages/de
   --color-on-surface: #1f1a18;
   --color-on-surface-variant: #6a5d57;
 
-  --color-primary: #ff6b35;
-  --color-primary-strong: #f56e3d;
+  --color-primary: #ea580c;
+  --color-primary-strong: #c2410c;
   --color-primary-container: #ffb59d;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #3c1206;
@@ -113,7 +113,7 @@ Use semantic tokens in app code. Foundation tokens stay internal to `packages/de
   --color-danger: #dc2626;
 
   --color-outline-variant: rgb(31 26 24 / 16%);
-  --color-focus-ring: rgb(255 107 53 / 45%);
+  --color-focus-ring: rgb(234 88 12 / 45%);
 }
 ```
 
@@ -403,8 +403,10 @@ export default config;
 
 | Previous reference | Unified token/contract |
 | --- | --- |
-| `#ff6b35` in scattered components | `--color-primary` |
-| `#f56e3d` in scattered components | `--color-primary-strong` |
+| `#ea580c` in scattered components | `--color-primary` (light theme) |
+| `#c2410c` in scattered components | `--color-primary-strong` (light theme) |
+| `#ff6b35` in scattered components | `--color-primary` (dark theme) |
+| `#f56e3d` in scattered components | `--color-primary-strong` (dark theme) |
 | `#fafafa` page bg | `--color-surface` |
 | `#ffffff` card bg | `--color-surface-container-lowest` |
 | Frequent 1px borders | tonal containers + optional `--color-outline-variant` |

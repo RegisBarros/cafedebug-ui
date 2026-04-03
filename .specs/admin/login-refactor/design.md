@@ -19,8 +19,8 @@
     │  └──────────────────────────────────────────┘│
     │                                               │
     │  <main> (flex-grow, center, relative)         │
-    │    [bg orb — primary/10 blur — top-left]      │
-    │    [bg orb — primary/5  blur — bottom-right]  │
+    │    [bg orb — primary-container/60 blur — top-left]      │
+    │    [bg orb — primary-container/30 blur — bottom-right]  │
     │                                               │
     │    ┌─ login/page.tsx ──────────────────────┐  │
     │    │  <LoginForm />                        │  │
@@ -48,8 +48,8 @@
 
 **Background orbs:**
 - Rendered inside `<main>` as `absolute inset-0 z-0 overflow-hidden`
-- Orb 1 (top-left): `absolute top-[10%] left-[10%] w-[30%] h-[30%] bg-primary/10 rounded-full blur-[120px]`
-- Orb 2 (bottom-right): `absolute bottom-[10%] right-[10%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[120px]`
+- Orb 1 (top-left): `absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary-container/60 rounded-full blur-3xl`
+- Orb 2 (bottom-right): `absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary-container/30 rounded-full blur-3xl`
 
 **Main area:**
 - `flex-grow flex items-center justify-center p-6 relative`
@@ -140,7 +140,8 @@ No new hooks or services are required.
 | `--color-surface-container-lowest` | `bg-surface-container-lowest` | Card + top bar background |
 | `--color-on-surface` | `text-on-surface` | Brand name, heading, input text |
 | `--color-on-surface-variant` | `text-on-surface-variant` | Subtitle, label, icons, footer |
-| `--color-primary` | `bg-primary`, `text-primary` | Logo icon box, orbs, CTA button |
+| `--color-primary-container` | `bg-primary-container` | Background orbs |
+| `--color-primary` | `bg-primary`, `text-primary` | Logo icon box, CTA button |
 | `--color-primary-strong` | `to-primary-strong` | CTA gradient end stop |
 | `--color-on-primary` | `text-on-primary` | Icon and button text |
 | `--color-outline-variant` | `ring-outline-variant`, `border-outline-variant` | Input ring, card border, divider |
