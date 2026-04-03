@@ -79,7 +79,7 @@ export function LoginForm() {
             <input
               id="email"
               autoComplete="email"
-              className="h-11 w-full rounded-lg bg-surface-container-highest pl-10 pr-4 text-sm text-on-surface outline-none ring-1 ring-outline-variant placeholder:text-on-surface-variant focus:ring-2 focus:ring-focus-ring disabled:opacity-60"
+              className="w-full rounded-lg border border-outline-variant bg-surface py-3 pl-10 pr-4 text-sm text-on-surface outline-none placeholder:text-on-surface-variant transition-all focus:border-primary focus:ring-2 focus:ring-focus-ring disabled:opacity-60"
               disabled={isSubmitting}
               placeholder="admin@cafedebug.com"
               type="email"
@@ -109,7 +109,7 @@ export function LoginForm() {
             <input
               id="password"
               autoComplete="current-password"
-              className="h-11 w-full rounded-lg bg-surface-container-highest pl-10 pr-12 text-sm text-on-surface outline-none ring-1 ring-outline-variant placeholder:text-on-surface-variant focus:ring-2 focus:ring-focus-ring disabled:opacity-60"
+              className="w-full rounded-lg border border-outline-variant bg-surface py-3 pl-10 pr-12 text-sm text-on-surface outline-none placeholder:text-on-surface-variant transition-all focus:border-primary focus:ring-2 focus:ring-focus-ring disabled:opacity-60"
               disabled={isSubmitting}
               placeholder="••••••••"
               type={showPassword ? "text" : "password"}
@@ -137,10 +137,30 @@ export function LoginForm() {
           ) : null}
         </div>
 
-        {/* TODO: Forgot Password — requires backend password reset flow (out of scope V1) */}
+        {/* Remember me + Forgot Password row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <input
+              id="remember-me"
+              name="remember-me"
+              type="checkbox"
+              className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-focus-ring"
+            />
+            <label htmlFor="remember-me" className="text-sm text-on-surface-variant">
+              Remember me
+            </label>
+          </div>
+          {/* TODO: Forgot Password — requires backend password reset flow (out of scope V1) */}
+          <a
+            href="#"
+            className="text-sm font-medium text-primary transition-colors hover:text-primary-strong"
+          >
+            Forgot Password?
+          </a>
+        </div>
 
         <button
-          className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-strong font-bold text-sm text-on-primary transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg bg-primary py-3.5 text-sm font-bold text-on-primary shadow-md transition-all hover:opacity-90 active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isSubmitting}
           type="submit"
           aria-busy={isSubmitting}

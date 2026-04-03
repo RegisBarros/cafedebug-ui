@@ -43,6 +43,8 @@
   --color-primary-container: #ffb59d;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #3c1206;
+  --color-auth-ambient-strong: #ffedd5;
+  --color-auth-ambient-soft: #fff7ed;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #d8f3fb;
@@ -72,6 +74,8 @@
   --color-primary-container: #5e2411;
   --color-on-primary: #fff3ee;
   --color-on-primary-container: #ffd8cb;
+  --color-auth-ambient-strong: #5e2411;
+  --color-auth-ambient-soft: #33201a;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #143844;

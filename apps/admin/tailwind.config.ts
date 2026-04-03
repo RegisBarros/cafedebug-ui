@@ -16,6 +16,8 @@ const config: Config = {
         primary: "var(--color-primary)",
         "primary-strong": "var(--color-primary-strong)",
         "primary-container": "var(--color-primary-container)",
+        "auth-ambient-strong": "var(--color-auth-ambient-strong)",
+        "auth-ambient-soft": "var(--color-auth-ambient-soft)",
         "on-primary": "var(--color-on-primary)",
         "on-primary-container": "var(--color-on-primary-container)",
         tertiary: "var(--color-tertiary)",

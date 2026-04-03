@@ -82,6 +82,7 @@ Use semantic tokens in app code. Foundation tokens stay internal to `packages/de
 - `surface` and `surface-container-*` define depth.
 - `primary` (Heat) drives core actions and brand emphasis.
 - `tertiary` (Cold) marks technical/analytical highlights.
+- `auth-ambient-*` supports subtle decorative backgrounds for auth surfaces.
 - `outline-variant` supports accessibility fallback separation.
 
 ### Light mode tokens
@@ -103,6 +104,8 @@ Use semantic tokens in app code. Foundation tokens stay internal to `packages/de
   --color-primary-container: #ffb59d;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #3c1206;
+  --color-auth-ambient-strong: #ffedd5;
+  --color-auth-ambient-soft: #fff7ed;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #d8f3fb;
@@ -136,6 +139,8 @@ Use semantic tokens in app code. Foundation tokens stay internal to `packages/de
   --color-primary-container: #5e2411;
   --color-on-primary: #fff3ee;
   --color-on-primary-container: #ffd8cb;
+  --color-auth-ambient-strong: #5e2411;
+  --color-auth-ambient-soft: #33201a;
 
   --color-tertiary: #59d5fb;
   --color-tertiary-container: #143844;
@@ -233,7 +238,7 @@ Use shadows for floating layers only. Prefer tonal layering for base composition
 
 ## 5.1 Buttons
 
-### Variants
+### Button Variants
 
 | Variant | Surface | Text | Border | Intent |
 | --- | --- | --- | --- | --- |
@@ -251,13 +256,13 @@ Use shadows for floating layers only. Prefer tonal layering for base composition
 
 ## 5.2 Inputs
 
-### Variants
+### Input Variants
 
 - Text input
 - Textarea
 - Select/combobox input shell
 
-### Contract
+### Input Contract
 
 - Surface: `--color-surface-container-highest`
 - Text: `--color-on-surface`
@@ -270,7 +275,7 @@ Use shadows for floating layers only. Prefer tonal layering for base composition
 
 ## 5.3 Cards
 
-### Variants
+### Card Variants
 
 | Variant | Background | Border | Shadow | Use |
 | --- | --- | --- | --- | --- |
@@ -286,7 +291,7 @@ Use shadows for floating layers only. Prefer tonal layering for base composition
 
 ## 5.4 Lists
 
-### Contract
+### List Contract
 
 - Do not use hard divider lines by default.
 - Separate list items with vertical spacing (`space-4` to `space-6`).
@@ -295,7 +300,7 @@ Use shadows for floating layers only. Prefer tonal layering for base composition
 
 ## 5.5 Badges
 
-### Variants
+### Badge Variants
 
 | Variant | Background | Text | Radius | Use |
 | --- | --- | --- | --- | --- |
@@ -330,13 +335,18 @@ const config: Config = {
         primary: "var(--color-primary)",
         "primary-strong": "var(--color-primary-strong)",
         "primary-container": "var(--color-primary-container)",
+        "auth-ambient-strong": "var(--color-auth-ambient-strong)",
+        "auth-ambient-soft": "var(--color-auth-ambient-soft)",
         "on-primary": "var(--color-on-primary)",
+        "on-primary-container": "var(--color-on-primary-container)",
         tertiary: "var(--color-tertiary)",
         "tertiary-container": "var(--color-tertiary-container)",
+        "on-tertiary-container": "var(--color-on-tertiary-container)",
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         danger: "var(--color-danger)",
         "outline-variant": "var(--color-outline-variant)",
+        "focus-ring": "var(--color-focus-ring)",
       },
       spacing: {
         1: "var(--space-1)",

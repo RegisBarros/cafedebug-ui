@@ -12,15 +12,22 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <span className="font-display text-xl font-bold tracking-tight text-on-surface">
             CafeDebug
           </span>
-          {/* Right slot reserved for theme toggle and help — out of scope V1 */}
-          <div aria-hidden="true" />
+          <button
+            type="button"
+            aria-label="Help"
+            className="text-on-surface-variant transition-colors hover:text-primary"
+          >
+            <span className="material-symbols-outlined" aria-hidden="true">
+              help_outline
+            </span>
+          </button>
         </header>
 
-        <main className="relative flex flex-grow items-center justify-center p-6">
-          {/* Decorative ambient orbs */}
-          <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-            <div className="absolute -left-[10%] -top-[10%] h-[40%] w-[40%] rounded-full bg-primary-container/60 blur-3xl" />
-            <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-primary-container/30 blur-3xl" />
+        <main className="relative flex flex-grow items-center justify-center overflow-hidden p-6">
+          {/* Decorative ambient background tuned to match the light login reference */}
+          <div className="absolute inset-0 z-0" aria-hidden="true">
+            <div className="absolute -left-[14%] -top-[14%] h-[52%] w-[52%] rounded-full bg-auth-ambient-strong/55 blur-3xl" />
+            <div className="absolute -bottom-[14%] -right-[14%] h-[52%] w-[52%] rounded-full bg-auth-ambient-soft blur-3xl" />
           </div>
 
           <div className="relative z-10 w-full">
