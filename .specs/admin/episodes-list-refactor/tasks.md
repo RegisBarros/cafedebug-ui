@@ -149,8 +149,8 @@ Apply design corrections per `design.md`:
 | Column names | `episodes-table.tsx` | `Number`, `Title`, `Status`, `Publish Date` |
 | Table header bg | `episodes-table.tsx` | `bg-surface-container-low border-b border-outline-variant/60` |
 | Status badge shape | `episode-status-badge.tsx` | `rounded-[4px]` not `rounded-full` |
-| Published badge | `episode-status-badge.tsx` | `bg-surface-container-high text-on-surface` |
-| Draft badge | `episode-status-badge.tsx` | `bg-primary/10 text-primary border border-primary/20` |
+| Published badge | `episode-status-badge.tsx` | `bg-gray-100 text-on-surface` |
+| Draft badge | `episode-status-badge.tsx` | `bg-orange-50 text-primary border border-orange-100` |
 | Date format | `episodes-table.tsx` | `dateStyle: "medium"` (date only, no time) |
 | Date fallback | `episodes-table.tsx` | `—` (em-dash) not `"Not published"` |
 | Row interaction | `episodes-table.tsx` | `cursor-pointer` + `useRouter().push()` |

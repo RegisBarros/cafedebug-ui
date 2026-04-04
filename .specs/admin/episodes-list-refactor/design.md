@@ -89,7 +89,7 @@
 |---|---|
 | Divide | `divide-y divide-outline-variant/40` |
 | Row base | `group cursor-pointer transition-colors duration-150` |
-| Row hover | `hover:bg-surface-container` |
+| Row hover | `hover:bg-gray-50` |
 | Number cell | `py-4 px-6 text-on-surface font-medium text-sm` |
 | Title (primary) | `text-on-surface font-medium group-hover:text-primary transition-colors` |
 | Title (subtitle) | `text-on-surface-variant text-sm mt-0.5` |
@@ -99,14 +99,14 @@
 
 **Published:**
 ```html
-<span class="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-semibold bg-surface-container-high text-on-surface">
+<span class="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-semibold bg-gray-100 text-on-surface">
   Published
 </span>
 ```
 
 **Draft:**
 ```html
-<span class="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+<span class="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-semibold bg-orange-50 text-primary border border-orange-100">
   Draft
 </span>
 ```

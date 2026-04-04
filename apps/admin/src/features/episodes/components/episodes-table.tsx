@@ -83,7 +83,7 @@ export function EpisodesTable({ items, isLoading }: EpisodesTableProps) {
         <tbody className="divide-y divide-outline-variant/40 font-body">
           {items.map((episode) => (
             <tr
-              className="group cursor-pointer transition-colors duration-150 hover:bg-[#f9fafb] dark:hover:bg-surface-container"
+              className="group cursor-pointer transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-surface-container"
               key={episode.id}
               onClick={() => router.push(appRoutes.editEpisode(String(episode.id)))}
             >

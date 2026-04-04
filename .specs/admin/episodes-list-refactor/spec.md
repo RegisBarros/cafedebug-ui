@@ -97,7 +97,7 @@ This spec defines the **full correction** targeting pixel-level fidelity to Stit
 #### Table body rows
 
 - Divide: `divide-y divide-outline-variant/40`
-- Row hover: `hover:bg-surface-container transition-colors cursor-pointer`
+- Row hover: `hover:bg-gray-50 transition-colors cursor-pointer`
 - Clicking any row navigates to `/episodes/[id]/edit`
 - Title cell hover: title text transitions to `text-primary`
 
@@ -123,8 +123,8 @@ Component: `EpisodeStatusBadge`
 
 | State | Background | Text | Border | Radius |
 |---|---|---|---|---|
-| Published | `bg-surface-container-high` | `text-on-surface` | none | `rounded-[4px]` |
-| Draft | `bg-primary-container/20` | `text-primary` | `border border-primary/30` | `rounded-[4px]` |
+| Published | `bg-gray-100` | `text-on-surface` | none | `rounded-[4px]` |
+| Draft | `bg-orange-50` | `text-primary` | `border border-orange-100` | `rounded-[4px]` |
 
 - Padding: `px-2.5 py-1`
 - Font: `text-xs font-semibold`
