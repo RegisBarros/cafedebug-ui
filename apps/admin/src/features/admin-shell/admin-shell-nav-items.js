@@ -21,21 +21,36 @@ const matchesRoutePrefix = (pathname, prefix) =>
 
 export const ADMIN_SHELL_NAV_ITEMS = Object.freeze([
   Object.freeze({
-    href: appRoutes.episodes,
-    label: "Episodes",
+    href: appRoutes.dashboard,
+    label: "Dashboard",
+    icon: "home",
     disabled: false
   }),
   Object.freeze({
-    href: appRoutes.dashboard,
-    label: "Dashboard",
+    href: appRoutes.episodes,
+    label: "Episodes",
+    icon: "mic",
+    disabled: false
+  }),
+  Object.freeze({
+    href: "/banners",
+    label: "Banners",
+    icon: "campaign",
     disabled: true,
-    statusLabel: "Coming soon"
+    statusLabel: "Soon"
+  }),
+  Object.freeze({
+    href: "/debuggers",
+    label: "Debuggers",
+    icon: "bug_report",
+    disabled: true,
+    statusLabel: "Soon"
   }),
   Object.freeze({
     href: appRoutes.settings,
     label: "Settings",
-    disabled: true,
-    statusLabel: "Coming soon"
+    icon: "settings",
+    disabled: false
   })
 ]);
 
@@ -45,21 +60,29 @@ const ADMIN_SHELL_ROUTE_CONTEXTS = Object.freeze([
   Object.freeze({
     href: appRoutes.episodes,
     title: "Episodes",
-    description: "Manage episode content and workflow placeholders for V1."
+    description: "Manage, edit, and publish your podcast content."
   }),
   Object.freeze({
     href: appRoutes.dashboard,
     title: "Dashboard",
-    description:
-      "Dashboard analytics are intentionally disabled for V1 and will be enabled once summary endpoints and metrics widgets are finalized.",
+    description: "Review top-level account and content metrics."
+  }),
+  Object.freeze({
+    href: "/banners",
+    title: "Banners",
+    description: "Banners area is not available yet in this milestone.",
+    disabledInV1: true
+  }),
+  Object.freeze({
+    href: "/debuggers",
+    title: "Debuggers",
+    description: "Debuggers area is not available yet in this milestone.",
     disabledInV1: true
   }),
   Object.freeze({
     href: appRoutes.settings,
     title: "Settings",
-    description:
-      "Settings is a deliberate V1 placeholder. Profile and SEO settings forms will be introduced in a later milestone.",
-    disabledInV1: true
+    description: "Configure admin settings and profile preferences."
   })
 ]);
 

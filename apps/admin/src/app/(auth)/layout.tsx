@@ -3,10 +3,6 @@ import type { ReactNode } from "react";
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-      />
       <div className="flex min-h-screen flex-col bg-surface">
         <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-outline-variant bg-surface-container-lowest px-6 backdrop-blur-md">
           <span className="font-display text-xl font-bold tracking-tight text-on-surface">

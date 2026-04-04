@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import {
   ADMIN_SHELL_NAV_ITEMS,
-  DISABLED_NAV_ENTRY_LABEL,
   isAdminShellNavItemActive,
   resolveAdminShellNavInteraction
 } from "./admin-shell-nav-items.js";
@@ -14,19 +13,19 @@ type AdminShellSidebarProps = {
 type AdminShellNavItemProps = {
   href: string;
   label: string;
+  icon: string;
   disabled: boolean;
-  statusLabel?: string;
   pathname: string;
 };
 
 const navItemBaseClassName =
-  "flex min-h-11 items-center justify-between rounded-lg px-3 py-2 text-sm font-medium";
+  "group relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm";
 
 function AdminShellNavItem({
   href,
   label,
+  icon,
   disabled,
-  statusLabel,
   pathname
 }: AdminShellNavItemProps) {
   const isActive = isAdminShellNavItemActive({ href, label, disabled }, pathname);
@@ -34,31 +33,36 @@ function AdminShellNavItem({
   const navItemClassName = [
     navItemBaseClassName,
     isActive
-      ? "bg-surface-container-high text-on-surface ring-1 ring-outline-variant"
-      : "bg-surface-container text-on-surface",
+      ? "border-l-2 border-primary bg-primary/10 font-semibold text-primary"
+      : "text-on-surface",
     navInteraction.interactive
-      ? "transition hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-      : "cursor-not-allowed opacity-80"
+      ? "transition-colors hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
+      : "cursor-not-allowed opacity-60"
   ].join(" ");
 
-  const statusChip = statusLabel ? (
-    <span className="rounded-full bg-surface-container-highest px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-on-surface-variant">
-      {statusLabel}
-    </span>
-  ) : null;
+  const iconClassName = [
+    "material-symbols-outlined text-[20px] leading-none",
+    isActive ? "text-primary" : "text-on-surface-variant group-hover:text-on-surface"
+  ].join(" ");
+
+  const iconStyle = isActive && label === "Episodes"
+    ? ({ fontVariationSettings: "'FILL' 1" } as const)
+    : undefined;
 
   if (!navInteraction.interactive) {
     return (
       <span
         aria-current={isActive ? "page" : undefined}
         aria-disabled={navInteraction.ariaDisabled}
-        aria-label={`${label}. ${statusLabel ?? "Disabled"}. Navigation disabled in V1.`}
+        aria-label={`${label}. Navigation disabled in this milestone.`}
         className={navItemClassName}
         role="link"
         tabIndex={navInteraction.tabIndex}
       >
-        <span>{label}</span>
-        {statusChip}
+        <span aria-hidden="true" className={iconClassName} style={iconStyle}>
+          {icon}
+        </span>
+        <span className="font-body text-sm font-medium">{label}</span>
         <span className="sr-only">
           Navigation disabled in V1. Route remains directly accessible.
         </span>
@@ -72,33 +76,54 @@ function AdminShellNavItem({
       className={navItemClassName}
       href={href}
     >
-      <span>{label}</span>
-      {statusChip}
+      <span aria-hidden="true" className={iconClassName} style={iconStyle}>
+        {icon}
+      </span>
+      <span className="font-body text-sm font-medium">{label}</span>
     </Link>
   );
 }
 
 export function AdminShellSidebar({ pathname }: AdminShellSidebarProps) {
   return (
-    <aside className="w-full rounded-xl bg-surface-container-low p-4 shadow-ambient md:sticky md:top-6 md:w-60 md:self-start">
-      <div className="mb-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
-          CafeDebug Admin
-        </p>
+    <aside className="w-full shrink-0 border-b border-outline-variant/60 bg-surface-container-lowest md:h-screen md:w-60 md:border-b-0 md:border-r md:sticky md:top-0">
+      <div className="flex h-full flex-col justify-between p-4">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-3 px-2 pt-2">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-on-primary shadow-sm">
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
+                mic
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <h1 className="font-display text-base font-bold leading-tight text-on-surface">
+                CafeDebug
+              </h1>
+              <p className="mt-0.5 text-xs font-medium uppercase tracking-wide text-on-surface-variant">
+                Admin
+              </p>
+            </div>
+          </div>
+
+          <nav aria-label="Admin primary" className="flex flex-col gap-1">
+            {ADMIN_SHELL_NAV_ITEMS.map((item) => (
+              <AdminShellNavItem key={item.href} {...item} pathname={pathname} />
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-6 border-t border-outline-variant/60 px-2 pt-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-8 items-center justify-center rounded-full border border-outline-variant/60 bg-surface-container text-xs font-semibold text-on-surface">
+              AA
+            </span>
+            <div className="flex min-w-0 flex-col overflow-hidden">
+              <span className="truncate text-sm font-medium text-on-surface">Alice Admin</span>
+              <span className="truncate text-xs text-on-surface-variant">alice@cafedebug.com</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <nav aria-label="Admin primary">
-        <ul className="space-y-2">
-          {ADMIN_SHELL_NAV_ITEMS.map((item) => (
-            <li key={item.href}>
-              <AdminShellNavItem {...item} pathname={pathname} />
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <p className="mt-4 text-xs text-on-surface-variant">
-        {DISABLED_NAV_ENTRY_LABEL}: Dashboard and Settings routes remain directly
-        accessible but stay disabled in V1 navigation.
-      </p>
     </aside>
   );
 }

@@ -12,18 +12,18 @@ type AdminShellLayoutProps = {
 
 export function AdminShellLayout({ children }: AdminShellLayoutProps) {
   const pathname = usePathname() ?? "/";
+  const showShellHeader = !(pathname === "/episodes" || pathname.startsWith("/episodes/"));
 
   return (
-    <div className="min-h-screen bg-surface">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6 p-6 md:flex-row md:gap-8">
+    <div className="flex min-h-screen">
         <AdminShellSidebar pathname={pathname} />
 
-        <main className="min-w-0 flex-1 space-y-4">
-          <AdminShellHeader pathname={pathname} />
-
-          <section className="space-y-4">{children}</section>
+        <main className="min-w-0 flex-1 overflow-y-auto">
+          <section className="mx-auto flex w-full max-w-[1024px] flex-col gap-8 px-6 py-8 lg:px-8 lg:py-10">
+            {showShellHeader ? <AdminShellHeader pathname={pathname} /> : null}
+            {children}
+          </section>
         </main>
-      </div>
     </div>
   );
 }
