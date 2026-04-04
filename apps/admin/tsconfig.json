@@ -3,7 +3,6 @@
   "extends": "@cafedebug/tsconfig/nextjs",
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
