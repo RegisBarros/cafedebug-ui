@@ -1,9 +1,25 @@
+/**
+ * Token Cookie Strategy: STRATEGY B — JSON Body Token Extraction
+ *
+ * CONFIRMED (Phase 0): The backend POST /api/v1/admin/auth/token endpoint returns
+ * token data exclusively in the JSON response body. No Set-Cookie headers are emitted.
+ *
+ * The generated OpenAPI schema (components["schemas"]["Result"]) only contains
+ * `isSuccess`, `error`, and `isFailure` — token fields are absent from the schema.
+ * The actual response body includes: { accessToken, refreshToken, tokenType, expiresIn }.
+ *
+ * This handler:
+ * 1. Attempts Strategy A first (forwarding any Set-Cookie headers defensively)
+ * 2. Falls back to Strategy B: extracts tokens from JSON body and sets HttpOnly cookies
+ * 3. Always sets the session signal cookie after successful token establishment
+ */
 import { createAdminApiClient } from "@cafedebug/api-client";
 import { NextResponse } from "next/server";
 
 import {
   appendSetCookieHeaders,
-  clearKnownAuthCookies,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
   setSessionCookie
 } from "@/lib/auth/next-response-cookies";
 import { extractSetCookieHeaders } from "@/lib/auth/session-strategy.js";
@@ -17,56 +33,9 @@ import {
 } from "@/lib/observability";
 import { postLoginRedirectRoute } from "@/lib/routes";
 
+import { createErrorResponse } from "../errors/createErrorResponse";
 import { loginSchema } from "../schemas/login.schema";
-import type { LoginErrorPayload } from "../types/auth.types";
-
-const createErrorResponse = ({
-  detail,
-  status,
-  title,
-  fieldErrors,
-  traceId,
-  event,
-  logLevel = "warn",
-  setCookieHeaders = [],
-  clearAuthCookies = false
-}: LoginErrorPayload & {
-  event: string;
-  logLevel?: "warn" | "error";
-  setCookieHeaders?: string[];
-  clearAuthCookies?: boolean;
-}) => {
-  const response = NextResponse.json(
-    {
-      ok: false,
-      error: {
-        detail,
-        status,
-        title,
-        ...(traceId ? { traceId } : {}),
-        ...(fieldErrors ? { fieldErrors } : {})
-      }
-    },
-    { status }
-  );
-
-  appendSetCookieHeaders(response, setCookieHeaders);
-
-  if (clearAuthCookies) {
-    clearKnownAuthCookies(response);
-  }
-
-  logger[logLevel](event, {
-    module: "auth",
-    action: "login",
-    status,
-    title,
-    ...(traceId ? { traceId } : {}),
-    hasFieldErrors: Boolean(fieldErrors)
-  });
-
-  return response;
-};
+import type { TokenResponse } from "../types/auth.types";
 
 const readLoginBody = async (request: Request): Promise<unknown | undefined> => {
   try {
@@ -180,6 +149,7 @@ export async function loginHandler(request: Request) {
         detail: normalizedTokenResponse.error.detail,
         status: normalizedTokenResponse.error.status,
         title: normalizedTokenResponse.error.title,
+        ...(normalizedTokenResponse.error.type ? { type: normalizedTokenResponse.error.type } : {}),
         ...(traceId ? { traceId } : {}),
         ...(responseFieldErrors ? { fieldErrors: responseFieldErrors } : {}),
         setCookieHeaders,
@@ -188,18 +158,29 @@ export async function loginHandler(request: Request) {
       });
     }
 
-    if (normalizedTokenResponse.data.isSuccess === false) {
-      const fallbackErrorDetail =
-        normalizedTokenResponse.data.error?.message?.trim() ||
-        "Authentication failed. Check your credentials and try again.";
+    // GAP-02: Removed dead `isSuccess === false` check — the API contract has no such
+    // field in the token response. Any API errors surface via `"error" in normalizedTokenResponse`.
+
+    // Strategy B: Extract tokens from the JSON response body.
+    // The generated schema does not capture token fields; use a type assertion
+    // against the verified TokenResponse shape from the API contract.
+    const tokenData = normalizedTokenResponse.data as unknown as TokenResponse;
+
+    if (!tokenData.accessToken || typeof tokenData.accessToken !== "string") {
+      logger.error(observabilityEvents.authLoginFailed, {
+        module: "auth",
+        action: "login",
+        status: 200,
+        issue: "missing-access-token"
+      });
 
       return createErrorResponse({
-        detail: fallbackErrorDetail,
-        status: 401,
-        title: "Authentication Failed",
-        setCookieHeaders,
+        detail: "Authentication response was incomplete. Please try again.",
+        status: 502,
+        title: "Upstream Error",
         clearAuthCookies: true,
-        event: observabilityEvents.authLoginFailed
+        event: observabilityEvents.authLoginFailed,
+        logLevel: "error"
       });
     }
 
@@ -223,7 +204,20 @@ export async function loginHandler(request: Request) {
       redirectTo: postLoginRedirectRoute
     });
 
-    appendSetCookieHeaders(response, setCookieHeaders);
+    // Strategy A (defensive): forward any Set-Cookie headers from the backend if present
+    if (setCookieHeaders.length > 0) {
+      appendSetCookieHeaders(response, setCookieHeaders);
+    } else {
+      // Strategy B: backend sent no Set-Cookie headers — extract tokens from JSON body
+      setAccessTokenCookie(response, tokenData.accessToken, tokenData.expiresIn);
+      setRefreshTokenCookie(
+        response,
+        tokenData.refreshToken.token,
+        tokenData.refreshToken.expirationDate
+      );
+    }
+
+    // Always set the session signal cookie after successful token establishment
     setSessionCookie(response);
 
     return response;

@@ -137,20 +137,8 @@ export function LoginForm() {
           ) : null}
         </div>
 
-        {/* Remember me + Forgot Password row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-focus-ring"
-            />
-            <label htmlFor="remember-me" className="text-sm text-on-surface-variant">
-              Remember me
-            </label>
-          </div>
-          {/* TODO: Forgot Password — requires backend password reset flow (out of scope V1) */}
+        {/* Forgot Password — requires backend password reset flow (out of scope V1) */}
+        <div className="flex items-center justify-end">
           <a
             href="#"
             className="text-sm font-medium text-primary transition-colors hover:text-primary-strong"

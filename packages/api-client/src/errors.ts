@@ -4,6 +4,7 @@ export interface NormalizedApiError {
   status: number;
   title: string;
   detail: string;
+  type?: string;
   fieldErrors?: ApiFieldErrors;
   traceId?: string;
 }
@@ -87,11 +88,13 @@ export const normalizeApiError = (
   const fieldErrors =
     toFieldErrors(source.fieldErrors) ?? toFieldErrors(source.errors);
   const traceId = toNonEmptyString(source.traceId);
+  const type = toNonEmptyString(source.type);
 
   return {
     status,
     title,
     detail,
+    ...(type ? { type } : {}),
     ...(fieldErrors ? { fieldErrors } : {}),
     ...(traceId ? { traceId } : {})
   };

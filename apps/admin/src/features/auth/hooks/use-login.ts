@@ -63,6 +63,8 @@ export const useLogin = () => {
         }
 
         if (result.error.kind === "transport") {
+          // Transport errors: browser could not reach the Next.js server.
+          // These are client-only failures — log here since the server never sees them.
           logger.error(observabilityEvents.authLoginServiceUnavailable, {
             module: "auth",
             action: "login-form-submit",
@@ -86,13 +88,8 @@ export const useLogin = () => {
           return;
         }
 
-        logger.warn(observabilityEvents.authLoginFailed, {
-          module: "auth",
-          action: "login-form-submit",
-          status: result.error.status,
-          ...(result.error.traceId ? { traceId: result.error.traceId } : {})
-        });
-
+        // Response errors (401, 400, 500, 503 from handler) are already logged
+        // server-side in loginHandler — no duplicate logging here (P2-T4).
         addSentryBreadcrumb("Admin login form failed", {
           category: "auth",
           level: "warning",
@@ -108,12 +105,7 @@ export const useLogin = () => {
         return;
       }
 
-      logger.info(observabilityEvents.authLoginSuccess, {
-        module: "auth",
-        action: "login-form-submit",
-        status: 200
-      });
-
+      // authLoginSuccess is already logged server-side in loginHandler (P2-T4).
       router.replace(result.redirectTo);
       router.refresh();
     },

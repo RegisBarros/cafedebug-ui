@@ -35,6 +35,42 @@ export const setSessionCookie = (response: NextResponse) => {
   });
 };
 
+/**
+ * Sets the access token as an HttpOnly cookie.
+ * Used by Strategy B (JSON body token extraction) when the backend
+ * does not emit Set-Cookie headers.
+ */
+export const setAccessTokenCookie = (
+  response: NextResponse,
+  accessToken: string,
+  expiresIn: number
+) => {
+  response.cookies.set({
+    ...createCookieBaseOptions(),
+    name: adminRuntimeEnv.accessCookieName || "accessToken",
+    value: accessToken,
+    maxAge: expiresIn
+  });
+};
+
+/**
+ * Sets the refresh token as an HttpOnly cookie.
+ * Used by Strategy B (JSON body token extraction) when the backend
+ * does not emit Set-Cookie headers.
+ */
+export const setRefreshTokenCookie = (
+  response: NextResponse,
+  refreshToken: string,
+  expirationDate: string
+) => {
+  response.cookies.set({
+    ...createCookieBaseOptions(),
+    name: adminRuntimeEnv.refreshCookieName || "refreshToken",
+    value: refreshToken,
+    expires: new Date(expirationDate)
+  });
+};
+
 export const clearKnownAuthCookies = (response: NextResponse) => {
   for (const cookieName of knownAuthCookieNames) {
     response.cookies.set({

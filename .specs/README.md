@@ -57,3 +57,15 @@ Implementation must follow:
 - the spec
 - the design
 - the task breakdown
+
+---
+
+## Spec Index
+
+### `admin`
+
+| Feature | Status | Path | Description |
+|---|---|---|---|
+| Admin Login | `Implemented` | `.specs/admin/login/` | Full feature spec for admin login flow against POST /api/v1/admin/auth/token |
+| Login Page Refactor | `Implemented` | `.specs/admin/login-refactor/` | Aligns the login page UI to the Stitch theme design reference |
+| Auth Handler Error Normalization | `Draft` | `.specs/admin/auth-error-normalization/` | Extracts shared error response building and normalizes error shapes across all auth API routes |

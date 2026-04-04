@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 import {
   appendSetCookieHeaders,
-  clearKnownAuthCookies,
   setSessionCookie
 } from "@/lib/auth/next-response-cookies";
 import { knownRefreshCookieNames } from "@/lib/auth/session-constants";
@@ -19,6 +18,8 @@ import {
   logger,
   observabilityEvents
 } from "@/lib/observability";
+
+import { createErrorResponse } from "@/features/auth/errors/createErrorResponse";
 
 const readRefreshToken = (cookieHeader: string): string | undefined => {
   const cookieMap = parseCookieHeader(cookieHeader);
@@ -36,48 +37,26 @@ const readRefreshToken = (cookieHeader: string): string | undefined => {
 
 export async function POST(request: Request) {
   if (!adminRuntimeEnv.apiBaseUrl) {
-    logger.error(observabilityEvents.authRefreshFailed, {
-      module: "auth",
-      action: "refresh",
-      reason: "missing-api-base-url",
-      status: 503
+    return createErrorResponse({
+      detail: "Admin API base URL is not configured.",
+      status: 503,
+      title: "Configuration Error",
+      event: observabilityEvents.authRefreshFailed,
+      logLevel: "error"
     });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          title: "Configuration Error",
-          detail: "Admin API base URL is not configured."
-        }
-      },
-      { status: 503 }
-    );
   }
 
   const cookieHeader = request.headers.get("cookie") ?? "";
   const refreshToken = readRefreshToken(cookieHeader);
 
   if (!refreshToken) {
-    logger.warn(observabilityEvents.authRefreshMissingToken, {
-      module: "auth",
-      action: "refresh",
-      status: 401
+    return createErrorResponse({
+      detail: "Your session has expired. Please sign in again.",
+      status: 401,
+      title: "Session expired",
+      event: observabilityEvents.authRefreshMissingToken,
+      clearAuthCookies: true
     });
-
-    const response = NextResponse.json(
-      {
-        success: false,
-        error: {
-          title: "Session expired",
-          detail: "Your session has expired. Please sign in again."
-        }
-      },
-      { status: 401 }
-    );
-
-    clearKnownAuthCookies(response);
-    return response;
   }
 
   const adminApiClient = createAdminApiClient({
@@ -109,7 +88,7 @@ export async function POST(request: Request) {
         normalizedRefreshResponse.error.traceId ??
         getTraceIdFromHeaders(normalizedRefreshResponse.response.headers);
 
-      logger.warn(observabilityEvents.authRefreshFailed, {
+      logger.warn(observabilityEvents.apiRequestFailed, {
         module: "auth",
         action: "refresh",
         endpoint: adminApiClient.paths.auth.refreshToken,
@@ -117,53 +96,33 @@ export async function POST(request: Request) {
         ...(traceId ? { traceId } : {})
       });
 
-      const response = NextResponse.json(
-        {
-          success: false,
-          error: {
-            title: normalizedRefreshResponse.error.title,
-            detail: normalizedRefreshResponse.error.detail,
-            ...(traceId ? { traceId } : {})
-          }
-        },
-        { status: normalizedRefreshResponse.error.status }
-      );
-
-      appendSetCookieHeaders(response, setCookieHeaders);
-      clearKnownAuthCookies(response);
-
-      return response;
+      return createErrorResponse({
+        detail: normalizedRefreshResponse.error.detail,
+        status: normalizedRefreshResponse.error.status,
+        title: normalizedRefreshResponse.error.title,
+        ...(traceId ? { traceId } : {}),
+        setCookieHeaders,
+        clearAuthCookies: true,
+        event: observabilityEvents.authRefreshFailed
+      });
     }
 
     if (normalizedRefreshResponse.data.isSuccess === false) {
       const traceId = getTraceIdFromHeaders(normalizedRefreshResponse.response.headers);
 
-      logger.warn(observabilityEvents.authRefreshFailed, {
-        module: "auth",
-        action: "refresh",
-        endpoint: adminApiClient.paths.auth.refreshToken,
+      const fallbackDetail =
+        normalizedRefreshResponse.data.error?.message?.trim() ??
+        "Unable to refresh session. Please sign in again.";
+
+      return createErrorResponse({
+        detail: fallbackDetail,
         status: 401,
-        ...(traceId ? { traceId } : {})
+        title: "Session expired",
+        ...(traceId ? { traceId } : {}),
+        setCookieHeaders,
+        clearAuthCookies: true,
+        event: observabilityEvents.authRefreshFailed
       });
-
-      const response = NextResponse.json(
-        {
-          success: false,
-          error: {
-            title: "Session expired",
-            detail:
-              normalizedRefreshResponse.data.error?.message?.trim() ??
-              "Unable to refresh session. Please sign in again.",
-            ...(traceId ? { traceId } : {})
-          }
-        },
-        { status: 401 }
-      );
-
-      appendSetCookieHeaders(response, setCookieHeaders);
-      clearKnownAuthCookies(response);
-
-      return response;
     }
 
     logger.info(observabilityEvents.authRefreshSuccess, {
@@ -201,15 +160,12 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          title: "Service Unavailable",
-          detail: "Unable to refresh session. Please try again."
-        }
-      },
-      { status: 503 }
-    );
+    return createErrorResponse({
+      detail: "Unable to refresh session. Please try again.",
+      status: 503,
+      title: "Service Unavailable",
+      event: observabilityEvents.authRefreshFailed,
+      logLevel: "error"
+    });
   }
 }

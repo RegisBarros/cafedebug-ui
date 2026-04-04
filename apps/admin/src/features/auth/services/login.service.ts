@@ -44,6 +44,7 @@ export const loginService = async (
             "Unable to sign in. Check your credentials and try again.",
           status: errorPayload?.status ?? response.status,
           title: errorPayload?.title ?? "Authentication Failed",
+          ...(errorPayload?.type ? { type: errorPayload.type } : {}),
           ...(errorPayload?.traceId ? { traceId: errorPayload.traceId } : {}),
           ...(errorPayload?.fieldErrors
             ? { fieldErrors: errorPayload.fieldErrors }
