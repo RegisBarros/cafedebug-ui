@@ -13,17 +13,11 @@
  * 2. Falls back to Strategy B: extracts tokens from JSON body and sets HttpOnly cookies
  * 3. Always sets the session signal cookie after successful token establishment
  */
-import { createAdminApiClient } from "@cafedebug/api-client";
 import { NextResponse } from "next/server";
 
-import {
-  appendSetCookieHeaders,
-  setAccessTokenCookie,
-  setRefreshTokenCookie,
-  setSessionCookie
-} from "@/lib/auth/next-response-cookies";
+import { getAdminApiClient } from "@/lib/api/admin-client";
+
 import { extractSetCookieHeaders } from "@/lib/auth/session-strategy.js";
-import { adminRuntimeEnv } from "@/lib/env";
 import {
   addSentryBreadcrumb,
   captureException,
@@ -33,8 +27,14 @@ import {
 } from "@/lib/observability";
 import { postLoginRedirectRoute } from "@/lib/routes";
 
-import { createErrorResponse } from "../errors/createErrorResponse";
+import {
+  appendSetCookieHeaders,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+  setSessionCookie
+} from "@/lib/auth/next-response-cookies";
 import { loginSchema } from "../schemas/login.schema";
+import { createErrorResponse } from "../errors/createErrorResponse";
 import type { TokenResponse } from "../types/auth.types";
 
 const readLoginBody = async (request: Request): Promise<unknown | undefined> => {
@@ -96,7 +96,9 @@ export async function loginHandler(request: Request) {
     });
   }
 
-  if (!adminRuntimeEnv.apiBaseUrl) {
+  const adminApiClient = getAdminApiClient();
+
+  if (!adminApiClient) {
     return createErrorResponse({
       detail: "Admin API base URL is not configured.",
       status: 500,
@@ -105,10 +107,6 @@ export async function loginHandler(request: Request) {
       logLevel: "error"
     });
   }
-
-  const adminApiClient = createAdminApiClient({
-    baseUrl: adminRuntimeEnv.apiBaseUrl
-  });
 
   addSentryBreadcrumb("Admin login attempt", {
     category: "auth",

@@ -1,4 +1,4 @@
-import type { EpisodeRecord, EpisodesPageData, EpisodesQueryParams } from "./types";
+import type { EpisodeRecord, EpisodesPageData, EpisodesQueryParams } from "./types/episode.types";
 
 type UnknownRecord = Record<string, unknown>;
 

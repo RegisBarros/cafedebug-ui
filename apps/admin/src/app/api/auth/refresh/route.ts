@@ -1,6 +1,6 @@
-import { createAdminApiClient } from "@cafedebug/api-client";
 import { NextResponse } from "next/server";
 
+import { getAdminApiClient } from "@/lib/api/admin-client";
 import {
   appendSetCookieHeaders,
   setSessionCookie
@@ -10,7 +10,6 @@ import {
   extractSetCookieHeaders,
   parseCookieHeader
 } from "@/lib/auth/session-strategy.js";
-import { adminRuntimeEnv } from "@/lib/env";
 import {
   addSentryBreadcrumb,
   captureException,
@@ -36,16 +35,6 @@ const readRefreshToken = (cookieHeader: string): string | undefined => {
 };
 
 export async function POST(request: Request) {
-  if (!adminRuntimeEnv.apiBaseUrl) {
-    return createErrorResponse({
-      detail: "Admin API base URL is not configured.",
-      status: 503,
-      title: "Configuration Error",
-      event: observabilityEvents.authRefreshFailed,
-      logLevel: "error"
-    });
-  }
-
   const cookieHeader = request.headers.get("cookie") ?? "";
   const refreshToken = readRefreshToken(cookieHeader);
 
@@ -59,9 +48,17 @@ export async function POST(request: Request) {
     });
   }
 
-  const adminApiClient = createAdminApiClient({
-    baseUrl: adminRuntimeEnv.apiBaseUrl
-  });
+  const adminApiClient = getAdminApiClient();
+
+  if (!adminApiClient) {
+    return createErrorResponse({
+      detail: "Admin API base URL is not configured.",
+      status: 503,
+      title: "Configuration Error",
+      event: observabilityEvents.authRefreshFailed,
+      logLevel: "error"
+    });
+  }
 
   addSentryBreadcrumb("Admin session refresh attempt", {
     category: "auth",

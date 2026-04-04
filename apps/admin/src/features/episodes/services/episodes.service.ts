@@ -5,12 +5,12 @@ import type {
   EpisodeRequestPayload,
   EpisodesMutationResult,
   EpisodesQueryParams
-} from "./types";
+} from "../types/episode.types";
 import {
   parseEpisodeMutationResult,
   parseEpisodeRecord,
   parseEpisodesPageData
-} from "./parsers";
+} from "../parsers";
 
 type ApiEnvelope<TData> =
   | {

@@ -8,8 +8,8 @@ import { appRoutes } from "@/lib/routes";
 import { logger, observabilityEvents } from "@/lib/observability";
 
 import { episodesListDefaultParams } from "./defaults";
-import { episodesQueryKeys, fetchEpisodesPage } from "./client";
-import type { AdminRouteError, EpisodeRecord, EpisodesQueryParams } from "./types";
+import { episodesQueryKeys, fetchEpisodesPage } from "./services/episodes.service";
+import type { AdminRouteError, EpisodeRecord, EpisodesQueryParams } from "./types/episode.types";
 
 const sortableFields = ["publishedAt", "number", "title"] as const;
 type SortField = (typeof sortableFields)[number];

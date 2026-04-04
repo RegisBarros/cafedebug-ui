@@ -1,13 +1,12 @@
-import {
-  createAdminApiClient,
-  normalizeApiError,
-  type NormalizedApiError,
-  type components
-} from "@cafedebug/api-client";
+import { type components } from "@cafedebug/api-client";
 
-import { extractSetCookieHeaders } from "@/lib/auth/session-strategy.js";
-import { adminRuntimeEnv } from "@/lib/env";
-import { getTraceIdFromHeaders } from "@/lib/observability";
+import { getAdminApiClient } from "./admin-client";
+import {
+  type BackendApiResult,
+  withAuthCookieHeader,
+  toConfigurationErrorResult,
+  normalizeBackendResult
+} from "./backend-api.utils";
 
 export type BackendEpisodesQuery = {
   page?: number;
@@ -18,89 +17,7 @@ export type BackendEpisodesQuery = {
 
 export type EpisodeMutationInput = components["schemas"]["EpisodeRequest"];
 
-type BackendErrorResult = {
-  error: NormalizedApiError;
-  response: Response;
-  setCookieHeaders: string[];
-  traceId?: string;
-};
-
-type BackendSuccessResult = {
-  data: unknown;
-  response: Response;
-  setCookieHeaders: string[];
-  traceId?: string;
-};
-
-export type BackendEpisodeApiResult = BackendSuccessResult | BackendErrorResult;
-
-const episodesPaths = Object.freeze({
-  list: "/api/v1/admin/episodes",
-  byId: "/api/v1/admin/episodes/{id}"
-});
-
-export const adminEpisodesApiPaths = episodesPaths;
-
-const withAuthCookieHeader = (cookieHeader: string): Record<string, string> =>
-  cookieHeader.length > 0 ? { cookie: cookieHeader } : {};
-
-const toConfigurationErrorResult = (): BackendErrorResult => ({
-  error: normalizeApiError(
-    {
-      status: 503,
-      title: "Configuration Error",
-      detail: "Admin API base URL is not configured."
-    },
-    503
-  ),
-  response: new Response(null, { status: 503 }),
-  setCookieHeaders: []
-});
-
-const normalizeBackendResult = (
-  result:
-    | {
-        data: unknown;
-        response: Response;
-      }
-    | {
-        error: unknown;
-        response: Response;
-      }
-): BackendEpisodeApiResult => {
-  const setCookieHeaders = extractSetCookieHeaders(result.response);
-
-  if ("error" in result) {
-    const normalizedError = normalizeApiError(result.error, result.response.status);
-    const traceId = normalizedError.traceId ?? getTraceIdFromHeaders(result.response.headers);
-
-    return {
-      error: normalizedError,
-      response: result.response,
-      setCookieHeaders,
-      ...(traceId ? { traceId } : {})
-    };
-  }
-
-  const traceId = getTraceIdFromHeaders(result.response.headers);
-
-  return {
-    data: result.data,
-    response: result.response,
-    setCookieHeaders,
-    ...(traceId ? { traceId } : {})
-  };
-};
-
-const withAdminClient = () => {
-  if (!adminRuntimeEnv.apiBaseUrl) {
-    return null;
-  }
-
-  return createAdminApiClient({
-    baseUrl: adminRuntimeEnv.apiBaseUrl
-  });
-};
+export type BackendEpisodeApiResult = BackendApiResult;
 
 export const listEpisodesFromBackend = async ({
   cookieHeader,
@@ -109,7 +26,7 @@ export const listEpisodesFromBackend = async ({
   cookieHeader: string;
   query: BackendEpisodesQuery;
 }): Promise<BackendEpisodeApiResult> => {
-  const adminClient = withAdminClient();
+  const adminClient = getAdminApiClient();
 
   if (!adminClient) {
     return toConfigurationErrorResult();
@@ -132,7 +49,7 @@ export const getEpisodeFromBackend = async ({
   cookieHeader: string;
   id: number;
 }): Promise<BackendEpisodeApiResult> => {
-  const adminClient = withAdminClient();
+  const adminClient = getAdminApiClient();
 
   if (!adminClient) {
     return toConfigurationErrorResult();
@@ -155,7 +72,7 @@ export const createEpisodeInBackend = async ({
   cookieHeader: string;
   payload: EpisodeMutationInput;
 }): Promise<BackendEpisodeApiResult> => {
-  const adminClient = withAdminClient();
+  const adminClient = getAdminApiClient();
 
   if (!adminClient) {
     return toConfigurationErrorResult();
@@ -178,7 +95,7 @@ export const updateEpisodeInBackend = async ({
   id: number;
   payload: EpisodeMutationInput;
 }): Promise<BackendEpisodeApiResult> => {
-  const adminClient = withAdminClient();
+  const adminClient = getAdminApiClient();
 
   if (!adminClient) {
     return toConfigurationErrorResult();

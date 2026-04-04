@@ -19,16 +19,16 @@ import {
   episodesQueryKeys,
   fetchEpisodeById,
   updateEpisode
-} from "./client";
+} from "./services/episodes.service";
 import { episodeEditorDefaultValues } from "./defaults";
-import { episodeEditorSchema, type EpisodeEditorSchemaValues } from "./schema";
+import { episodeEditorSchema, type EpisodeEditorSchemaValues } from "./schemas/episode.schema";
 import { toEpisodeRequestPayload, toEpisodeEditorDefaults } from "./transformers";
 import type {
   AdminRouteError,
   EpisodeMutationAction,
   EpisodeRecord,
   EpisodesMutationResult
-} from "./types";
+} from "./types/episode.types";
 
 type EpisodeEditorMode = "new" | "edit";
 

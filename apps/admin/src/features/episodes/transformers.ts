@@ -4,7 +4,7 @@ import type {
   EpisodeEditorFormValues,
   EpisodeMutationAction,
   EpisodeRecord
-} from "./types";
+} from "./types/episode.types";
 
 const toTrimmedValue = (value: string): string => value.trim();
 

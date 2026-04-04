@@ -1,6 +1,10 @@
 export { EpisodeEditorPage } from "./episode-editor-page";
 export { EpisodesListPage } from "./episodes-list-page";
 export { EPISODES_LIST_STATES } from "./episodes-list-states.js";
-export { episodeEditorSchema } from "./schema";
+export { episodeEditorSchema } from "./schemas/episode.schema";
 export { episodesListDefaultParams, episodeEditorDefaultValues } from "./defaults";
-export { episodesQueryKeys } from "./client";
+export { episodesQueryKeys } from "./services/episodes.service";
+export { useEpisodesList } from "./hooks/use-episodes-list";
+export { useEpisodeById } from "./hooks/use-episode-by-id";
+export { useCreateEpisode } from "./hooks/use-create-episode";
+export { useUpdateEpisode } from "./hooks/use-update-episode";
