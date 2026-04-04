@@ -1,7 +1,8 @@
 import type { PathBasedClient } from "../../client";
 import { adminApiPaths } from "../paths";
+import { m } from "./utils";
 
 export const createAuthResource = (pathClient: PathBasedClient) => ({
-  token: pathClient[adminApiPaths.auth.token].POST,
-  refreshToken: pathClient[adminApiPaths.auth.refreshToken].POST
+  token: m(pathClient, adminApiPaths.auth.token, "POST"),
+  refreshToken: m(pathClient, adminApiPaths.auth.refreshToken, "POST")
 });

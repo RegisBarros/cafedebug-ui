@@ -1,14 +1,15 @@
 import type { PathBasedClient } from "../../client";
 import { adminApiPaths } from "../paths";
+import { m } from "./utils";
 
 export const createEpisodesResource = (pathClient: PathBasedClient) => ({
   list: {
-    get: pathClient[adminApiPaths.episodes.list].GET,
-    create: pathClient[adminApiPaths.episodes.list].POST
+    get: m(pathClient, adminApiPaths.episodes.list, "GET"),
+    create: m(pathClient, adminApiPaths.episodes.list, "POST")
   },
   byId: {
-    get: pathClient[adminApiPaths.episodes.byId].GET,
-    update: pathClient[adminApiPaths.episodes.byId].PUT,
-    remove: pathClient[adminApiPaths.episodes.byId].DELETE
+    get: m(pathClient, adminApiPaths.episodes.byId, "GET"),
+    update: m(pathClient, adminApiPaths.episodes.byId, "PUT"),
+    remove: m(pathClient, adminApiPaths.episodes.byId, "DELETE")
   }
 });
