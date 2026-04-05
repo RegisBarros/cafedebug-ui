@@ -37,7 +37,7 @@ function AdminShellNavItem({
   const navItemClassName = [
     navItemBaseClassName,
     isActive
-      ? "border-l-2 border-primary bg-primary/10 font-semibold text-primary"
+      ? "border-l-2 border-primary bg-nav-active-surface font-semibold text-primary"
       : "text-on-surface",
     navInteraction.interactive
       ? "transition-colors hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"

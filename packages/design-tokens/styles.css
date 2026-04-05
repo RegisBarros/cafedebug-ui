@@ -67,6 +67,7 @@
   --color-status-draft-surface: #fff7ed;
   --color-status-draft-on: #ea580c;
   --color-status-draft-border: #fed7aa;
+  --color-nav-active-surface: rgb(234 88 12 / 7%);
 }
 
 :root[data-theme="dark"] {
@@ -109,4 +110,5 @@
   --color-status-draft-surface: rgb(255 107 53 / 10%);
   --color-status-draft-on: #ff6b35;
   --color-status-draft-border: rgb(255 107 53 / 25%);
+  --color-nav-active-surface: rgb(255 107 53 / 10%);
 }

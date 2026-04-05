@@ -37,7 +37,8 @@ const config: Config = {
         "status-published-on": "var(--color-status-published-on)",
         "status-draft-surface": "var(--color-status-draft-surface)",
         "status-draft-on": "var(--color-status-draft-on)",
-        "status-draft-border": "var(--color-status-draft-border)"
+        "status-draft-border": "var(--color-status-draft-border)",
+        "nav-active-surface": "var(--color-nav-active-surface)"
       },
       spacing: {
         1: "var(--space-1)",
