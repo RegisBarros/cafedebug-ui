@@ -118,7 +118,7 @@
 ## 5. Pagination Footer
 
 ```
-[Showing 1 to 10 of 44 episodes]       [◀] [▶]
+[Showing 1 to 5 of 44 episodes]       [◀] [▶]
 ```
 
 | Element | Token / Class |

@@ -85,8 +85,8 @@ const createErrorResponse = ({
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const page = parseInteger(requestUrl.searchParams.get("page"), 1);
-  const pageSize = parseInteger(requestUrl.searchParams.get("pageSize"), 10);
-  const sortBy = requestUrl.searchParams.get("sortBy")?.trim() || "publishedAt";
+  const pageSize = parseInteger(requestUrl.searchParams.get("pageSize"), 5);
+  const sortBy = requestUrl.searchParams.get("sortBy")?.trim() || "number";
   const descending = parseBoolean(
     requestUrl.searchParams.get("descending"),
     true
