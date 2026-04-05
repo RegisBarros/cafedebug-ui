@@ -244,12 +244,12 @@ export function EpisodeEditorForm({
                     Show Notes
                   </label>
 
-                  <div className="inline-flex rounded-full border border-outline-variant/60 bg-surface-container-low p-1">
+                  <div className="inline-flex items-center rounded-lg bg-surface-container-low p-1">
                     <button
-                      className={`inline-flex min-w-20 items-center justify-center rounded-full px-4 py-2 text-sm transition ${
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                         editorMode === "write"
-                          ? "bg-surface-container-lowest text-on-surface shadow-ambient"
-                          : "text-on-surface-variant hover:text-on-surface"
+                          ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
+                          : "bg-surface-container-low text-on-surface-variant hover:text-on-surface"
                       }`}
                       onClick={(event) => {
                         event.preventDefault();
@@ -260,10 +260,10 @@ export function EpisodeEditorForm({
                       Write
                     </button>
                     <button
-                      className={`inline-flex min-w-20 items-center justify-center rounded-full px-4 py-2 text-sm transition ${
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                         editorMode === "preview"
-                          ? "bg-surface-container-lowest text-on-surface shadow-ambient"
-                          : "text-on-surface-variant hover:text-on-surface"
+                          ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
+                          : "bg-surface-container-low text-on-surface-variant hover:text-on-surface"
                       }`}
                       onClick={(event) => {
                         event.preventDefault();
