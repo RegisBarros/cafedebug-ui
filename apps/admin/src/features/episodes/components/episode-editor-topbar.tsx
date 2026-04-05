@@ -10,7 +10,7 @@ type EpisodeEditorTopBarProps = {
 
 export function EpisodeEditorTopBar({ active, mode, onBack }: EpisodeEditorTopBarProps) {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-outline-variant/60 bg-surface-container-lowest/90 px-6 py-5 backdrop-blur lg:px-8 xl:px-10">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-outline-variant/60 bg-surface-container-lowest px-6 py-5 lg:px-8 xl:px-10">
       <div className="flex items-center gap-4">
         <button
           aria-label="Back to episodes"

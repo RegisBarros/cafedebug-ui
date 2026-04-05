@@ -606,7 +606,7 @@ export function EpisodeEditorForm({
           </aside>
         </div>
 
-        <footer className="sticky bottom-0 z-20 mt-auto border-t border-outline-variant/60 bg-surface-container-lowest/95 px-6 py-5 backdrop-blur lg:px-8 xl:px-10">
+        <footer className="sticky bottom-0 z-20 mt-auto border-t border-outline-variant/60 bg-surface-container-lowest px-6 py-5 lg:px-8 xl:px-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <button
               className="text-sm font-medium text-on-surface-variant transition hover:text-on-surface"
