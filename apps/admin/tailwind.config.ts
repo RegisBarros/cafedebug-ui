@@ -31,8 +31,13 @@ const config: Config = {
         success: "var(--color-success)",
         warning: "var(--color-warning)",
         danger: "var(--color-danger)",
-        "outline-variant": "var(--color-outline-variant)",
-        "focus-ring": "var(--color-focus-ring)"
+        "outline-variant": "rgb(var(--color-outline-variant) / <alpha-value>)",
+        "focus-ring": "var(--color-focus-ring)",
+        "status-published-surface": "var(--color-status-published-surface)",
+        "status-published-on": "var(--color-status-published-on)",
+        "status-draft-surface": "var(--color-status-draft-surface)",
+        "status-draft-on": "var(--color-status-draft-on)",
+        "status-draft-border": "var(--color-status-draft-border)"
       },
       spacing: {
         1: "var(--space-1)",

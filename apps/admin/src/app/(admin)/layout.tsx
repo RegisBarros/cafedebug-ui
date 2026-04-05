@@ -1,4 +1,5 @@
 import { AdminShellLayout } from "@/features/admin-shell/admin-shell-layout";
+import { getThemeCookie, resolveDataTheme } from "@/lib/auth/theme";
 import type { ReactNode } from "react";
 
 export default async function AdminLayout({
@@ -6,5 +7,8 @@ export default async function AdminLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return <AdminShellLayout>{children}</AdminShellLayout>;
+  const theme = await getThemeCookie();
+  const currentTheme = resolveDataTheme(theme);
+
+  return <AdminShellLayout currentTheme={currentTheme}>{children}</AdminShellLayout>;
 }

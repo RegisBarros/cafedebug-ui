@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+import { ThemeToggle } from "@/features/admin-shell/theme-toggle";
+import { getThemeCookie, resolveDataTheme } from "@/lib/auth/theme";
+
+export default async function AuthLayout({ children }: { children: ReactNode }) {
+  const theme = await getThemeCookie();
+  const currentTheme = resolveDataTheme(theme);
+
   return (
     <>
       <div className="flex min-h-screen flex-col bg-surface">
@@ -8,15 +14,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <span className="font-display text-xl font-bold tracking-tight text-on-surface">
             CafeDebug
           </span>
-          <button
-            type="button"
-            aria-label="Help"
-            className="text-on-surface-variant transition-colors hover:text-primary"
-          >
-            <span className="material-symbols-outlined" aria-hidden="true">
-              help_outline
-            </span>
-          </button>
+          <ThemeToggle currentTheme={currentTheme} />
         </header>
 
         <main className="relative flex flex-grow items-center justify-center overflow-hidden p-6">

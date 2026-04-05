@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import "@cafedebug/design-tokens/styles.css";
 import "./globals.css";
+import { getThemeCookie, resolveDataTheme } from "@/lib/auth/theme";
 import { AppProviders } from "./providers";
 
 export const metadata: Metadata = {
@@ -13,13 +14,16 @@ export const metadata: Metadata = {
   description: "CafeDebug backoffice scaffold for authenticated admin workflows."
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const theme = await getThemeCookie();
+  const dataTheme = resolveDataTheme(theme);
+
   return (
-    <html lang="en-US" data-theme="dark">
+    <html lang="en-US" data-theme={dataTheme}>
       <head>
         <link
           rel="stylesheet"

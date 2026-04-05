@@ -8,9 +8,10 @@ import { AdminShellSidebar } from "./admin-shell-sidebar";
 
 type AdminShellLayoutProps = {
   children: ReactNode;
+  currentTheme: "light" | "dark";
 };
 
-export function AdminShellLayout({ children }: AdminShellLayoutProps) {
+export function AdminShellLayout({ children, currentTheme }: AdminShellLayoutProps) {
   const pathname = usePathname() ?? "/";
   const isEpisodeEditorRoute =
     pathname === "/episodes/new" || /^\/episodes\/[^/]+\/edit$/.test(pathname);
@@ -21,7 +22,7 @@ export function AdminShellLayout({ children }: AdminShellLayoutProps) {
 
   return (
     <div className="flex min-h-screen">
-        <AdminShellSidebar pathname={pathname} />
+        <AdminShellSidebar pathname={pathname} currentTheme={currentTheme} />
 
         <main className="min-w-0 flex-1 overflow-y-auto">
           <section className={contentClassName}>

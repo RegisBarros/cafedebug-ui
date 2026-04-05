@@ -23,7 +23,7 @@ export function EpisodesPagination({
   const to = Math.min(page * pageSize, totalCount);
 
   return (
-    <div className="flex items-center justify-between border-t border-outline-variant/60 bg-gray-50/30 px-6 py-4 dark:bg-white/5">
+    <div className="flex items-center justify-between border-t border-outline-variant/60 bg-table-header-surface px-6 py-4">
       <span className="text-sm text-on-surface-variant">
         Showing {from} to {to} of {totalCount} episodes
       </span>
@@ -31,7 +31,7 @@ export function EpisodesPagination({
       <div className="flex items-center gap-2">
         <button
           aria-label="Previous page"
-          className="rounded-md p-1 text-on-surface-variant transition-colors hover:bg-[#f3f4f6] hover:text-on-surface disabled:opacity-50 dark:hover:bg-white/10"
+          className="rounded-md p-1 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface disabled:opacity-50"
           disabled={!hasPrevious || isFetching}
           onClick={onPrevious}
           type="button"
@@ -43,7 +43,7 @@ export function EpisodesPagination({
 
         <button
           aria-label="Next page"
-          className="rounded-md p-1 text-on-surface-variant transition-colors hover:bg-[#f3f4f6] hover:text-on-surface disabled:opacity-50 dark:hover:bg-white/10"
+          className="rounded-md p-1 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface disabled:opacity-50"
           disabled={!hasNext || isFetching}
           onClick={onNext}
           type="button"
