@@ -36,10 +36,10 @@ const labelClassName =
   "text-sm font-semibold tracking-tight text-on-surface";
 
 const inputClassName =
-  "w-full rounded-lg border border-outline-variant/70 bg-slate-50 px-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-xl border border-outline-variant/70 bg-slate-50 px-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
 const iconInputClassName =
-  "w-full rounded-lg border border-outline-variant/70 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-xl border border-outline-variant/70 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
 const metadataSectionClassName = "space-y-5";
 
