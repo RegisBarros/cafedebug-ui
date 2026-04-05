@@ -494,15 +494,26 @@ export function EpisodeEditorForm({
                 </label>
 
                 <label className="flex flex-col gap-2">
-                  <span className={labelClassName}>Category ID</span>
-                  <input
-                    aria-invalid={errors.categoryId ? true : undefined}
-                    className={inputClassName}
-                    inputMode="numeric"
-                    placeholder="1"
-                    type="text"
-                    {...register("categoryId")}
-                  />
+                  <span className={labelClassName}>Category</span>
+                  <span className="relative block">
+                    <select
+                      aria-invalid={errors.categoryId ? true : undefined}
+                      className={`${inputClassName} cursor-pointer appearance-none pr-12`}
+                      {...register("categoryId")}
+                    >
+                      <option value="">Select a category</option>
+                      <option value="1">1 - Design</option>
+                      <option value="2">2 - Development</option>
+                      <option value="3">3 - Product</option>
+                      <option value="4">4 - Career</option>
+                    </select>
+                    <span
+                      aria-hidden="true"
+                      className="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant"
+                    >
+                      expand_more
+                    </span>
+                  </span>
                   {errors.categoryId?.message ? (
                     <p className="text-xs text-danger">{errors.categoryId.message}</p>
                   ) : null}
