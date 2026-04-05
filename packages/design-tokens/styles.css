@@ -71,7 +71,7 @@
 }
 
 :root[data-theme="dark"] {
-  --color-surface-neutral-soft: #1f2937;
+  --color-surface-neutral-soft: #0f0f11;
   --color-slate-50: var(--color-surface-neutral-soft);
 
   --color-surface: #0f0f11;

@@ -244,7 +244,7 @@ export function EpisodeEditorForm({
                     Show Notes
                   </label>
 
-                  <div className="inline-flex items-center rounded-lg bg-slate-50 p-1">
+                  <div className="inline-flex items-center rounded-lg bg-surface-container-low p-1">
                     <button
                       className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
                         editorMode === "write"
@@ -277,7 +277,7 @@ export function EpisodeEditorForm({
                 </div>
 
                 <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
-                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-slate-50 px-2 py-2 text-on-surface-variant">
+                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface-container-low px-2 py-2 text-on-surface-variant">
                     <button
                       aria-label="Bold"
                       className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
