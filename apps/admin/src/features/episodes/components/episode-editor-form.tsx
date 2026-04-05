@@ -210,11 +210,11 @@ export function EpisodeEditorForm({
           <section className="w-full px-6 pb-32 pt-8 md:w-[60%] md:p-8 lg:w-[68%] lg:p-12">
             <div className="flex flex-col gap-8">
               <div className="space-y-4">
-                <input
+                <textarea
                   aria-invalid={errors.title ? true : undefined}
-                  className="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-2 font-display text-3xl font-bold leading-[0.98] text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:text-4xl xl:text-5xl"
+                  className="min-h-[5.5rem] w-full resize-none border-0 border-b-2 border-transparent bg-transparent px-0 py-2 font-display text-2xl font-bold leading-tight text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:text-3xl xl:text-4xl"
                   placeholder="Episode Title..."
-                  type="text"
+                  rows={2}
                   {...register("title")}
                 />
                 {errors.title?.message ? (
