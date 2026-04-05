@@ -36,12 +36,12 @@ const labelClassName =
   "text-sm font-semibold tracking-tight text-on-surface";
 
 const inputClassName =
-  "h-12 w-full rounded-full border border-outline-variant/70 bg-surface-container-lowest px-4 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-lg border border-outline-variant/70 bg-surface px-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
 const iconInputClassName =
-  "h-12 w-full rounded-full border border-outline-variant/70 bg-surface-container-lowest pl-12 pr-4 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-lg border border-outline-variant/70 bg-surface pl-10 pr-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
-const metadataSectionClassName = "space-y-5 rounded-[1.75rem] bg-surface-container-low px-5 py-6";
+const metadataSectionClassName = "space-y-5";
 
 export function EpisodeEditorForm({
   activeAction,
@@ -56,7 +56,6 @@ export function EpisodeEditorForm({
   const [editorMode, setEditorMode] = useState<EditorMode>("write");
   const [tagDraft, setTagDraft] = useState("");
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
-  const imageUrlRef = useRef<HTMLInputElement | null>(null);
 
   const {
     register,
@@ -65,7 +64,6 @@ export function EpisodeEditorForm({
     formState: { errors }
   } = form;
   const descriptionField = register("description");
-  const imageUrlField = register("imageUrl");
 
   const description = watch("description");
   const imageUrl = watch("imageUrl");
@@ -206,13 +204,15 @@ export function EpisodeEditorForm({
       ) : null}
 
       <form className="flex flex-1 flex-col" noValidate>
-        <div className="grid flex-1 xl:grid-cols-[minmax(0,1fr)_minmax(340px,420px)]">
-          <section className="bg-surface px-6 pb-32 pt-8 lg:px-8 xl:px-10 xl:pb-36 xl:pt-12">
-            <div className="mx-auto flex max-w-[980px] flex-col gap-8">
+        <input type="hidden" {...register("imageUrl")} />
+
+        <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col pb-24 md:flex-row">
+          <section className="w-full px-6 pb-32 pt-8 md:w-[60%] md:p-8 lg:w-[68%] lg:p-12">
+            <div className="flex flex-col gap-8">
               <div className="space-y-4">
                 <input
                   aria-invalid={errors.title ? true : undefined}
-                  className="w-full border-0 bg-transparent px-0 font-display text-4xl font-bold leading-[0.98] text-on-surface outline-none placeholder:text-on-surface-variant/35 focus:ring-0 md:text-5xl xl:text-[4rem]"
+                  className="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-2 font-display text-4xl font-bold leading-[0.98] text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:text-5xl xl:text-[4rem]"
                   placeholder="Episode Title..."
                   type="text"
                   {...register("title")}
@@ -222,12 +222,12 @@ export function EpisodeEditorForm({
                 ) : null}
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
+                  <span className="text-[11px] font-semibold text-on-surface-variant">
                     Short Description
                   </span>
                   <textarea
                     aria-invalid={errors.shortDescription ? true : undefined}
-                    className="min-h-24 w-full rounded-[1.75rem] border border-outline-variant/60 bg-surface-container-low px-5 py-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-2 focus:ring-focus-ring"
+                    className="min-h-24 w-full rounded-[1.75rem] border border-outline-variant/60 bg-surface-container-lowest px-5 py-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-2 focus:ring-focus-ring"
                     maxLength={240}
                     placeholder="Add a concise summary for episode cards and share surfaces."
                     {...register("shortDescription")}
@@ -238,7 +238,7 @@ export function EpisodeEditorForm({
                 </label>
               </div>
 
-              <div className="space-y-4">
+              <div className="flex min-h-[500px] flex-1 flex-col gap-3">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <label className={labelClassName} htmlFor="episode-show-notes">
                     Show Notes
@@ -249,7 +249,7 @@ export function EpisodeEditorForm({
                       className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                         editorMode === "write"
                           ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
-                          : "bg-surface-container-low text-on-surface-variant hover:text-on-surface"
+                          : "bg-transparent text-on-surface-variant hover:text-on-surface"
                       }`}
                       onClick={(event) => {
                         event.preventDefault();
@@ -263,7 +263,7 @@ export function EpisodeEditorForm({
                       className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                         editorMode === "preview"
                           ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
-                          : "bg-surface-container-low text-on-surface-variant hover:text-on-surface"
+                          : "bg-transparent text-on-surface-variant hover:text-on-surface"
                       }`}
                       onClick={(event) => {
                         event.preventDefault();
@@ -276,11 +276,11 @@ export function EpisodeEditorForm({
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-[2rem] border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
-                  <div className="flex flex-wrap items-center gap-1 border-b border-outline-variant/50 bg-surface-container-low px-4 py-3 text-on-surface-variant">
+                <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
+                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface px-2 py-2 text-on-surface-variant">
                     <button
                       aria-label="Bold"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         wrapSelection("**");
@@ -293,7 +293,7 @@ export function EpisodeEditorForm({
                     </button>
                     <button
                       aria-label="Italic"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         wrapSelection("*");
@@ -304,10 +304,10 @@ export function EpisodeEditorForm({
                         format_italic
                       </span>
                     </button>
-                    <span className="mx-1 h-6 w-px bg-outline-variant/70" />
+                    <span className="mx-1 h-5 w-px bg-outline-variant/50" />
                     <button
                       aria-label="Link"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         insertLink();
@@ -320,7 +320,7 @@ export function EpisodeEditorForm({
                     </button>
                     <button
                       aria-label="Quote"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         prefixLines((line) => `> ${line}`);
@@ -333,7 +333,7 @@ export function EpisodeEditorForm({
                     </button>
                     <button
                       aria-label="Code"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         wrapSelection("`");
@@ -344,10 +344,10 @@ export function EpisodeEditorForm({
                         code
                       </span>
                     </button>
-                    <span className="mx-1 h-6 w-px bg-outline-variant/70" />
+                    <span className="mx-1 h-5 w-px bg-outline-variant/50" />
                     <button
                       aria-label="Bulleted List"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         prefixLines((line) => `- ${line}`);
@@ -360,7 +360,7 @@ export function EpisodeEditorForm({
                     </button>
                     <button
                       aria-label="Numbered List"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-surface-container-high hover:text-on-surface"
+                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
                       onClick={(event) => {
                         event.preventDefault();
                         prefixLines((line, index) => `${index + 1}. ${line}`);
@@ -376,7 +376,7 @@ export function EpisodeEditorForm({
                   {editorMode === "write" ? (
                     <textarea
                       aria-invalid={errors.description ? true : undefined}
-                      className="min-h-[520px] w-full resize-none border-0 bg-transparent px-5 py-6 font-mono text-[15px] leading-8 text-on-surface outline-none placeholder:text-on-surface-variant/45 focus:ring-0"
+                      className="min-h-[520px] w-full resize-none border-0 bg-transparent p-4 font-mono text-sm leading-relaxed text-on-surface outline-none placeholder:text-on-surface-variant/45 focus:ring-0"
                       id="episode-show-notes"
                       placeholder="Write your show notes here using Markdown..."
                       {...descriptionField}
@@ -386,9 +386,9 @@ export function EpisodeEditorForm({
                       }}
                     />
                   ) : (
-                    <div className="min-h-[520px] px-5 py-6">
+                    <div className="min-h-[520px] p-4">
                       {description.trim().length > 0 ? (
-                        <pre className="whitespace-pre-wrap font-mono text-[15px] leading-8 text-on-surface">
+                        <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-on-surface">
                           {description}
                         </pre>
                       ) : (
@@ -406,14 +406,14 @@ export function EpisodeEditorForm({
             </div>
           </section>
 
-          <aside className="border-t border-outline-variant/60 bg-surface-container-lowest px-6 pb-32 pt-8 lg:px-8 xl:border-l xl:border-t-0 xl:px-10 xl:pb-36 xl:pt-10">
+          <aside className="w-full border-t border-outline-variant/60 bg-surface-container-lowest px-6 pb-32 pt-8 shadow-[-4px_0_24px_-12px_rgba(0,0,0,0.05)] md:w-[40%] md:border-l md:border-t-0 md:p-8 lg:w-[32%] lg:p-10">
             <div className="flex flex-col gap-6">
               <section className={metadataSectionClassName}>
                 <div className="flex flex-col gap-3">
                   <p className={labelClassName}>Cover Artwork</p>
 
-                  <div className="flex flex-col gap-4 md:flex-row xl:flex-col">
-                    <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-[2rem] border border-dashed border-outline-variant/70 bg-surface">
+                  <div className="flex flex-col gap-4">
+                    <div className="relative mx-auto aspect-square w-full max-w-[240px] overflow-hidden rounded-xl border-2 border-dashed border-outline-variant/40 bg-surface">
                       {imageUrl.trim().length > 0 ? (
                         <img
                           alt="Episode cover preview"
@@ -439,10 +439,6 @@ export function EpisodeEditorForm({
                     <div className="flex flex-col gap-3 xl:max-w-[280px]">
                       <button
                         className="inline-flex h-12 items-center justify-center rounded-full border border-outline-variant/70 px-5 text-sm font-semibold text-on-surface transition hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          imageUrlRef.current?.focus();
-                        }}
                         type="button"
                       >
                         Choose Image
@@ -454,25 +450,9 @@ export function EpisodeEditorForm({
                   </div>
                 </div>
 
-                <label className="flex flex-col gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
-                    Cover Image URL
-                  </span>
-                  <input
-                    aria-invalid={errors.imageUrl ? true : undefined}
-                    className={inputClassName}
-                    placeholder="https://cafedebug-uploads..."
-                    type="url"
-                    {...imageUrlField}
-                    ref={(element) => {
-                      imageUrlField.ref(element);
-                      imageUrlRef.current = element;
-                    }}
-                  />
-                  {errors.imageUrl?.message ? (
-                    <p className="text-xs text-danger">{errors.imageUrl.message}</p>
-                  ) : null}
-                </label>
+                {errors.imageUrl?.message ? (
+                  <p className="text-xs text-danger">{errors.imageUrl.message}</p>
+                ) : null}
               </section>
 
               <section className={metadataSectionClassName}>
@@ -540,13 +520,13 @@ export function EpisodeEditorForm({
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag) => (
                         <span
-                          className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary"
+                          className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-on-surface-variant"
                           key={tag}
                         >
                           {tag}
                           <button
                             aria-label={`Remove ${tag}`}
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-full text-primary transition hover:text-primary-strong"
+                            className="inline-flex h-4 w-4 items-center justify-center rounded-full text-on-surface-variant transition hover:text-on-surface"
                             onClick={(event) => {
                               event.preventDefault();
                               removeTag(tag);
@@ -606,10 +586,10 @@ export function EpisodeEditorForm({
           </aside>
         </div>
 
-        <footer className="sticky bottom-0 z-20 mt-auto border-t border-outline-variant/60 bg-surface-container-lowest px-6 py-5 lg:px-8 xl:px-10">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+        <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-outline-variant/60 bg-surface-container-lowest/80 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] backdrop-blur-md">
+          <div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-4 px-2 md:px-4">
             <button
-              className="text-sm font-medium text-on-surface-variant transition hover:text-on-surface"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-on-surface-variant transition hover:bg-surface hover:text-on-surface"
               onClick={(event) => {
                 event.preventDefault();
                 onCancel();
@@ -621,7 +601,7 @@ export function EpisodeEditorForm({
 
             <div className="flex flex-wrap items-center gap-3">
               <button
-                className="inline-flex h-12 items-center justify-center rounded-full border border-outline-variant/70 px-6 text-sm font-semibold text-on-surface transition hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-lg border border-outline-variant/70 bg-surface-container-lowest px-5 py-2.5 text-sm font-semibold text-on-surface shadow-sm transition hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isSubmitting}
                 onClick={(event) => {
                   event.preventDefault();
@@ -635,7 +615,7 @@ export function EpisodeEditorForm({
               </button>
 
               <button
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-semibold text-on-primary transition hover:bg-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-on-primary shadow-sm transition hover:bg-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isSubmitting}
                 onClick={(event) => {
                   event.preventDefault();
