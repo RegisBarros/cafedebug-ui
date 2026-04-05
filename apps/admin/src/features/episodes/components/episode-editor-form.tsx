@@ -206,7 +206,7 @@ export function EpisodeEditorForm({
       <form className="flex flex-1 flex-col" noValidate>
         <input type="hidden" {...register("imageUrl")} />
 
-        <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col pb-24 md:flex-row">
+        <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col md:flex-row">
           <section className="w-full px-6 pb-32 pt-8 md:w-[60%] md:p-8 lg:w-[68%] lg:p-12">
             <div className="flex flex-col gap-8">
               <div className="space-y-4">
@@ -406,7 +406,7 @@ export function EpisodeEditorForm({
             </div>
           </section>
 
-          <aside className="w-full border-t border-outline-variant/60 bg-surface-container-lowest px-6 pb-32 pt-8 shadow-[-4px_0_24px_-12px_rgba(0,0,0,0.05)] md:w-[40%] md:border-l md:border-t-0 md:p-8 lg:w-[32%] lg:p-10">
+          <aside className="w-full border-t border-outline-variant/60 bg-surface-container-lowest px-6 pb-10 pt-8 shadow-[-4px_0_24px_-12px_rgba(0,0,0,0.05)] md:w-[40%] md:border-l md:border-t-0 md:p-8 lg:w-[32%] lg:p-10">
             <div className="flex flex-col gap-6">
               <section className={metadataSectionClassName}>
                 <div className="flex flex-col gap-3">
@@ -586,7 +586,7 @@ export function EpisodeEditorForm({
           </aside>
         </div>
 
-        <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-outline-variant/60 bg-surface-container-lowest/80 p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] backdrop-blur-md">
+        <footer className="mt-auto border-t border-outline-variant/60 bg-surface-container-lowest p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
           <div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-4 px-2 md:px-4">
             <button
               className="rounded-lg px-4 py-2 text-sm font-medium text-on-surface-variant transition hover:bg-surface hover:text-on-surface"
