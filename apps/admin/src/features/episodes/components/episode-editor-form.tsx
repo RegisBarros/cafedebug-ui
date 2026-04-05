@@ -212,7 +212,7 @@ export function EpisodeEditorForm({
               <div className="space-y-4">
                 <input
                   aria-invalid={errors.title ? true : undefined}
-                  className="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-2 font-display text-4xl font-bold leading-[0.98] text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:text-5xl xl:text-[4rem]"
+                  className="w-full border-0 border-b-2 border-transparent bg-transparent px-0 py-2 font-display text-3xl font-bold leading-[0.98] text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:text-4xl xl:text-5xl"
                   placeholder="Episode Title..."
                   type="text"
                   {...register("title")}
@@ -222,7 +222,7 @@ export function EpisodeEditorForm({
                 ) : null}
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[11px] font-semibold text-on-surface-variant">
+                  <span className={labelClassName}>
                     Short Description
                   </span>
                   <textarea
@@ -246,7 +246,7 @@ export function EpisodeEditorForm({
 
                   <div className="inline-flex items-center rounded-lg bg-slate-50 p-1">
                     <button
-                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
                         editorMode === "write"
                           ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
                           : "bg-transparent text-on-surface-variant hover:text-on-surface"
@@ -260,7 +260,7 @@ export function EpisodeEditorForm({
                       Write
                     </button>
                     <button
-                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
                         editorMode === "preview"
                           ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
                           : "bg-transparent text-on-surface-variant hover:text-on-surface"
