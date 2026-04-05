@@ -36,10 +36,10 @@ const labelClassName =
   "text-sm font-semibold tracking-tight text-on-surface";
 
 const inputClassName =
-  "w-full rounded-lg border border-outline-variant/70 bg-surface px-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-lg border border-outline-variant/70 bg-slate-50 px-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
 const iconInputClassName =
-  "w-full rounded-lg border border-outline-variant/70 bg-surface pl-10 pr-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
+  "w-full rounded-lg border border-outline-variant/70 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-on-surface outline-none transition focus:border-primary focus:ring-2 focus:ring-focus-ring placeholder:text-on-surface-variant/60";
 
 const metadataSectionClassName = "space-y-5";
 
@@ -227,7 +227,7 @@ export function EpisodeEditorForm({
                   </span>
                   <textarea
                     aria-invalid={errors.shortDescription ? true : undefined}
-                    className="min-h-24 w-full rounded-[1.75rem] border border-outline-variant/60 bg-surface-container-lowest px-5 py-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-2 focus:ring-focus-ring"
+                    className="min-h-24 w-full rounded-[1.75rem] border border-outline-variant/60 bg-slate-50 px-5 py-4 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/55 focus:border-primary focus:ring-2 focus:ring-focus-ring"
                     maxLength={240}
                     placeholder="Add a concise summary for episode cards and share surfaces."
                     {...register("shortDescription")}
@@ -244,7 +244,7 @@ export function EpisodeEditorForm({
                     Show Notes
                   </label>
 
-                  <div className="inline-flex items-center rounded-lg bg-surface-container-low p-1">
+                  <div className="inline-flex items-center rounded-lg bg-slate-50 p-1">
                     <button
                       className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                         editorMode === "write"
@@ -277,7 +277,7 @@ export function EpisodeEditorForm({
                 </div>
 
                 <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
-                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface px-2 py-2 text-on-surface-variant">
+                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-slate-50 px-2 py-2 text-on-surface-variant">
                     <button
                       aria-label="Bold"
                       className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
@@ -520,7 +520,7 @@ export function EpisodeEditorForm({
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag) => (
                         <span
-                          className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-on-surface-variant"
+                          className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-on-surface-variant"
                           key={tag}
                         >
                           {tag}

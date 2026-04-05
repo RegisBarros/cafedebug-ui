@@ -28,6 +28,9 @@
 
 :root,
 :root[data-theme="light"] {
+  --color-surface-neutral-soft: #f8fafc;
+  --color-slate-50: var(--color-surface-neutral-soft);
+
   --color-surface: #f8f6f5;
   --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #f4eeeb;
@@ -59,6 +62,9 @@
 }
 
 :root[data-theme="dark"] {
+  --color-surface-neutral-soft: #1f2937;
+  --color-slate-50: var(--color-surface-neutral-soft);
+
   --color-surface: #1d100c;
   --color-surface-container-lowest: #231410;
   --color-surface-container-low: #2a1914;

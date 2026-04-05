@@ -5,7 +5,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        "slate-50": "var(--color-slate-50)",
         surface: "var(--color-surface)",
+        "surface-neutral-soft": "var(--color-surface-neutral-soft)",
         "surface-container-lowest": "var(--color-surface-container-lowest)",
         "surface-container-low": "var(--color-surface-container-low)",
         "surface-container": "var(--color-surface-container)",
