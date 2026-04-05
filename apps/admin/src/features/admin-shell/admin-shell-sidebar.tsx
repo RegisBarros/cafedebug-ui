@@ -118,8 +118,8 @@ export function AdminShellSidebar({ pathname }: AdminShellSidebarProps) {
               AA
             </span>
             <div className="flex min-w-0 flex-col overflow-hidden">
-              <span className="truncate text-sm font-medium text-on-surface">Alice Admin</span>
-              <span className="truncate text-xs text-on-surface-variant">alice@cafedebug.com</span>
+              <span className="truncate text-sm font-medium text-on-surface">Jéssica Nathany</span>
+              <span className="truncate text-xs text-on-surface-variant">jessica@cafedebug.com</span>
             </div>
           </div>
         </div>
