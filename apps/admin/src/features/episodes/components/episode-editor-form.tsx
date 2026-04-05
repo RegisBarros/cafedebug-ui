@@ -546,13 +546,13 @@ export function EpisodeEditorForm({
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag) => (
                         <span
-                          className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-on-surface-variant"
+                          className="inline-flex items-center gap-1 rounded-md border border-status-draft-border bg-status-draft-surface px-2 py-1 text-xs font-medium text-status-draft-on"
                           key={tag}
                         >
                           {tag}
                           <button
                             aria-label={`Remove ${tag}`}
-                            className="inline-flex h-4 w-4 items-center justify-center rounded-full text-on-surface-variant transition hover:text-on-surface"
+                            className="inline-flex items-center justify-center text-status-draft-on transition-colors hover:opacity-70"
                             onClick={(event) => {
                               event.preventDefault();
                               removeTag(tag);
@@ -561,7 +561,7 @@ export function EpisodeEditorForm({
                           >
                             <span
                               aria-hidden="true"
-                              className="material-symbols-outlined text-[14px]"
+                              className="material-symbols-outlined text-xs leading-none"
                             >
                               close
                             </span>
