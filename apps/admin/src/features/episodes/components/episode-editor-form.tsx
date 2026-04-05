@@ -478,6 +478,21 @@ export function EpisodeEditorForm({
                   ) : null}
                 </label>
 
+                <label className="flex max-w-[160px] flex-col gap-2">
+                  <span className={labelClassName}># Number</span>
+                  <input
+                    aria-invalid={errors.number ? true : undefined}
+                    className={inputClassName}
+                    inputMode="numeric"
+                    placeholder="13"
+                    type="number"
+                    {...register("number")}
+                  />
+                  {errors.number?.message ? (
+                    <p className="text-xs text-danger">{errors.number.message}</p>
+                  ) : null}
+                </label>
+
                 <label className="flex flex-col gap-2">
                   <span className={labelClassName}>Category ID</span>
                   <input
@@ -564,24 +579,6 @@ export function EpisodeEditorForm({
                 </div>
               </section>
 
-              <section className={metadataSectionClassName}>
-                <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
-                  <label className="flex flex-col gap-2">
-                    <span className={labelClassName}>Episode Number</span>
-                    <input
-                      aria-invalid={errors.number ? true : undefined}
-                      className={inputClassName}
-                      inputMode="numeric"
-                      placeholder="13"
-                      type="text"
-                      {...register("number")}
-                    />
-                    {errors.number?.message ? (
-                      <p className="text-xs text-danger">{errors.number.message}</p>
-                    ) : null}
-                  </label>
-                </div>
-              </section>
             </div>
           </aside>
         </div>
