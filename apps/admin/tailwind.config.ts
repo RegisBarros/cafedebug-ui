@@ -14,6 +14,7 @@ const config: Config = {
         "surface-container": "var(--color-surface-container)",
         "surface-container-high": "var(--color-surface-container-high)",
         "surface-container-highest": "var(--color-surface-container-highest)",
+        "table-header-surface": "var(--color-table-header-surface)",
         "table-row-hover": "var(--color-table-row-hover)",
         "on-surface": "var(--color-on-surface)",
         "on-surface-variant": "var(--color-on-surface-variant)",

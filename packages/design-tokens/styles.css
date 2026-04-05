@@ -37,6 +37,7 @@
   --color-surface-container: #ede4df;
   --color-surface-container-high: #e6d9d3;
   --color-surface-container-highest: #decec7;
+  --color-table-header-surface: rgb(249 250 251 / 50%);
   --color-table-row-hover: #fafafa;
 
   --color-on-surface: #1f1a18;
@@ -72,6 +73,7 @@
   --color-surface-container: #33201a;
   --color-surface-container-high: #402923;
   --color-surface-container-highest: #4a312a;
+  --color-table-header-surface: rgb(31 41 55 / 35%);
   --color-table-row-hover: #33201a;
 
   --color-on-surface: #f4e9e4;
