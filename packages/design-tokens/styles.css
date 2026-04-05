@@ -37,6 +37,7 @@
   --color-surface-container: #ede4df;
   --color-surface-container-high: #e6d9d3;
   --color-surface-container-highest: #decec7;
+  --color-table-row-hover: #fafafa;
 
   --color-on-surface: #1f1a18;
   --color-on-surface-variant: #6a5d57;
@@ -71,6 +72,7 @@
   --color-surface-container: #33201a;
   --color-surface-container-high: #402923;
   --color-surface-container-highest: #4a312a;
+  --color-table-row-hover: #33201a;
 
   --color-on-surface: #f4e9e4;
   --color-on-surface-variant: #c5b2aa;

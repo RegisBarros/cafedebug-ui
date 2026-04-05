@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: ['selector', '[data-theme="dark"]'],
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
@@ -13,6 +14,7 @@ const config: Config = {
         "surface-container": "var(--color-surface-container)",
         "surface-container-high": "var(--color-surface-container-high)",
         "surface-container-highest": "var(--color-surface-container-highest)",
+        "table-row-hover": "var(--color-table-row-hover)",
         "on-surface": "var(--color-on-surface)",
         "on-surface-variant": "var(--color-on-surface-variant)",
         primary: "var(--color-primary)",

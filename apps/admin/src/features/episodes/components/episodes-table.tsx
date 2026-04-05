@@ -28,7 +28,7 @@ function EpisodesTableSkeleton() {
   return (
     <table className="w-full border-collapse text-left">
       <thead>
-        <tr className="border-b border-outline-variant/60 bg-gray-50/50 dark:bg-white/5">
+        <tr className="border-b border-outline-variant/60 bg-surface-container-low dark:bg-surface-container-low">
           <th className={`${tableHeadCellClassName} w-16`}>Number</th>
           <th className={tableHeadCellClassName}>Title</th>
           <th className={`${tableHeadCellClassName} w-1/6`}>Status</th>
@@ -72,7 +72,7 @@ export function EpisodesTable({ items, isLoading }: EpisodesTableProps) {
   return (
     <table className="w-full border-collapse text-left">
         <thead>
-        <tr className="border-b border-outline-variant/60 bg-gray-50/50 dark:bg-white/5">
+        <tr className="border-b border-outline-variant/60 bg-surface-container-low dark:bg-surface-container-low">
           <th className={`${tableHeadCellClassName} w-16`}>Number</th>
           <th className={tableHeadCellClassName}>Title</th>
           <th className={`${tableHeadCellClassName} w-1/6`}>Status</th>
@@ -83,7 +83,7 @@ export function EpisodesTable({ items, isLoading }: EpisodesTableProps) {
         <tbody className="divide-y divide-outline-variant/40 font-body">
           {items.map((episode) => (
             <tr
-              className="group cursor-pointer transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-surface-container"
+              className="group cursor-pointer transition-colors duration-150 hover:bg-[var(--color-table-row-hover)]"
               key={episode.id}
               onClick={() => router.push(appRoutes.editEpisode(String(episode.id)))}
             >
