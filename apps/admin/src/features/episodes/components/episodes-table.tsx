@@ -18,7 +18,7 @@ const formatPublishDate = (publishedAt?: string): string => {
 };
 
 const tableHeadCellClassName =
-  "py-4 px-6 font-display font-semibold text-sm text-on-surface";
+  "py-4 px-6 font-display font-medium text-sm text-on-surface";
 
 const tableCellClassName = "py-4 px-6";
 
@@ -87,13 +87,13 @@ export function EpisodesTable({ items, isLoading }: EpisodesTableProps) {
               key={episode.id}
               onClick={() => router.push(appRoutes.editEpisode(String(episode.id)))}
             >
-              <td className={`${tableCellClassName} text-sm font-medium text-on-surface`}>
+              <td className={`${tableCellClassName} text-sm font-normal text-on-surface`}>
                 {typeof episode.number === "number" ? `#${episode.number}` : "—"}
               </td>
 
               <td className={tableCellClassName}>
                 <div className="flex flex-col">
-                  <span className="font-medium text-on-surface transition-colors group-hover:text-primary">
+                  <span className="font-normal text-on-surface transition-colors group-hover:text-primary">
                     {episode.title}
                   </span>
                   {(episode.shortDescription || episode.description) ? (

@@ -97,7 +97,7 @@ export function EpisodesListPage() {
     <div className="flex flex-col gap-8">
       <header className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
-          <h1 className="font-display text-[32px] font-bold leading-tight text-on-surface">
+          <h1 className="font-display text-[32px] font-semibold leading-tight text-on-surface">
             Episodes
           </h1>
           <p className="font-body text-body-md text-on-surface-variant">
@@ -106,7 +106,7 @@ export function EpisodesListPage() {
         </div>
 
         <Link
-          className="flex h-10 items-center gap-2 whitespace-nowrap rounded-lg bg-primary px-5 font-display text-sm font-semibold text-on-primary shadow-ambient transition-colors hover:bg-primary-strong"
+          className="flex h-10 items-center gap-2 whitespace-nowrap rounded-lg bg-primary px-5 font-display text-sm font-medium text-on-primary shadow-ambient transition-colors hover:bg-primary-strong"
           href={appRoutes.newEpisode}
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
