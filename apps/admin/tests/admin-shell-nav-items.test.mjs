@@ -20,6 +20,8 @@ test("admin shell nav preserves primary routes and disabled placeholder entries"
   assert.equal(navByLabel.Settings.disabled, false);
   assert.equal(navByLabel.Banners.disabled, true);
   assert.equal(navByLabel.Debuggers.disabled, true);
+  assert.equal(navByLabel.Banners.statusLabel, "Coming soon");
+  assert.equal(navByLabel.Debuggers.statusLabel, "Coming soon");
   assert.equal(navByLabel.Dashboard.href, "/dashboard");
   assert.equal(navByLabel.Settings.href, "/settings");
   assert.equal(navByLabel.Banners.href, "/banners");

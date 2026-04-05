@@ -37,14 +37,14 @@ export const ADMIN_SHELL_NAV_ITEMS = Object.freeze([
     label: "Banners",
     icon: "campaign",
     disabled: true,
-    statusLabel: "Soon"
+    statusLabel: "Coming soon"
   }),
   Object.freeze({
     href: "/debuggers",
     label: "Debuggers",
     icon: "bug_report",
     disabled: true,
-    statusLabel: "Soon"
+    statusLabel: "Coming soon"
   }),
   Object.freeze({
     href: appRoutes.settings,

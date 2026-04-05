@@ -15,6 +15,7 @@ type AdminShellNavItemProps = {
   label: string;
   icon: string;
   disabled: boolean;
+  statusLabel?: string;
   pathname: string;
 };
 
@@ -26,6 +27,7 @@ function AdminShellNavItem({
   label,
   icon,
   disabled,
+  statusLabel,
   pathname
 }: AdminShellNavItemProps) {
   const isActive = isAdminShellNavItemActive({ href, label, disabled }, pathname);
@@ -48,6 +50,9 @@ function AdminShellNavItem({
   const iconStyle = isActive && label === "Episodes"
     ? ({ fontVariationSettings: "'FILL' 1" } as const)
     : undefined;
+  const statusLabelClassName = navInteraction.interactive
+    ? "ml-auto shrink-0 whitespace-nowrap rounded-full border border-outline-variant/60 bg-surface-container-low px-1.5 py-0.5 text-[0.5rem] font-semibold uppercase tracking-[0.12em] text-on-surface-variant"
+    : "ml-auto shrink-0 whitespace-nowrap rounded-full border border-outline-variant/50 bg-surface-container-low px-1.5 py-0.5 text-[0.5rem] font-semibold uppercase tracking-[0.12em] text-on-surface-variant/90";
 
   if (!navInteraction.interactive) {
     return (
@@ -63,6 +68,11 @@ function AdminShellNavItem({
           {icon}
         </span>
         <span className="font-body text-sm font-medium">{label}</span>
+        {statusLabel ? (
+          <span className={statusLabelClassName}>
+            {statusLabel}
+          </span>
+        ) : null}
         <span className="sr-only">
           Navigation disabled in V1. Route remains directly accessible.
         </span>
@@ -80,6 +90,11 @@ function AdminShellNavItem({
         {icon}
       </span>
       <span className="font-body text-sm font-medium">{label}</span>
+      {statusLabel ? (
+        <span className={statusLabelClassName}>
+          {statusLabel}
+        </span>
+      ) : null}
     </Link>
   );
 }
