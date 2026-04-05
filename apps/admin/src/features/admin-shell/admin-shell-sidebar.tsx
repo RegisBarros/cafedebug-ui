@@ -112,7 +112,7 @@ export function AdminShellSidebar({ pathname, currentTheme }: AdminShellSidebarP
                 mic
               </span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex min-w-0 flex-1 flex-col">
               <h1 className="font-display text-base font-bold leading-tight text-on-surface">
                 CafeDebug
               </h1>
@@ -120,6 +120,7 @@ export function AdminShellSidebar({ pathname, currentTheme }: AdminShellSidebarP
                 Admin
               </p>
             </div>
+            <ThemeToggle currentTheme={currentTheme} />
           </div>
 
           <nav aria-label="Admin primary" className="flex flex-col gap-1">
@@ -138,7 +139,6 @@ export function AdminShellSidebar({ pathname, currentTheme }: AdminShellSidebarP
               <span className="truncate text-sm font-medium text-on-surface">Jéssica Nathany</span>
               <span className="truncate text-xs text-on-surface-variant">jessica@cafedebug.com</span>
             </div>
-            <ThemeToggle currentTheme={currentTheme} />
           </div>
         </div>
       </div>
