@@ -24,7 +24,8 @@ export const ADMIN_SHELL_NAV_ITEMS = Object.freeze([
     href: appRoutes.dashboard,
     label: "Dashboard",
     icon: "home",
-    disabled: false
+    disabled: true,
+    statusLabel: "Coming soon"
   }),
   Object.freeze({
     href: appRoutes.episodes,
@@ -50,7 +51,8 @@ export const ADMIN_SHELL_NAV_ITEMS = Object.freeze([
     href: appRoutes.settings,
     label: "Settings",
     icon: "settings",
-    disabled: false
+    disabled: true,
+    statusLabel: "Coming soon"
   })
 ]);
 
