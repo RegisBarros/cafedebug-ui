@@ -19,7 +19,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en-US" data-theme="light">
+    <html lang="en-US" data-theme="dark">
       <head>
         <link
           rel="stylesheet"
