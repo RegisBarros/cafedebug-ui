@@ -11,7 +11,7 @@
 }
 
 body {
-  @apply bg-[#FAFAFA] text-on-surface font-body antialiased;
+  @apply bg-surface text-on-surface font-body antialiased;
 }
 
 :root[data-theme="dark"] body {

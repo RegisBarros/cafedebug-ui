@@ -28,7 +28,7 @@
 
 :root,
 :root[data-theme="light"] {
-  --color-surface: #f8f4f2;
+  --color-surface: #f8f6f5;
   --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #f4eeeb;
   --color-surface-container: #ede4df;
