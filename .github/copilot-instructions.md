@@ -161,6 +161,102 @@ export async function POST(req: Request) {
 
 ---
 
+🌗 6.1 Theme System (Light / Dark) — MANDATORY
+
+Core Principle
+
+All UI must support light and dark themes with full parity, using design tokens only.
+
+---
+
+Token Rules
+	•	❌ Never use raw colors (#fff, #000, etc.)
+	•	✅ Always use semantic tokens (surface, primary, etc.)
+
+---
+
+Light/Dark Parity
+
+Every UI MUST:
+	•	Keep identical layout
+	•	Preserve hierarchy and contrast
+	•	Preserve interaction states
+
+---
+
+Surface Layer Model
+
+Always use:
+	•	surface
+	•	surface-container-*
+	•	elevated
+
+Never simulate depth with arbitrary colors.
+
+---
+
+Theme Switching
+	•	Support: light, dark, system
+	•	Must:
+	•	Apply instantly
+	•	Persist (cookie/storage)
+	•	Be server-readable (avoid hydration issues)
+
+---
+
+Tailwind Rules
+
+Tailwind must map ONLY to CSS variables:
+
+colors: {
+  surface: "var(--color-surface)",
+  primary: "var(--color-primary)",
+}
+
+
+---
+
+Component Requirements
+
+All components must:
+	•	Be theme-aware by default
+	•	Support all states in both themes:
+	•	hover
+	•	focus
+	•	disabled
+	•	error
+
+---
+
+Accent Usage
+	•	primary → actions & focus
+	•	tertiary → analytics only
+	•	❌ Never use accents as large backgrounds
+
+---
+
+No-Line Rule
+	•	❌ Avoid borders
+	•	✅ Use tonal layering
+	•	Use outline-variant only when necessary
+
+---
+
+Enforcement Rule
+
+If code violates theme rules:
+
+👉 Refactor to use tokens
+👉 Do not accept hardcoded styles
+
+---
+
+Final Rule
+
+If it does not work correctly in both light and dark, it is not done.
+
+---
+
 ## 🔐 7. Auth Rules
 
 - Auth logic lives in `features/auth`
