@@ -6,6 +6,7 @@ import {
   resolveAdminShellNavInteraction
 } from "./admin-shell-nav-items.js";
 import { ThemeToggle } from "./theme-toggle";
+import { UserMenu } from "./user-menu";
 
 type AdminShellSidebarProps = {
   pathname: string;
@@ -131,15 +132,11 @@ export function AdminShellSidebar({ pathname, currentTheme }: AdminShellSidebarP
         </div>
 
         <div className="mt-6 border-t border-outline-variant/60 px-2 pt-4">
-          <div className="flex items-center gap-3">
-            <span className="flex size-8 items-center justify-center rounded-full border border-outline-variant/60 bg-surface-container text-xs font-semibold text-on-surface">
-              JN
-            </span>
-            <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-medium text-on-surface">Jéssica Nathany</span>
-              <span className="truncate text-xs text-on-surface-variant">jessica@cafedebug.com</span>
-            </div>
-          </div>
+          <UserMenu
+            userName="Jéssica Nathany"
+            email="jessica@cafedebug.com"
+            initials="JN"
+          />
         </div>
       </div>
     </aside>
