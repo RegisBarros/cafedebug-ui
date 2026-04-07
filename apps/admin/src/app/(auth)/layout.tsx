@@ -51,7 +51,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
             </a>
           </div>
           <p className="text-xs text-on-surface-variant">
-            © 2025 CafeDebug Admin. All rights reserved.
+            © 2026 CafeDebug Admin. All rights reserved.
           </p>
         </footer>
       </div>
