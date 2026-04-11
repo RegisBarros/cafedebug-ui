@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
 import type { AdminRouteError, EpisodeMutationAction } from "../types/episode.types";
 import { EpisodeEditorTopBar } from "./episode-editor-topbar";
+import { EpisodeShowNotesField } from "./episode-show-notes-field";
 
 type EpisodeEditorFormProps = {
   activeAction: EpisodeMutationAction | null;
@@ -17,13 +18,6 @@ type EpisodeEditorFormProps = {
   onCancel: () => void;
   onSubmitAction: (action: EpisodeMutationAction) => () => void;
   submitError: AdminRouteError | null;
-};
-
-type EditorMode = "write" | "preview";
-type MarkdownTransform = {
-  nextValue: string;
-  selectionEnd: number;
-  selectionStart: number;
 };
 
 const splitTags = (value: string): string[] =>
@@ -53,9 +47,7 @@ export function EpisodeEditorForm({
   onSubmitAction,
   submitError
 }: EpisodeEditorFormProps) {
-  const [editorMode, setEditorMode] = useState<EditorMode>("write");
   const [tagDraft, setTagDraft] = useState("");
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
   const {
     register,
@@ -63,9 +55,7 @@ export function EpisodeEditorForm({
     watch,
     formState: { errors }
   } = form;
-  const descriptionField = register("description");
 
-  const description = watch("description");
   const imageUrl = watch("imageUrl");
   const tagsValue = watch("tags");
   const tags = useMemo(() => splitTags(tagsValue), [tagsValue]);
@@ -73,79 +63,6 @@ export function EpisodeEditorForm({
   useEffect(() => {
     setTagDraft("");
   }, [tagsValue]);
-
-  const updateDescription = (
-    transform: (value: string, selectionStart: number, selectionEnd: number) => MarkdownTransform
-  ) => {
-    const textarea = descriptionRef.current;
-    const currentValue = form.getValues("description");
-    const selectionStart = textarea?.selectionStart ?? currentValue.length;
-    const selectionEnd = textarea?.selectionEnd ?? currentValue.length;
-    const next = transform(currentValue, selectionStart, selectionEnd);
-
-    setValue("description", next.nextValue, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true
-    });
-
-    requestAnimationFrame(() => {
-      if (!textarea) {
-        return;
-      }
-
-      textarea.focus();
-      textarea.setSelectionRange(next.selectionStart, next.selectionEnd);
-    });
-  };
-
-  const wrapSelection = (prefix: string, suffix: string = prefix) => {
-    updateDescription((value, selectionStart, selectionEnd) => {
-      const selected = value.slice(selectionStart, selectionEnd) || "text";
-      const nextValue =
-        value.slice(0, selectionStart) +
-        prefix +
-        selected +
-        suffix +
-        value.slice(selectionEnd);
-
-      return {
-        nextValue,
-        selectionStart: selectionStart + prefix.length,
-        selectionEnd: selectionStart + prefix.length + selected.length
-      };
-    });
-  };
-
-  const prefixLines = (formatter: (line: string, index: number) => string) => {
-    updateDescription((value, selectionStart, selectionEnd) => {
-      const selected = value.slice(selectionStart, selectionEnd) || "List item";
-      const lines = selected.split("\n");
-      const nextContent = lines.map((line, index) => formatter(line, index)).join("\n");
-      const nextValue =
-        value.slice(0, selectionStart) + nextContent + value.slice(selectionEnd);
-
-      return {
-        nextValue,
-        selectionStart,
-        selectionEnd: selectionStart + nextContent.length
-      };
-    });
-  };
-
-  const insertLink = () => {
-    updateDescription((value, selectionStart, selectionEnd) => {
-      const selected = value.slice(selectionStart, selectionEnd) || "Link text";
-      const linkMarkup = `[${selected}](https://example.com)`;
-      const nextValue = value.slice(0, selectionStart) + linkMarkup + value.slice(selectionEnd);
-
-      return {
-        nextValue,
-        selectionStart: selectionStart + 1,
-        selectionEnd: selectionStart + 1 + selected.length
-      };
-    });
-  };
 
   const commitTag = () => {
     const nextTag = tagDraft.trim().replace(/,$/, "");
@@ -238,171 +155,10 @@ export function EpisodeEditorForm({
                 </label>
               </div>
 
-              <div className="flex min-h-[500px] flex-1 flex-col gap-3">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <label className={labelClassName} htmlFor="episode-show-notes">
-                    Show Notes
-                  </label>
-
-                  <div className="inline-flex items-center rounded-lg bg-surface-container-low p-1">
-                    <button
-                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
-                        editorMode === "write"
-                          ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
-                          : "bg-transparent text-on-surface-variant hover:text-on-surface"
-                      }`}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setEditorMode("write");
-                      }}
-                      type="button"
-                    >
-                      Write
-                    </button>
-                    <button
-                      className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
-                        editorMode === "preview"
-                          ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
-                          : "bg-transparent text-on-surface-variant hover:text-on-surface"
-                      }`}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setEditorMode("preview");
-                      }}
-                      type="button"
-                    >
-                      Preview
-                    </button>
-                  </div>
-                </div>
-
-                <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
-                  <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface-container-low px-2 py-2 text-on-surface-variant">
-                    <button
-                      aria-label="Bold"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        wrapSelection("**");
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        format_bold
-                      </span>
-                    </button>
-                    <button
-                      aria-label="Italic"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        wrapSelection("*");
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        format_italic
-                      </span>
-                    </button>
-                    <span className="mx-1 h-5 w-px bg-outline-variant/50" />
-                    <button
-                      aria-label="Link"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        insertLink();
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        link
-                      </span>
-                    </button>
-                    <button
-                      aria-label="Quote"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        prefixLines((line) => `> ${line}`);
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        format_quote
-                      </span>
-                    </button>
-                    <button
-                      aria-label="Code"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        wrapSelection("`");
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        code
-                      </span>
-                    </button>
-                    <span className="mx-1 h-5 w-px bg-outline-variant/50" />
-                    <button
-                      aria-label="Bulleted List"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        prefixLines((line) => `- ${line}`);
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        format_list_bulleted
-                      </span>
-                    </button>
-                    <button
-                      aria-label="Numbered List"
-                      className="rounded-lg p-2 transition hover:bg-surface-container-low hover:text-on-surface"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        prefixLines((line, index) => `${index + 1}. ${line}`);
-                      }}
-                      type="button"
-                    >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
-                        format_list_numbered
-                      </span>
-                    </button>
-                  </div>
-
-                  {editorMode === "write" ? (
-                    <textarea
-                      aria-invalid={errors.description ? true : undefined}
-                      className="min-h-[520px] w-full resize-none border-0 bg-transparent p-4 font-mono text-sm leading-relaxed text-on-surface outline-none placeholder:text-on-surface-variant/45 focus:ring-0"
-                      id="episode-show-notes"
-                      placeholder="Write your show notes here using Markdown..."
-                      {...descriptionField}
-                      ref={(element) => {
-                        descriptionField.ref(element);
-                        descriptionRef.current = element;
-                      }}
-                    />
-                  ) : (
-                    <div className="min-h-[520px] p-4">
-                      {description.trim().length > 0 ? (
-                        <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-on-surface">
-                          {description}
-                        </pre>
-                      ) : (
-                        <p className="text-sm text-on-surface-variant">
-                          Nothing to preview yet.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {errors.description?.message ? (
-                  <p className="text-xs text-danger">{errors.description.message}</p>
-                ) : null}
-              </div>
+              <EpisodeShowNotesField
+                error={errors.description?.message}
+                form={form}
+              />
             </div>
           </section>
 
