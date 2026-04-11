@@ -1,6 +1,6 @@
 # Tasks: Episode Show Notes Editor (Tiptap)
 
-**Status:** Ready for implementation  
+**Status:** Implemented  
 **Spec:** `.specs/admin/episode-editor-tiptap/spec.md`  
 **Design:** `.specs/admin/episode-editor-tiptap/design.md`  
 **Assigned to:** Frontend Blacksmith

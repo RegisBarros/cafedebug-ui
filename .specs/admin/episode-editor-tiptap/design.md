@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| **Status** | `Draft` |
+| **Status** | `Implemented` |
 | **Spec** | `.specs/admin/episode-editor-tiptap/spec.md` |
 | **Source of truth** | `.specs/admin/stitch/cafedebug-admin/code/themes/*/episode-edit.html` |
 | **Visual reference** | `.specs/admin/stitch/cafedebug-admin/images/themes/light/episode-edit.png` |
