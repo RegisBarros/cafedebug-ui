@@ -1,6 +1,6 @@
 # Spec: API Client Refactor (Orval Contract Layer + Next.js Data Strategy)
 
-**Status:** Approved  
+**Status:** Implemented  
 **Scope:** Monorepo (`packages/api-client`, `apps/admin`, `apps/web`)  
 **Primary Goal:** Type-safe, simple, and scalable API access with clear app-specific fetching rules
 

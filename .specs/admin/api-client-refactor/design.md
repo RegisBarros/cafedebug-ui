@@ -1,6 +1,6 @@
 # Design: API Client Refactor (Orval + Next.js App-Specific Fetching)
 
-**Status:** Approved  
+**Status:** Implemented  
 **Spec:** `spec.md` (same folder)
 
 ---

@@ -46,7 +46,7 @@ What we confirmed from those sources:
 | Admin | `Next.js` App Router + `TypeScript` | Separate app with authenticated CRUD workflows. |
 | Styling | `Tailwind CSS v4` + CSS variables | Best fit for white-label design tokens and shared theming. |
 | Components | `shadcn/ui` + custom primitives | Use as a base layer, not as the visual identity. |
-| API contract | `openapi-typescript` + `openapi-fetch` | Generate typed API contracts from the backend Swagger/OpenAPI output. |
+| API contract | `Orval` (fetch client) | Generate typed API endpoint functions and models from the backend Swagger/OpenAPI output. |
 | Data fetching | Server `fetch` by default on the website, `TanStack Query` in admin/client-heavy flows | Keep the public website SEO-first and the admin productivity-first. |
 | Forms | `React Hook Form` + `Zod` | Strong DX for admin forms and validation. |
 | Testing | `Vitest`, `React Testing Library`, `Playwright`, `MSW` | Unit, component, e2e, and API-mocking coverage. |
@@ -379,7 +379,7 @@ This project should be AI-friendly without becoming AI-dependent.
 
 Use the root validation commands before merge and in CI:
 
-- `pnpm gate:contract` → verifies OpenAPI generated client is up to date (`openapi-typescript --check`)
+- `pnpm gate:contract` → verifies OpenAPI generated client is up to date (`orval --config orval.config.ts`)
 - `pnpm gate:quality` → runs `lint`, `typecheck`, and `build`
 - `pnpm gate:states` → runs admin loading/empty/error state coverage checks
 - `pnpm gate:validation` (or `pnpm ci:validation`) → executes all gates in order

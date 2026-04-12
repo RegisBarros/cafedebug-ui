@@ -1,6 +1,6 @@
 # Tasks: API Client Refactor (Orval + Next.js Data Strategy)
 
-**Status:** Approved  
+**Status:** Implemented  
 **Spec:** `spec.md`  
 **Design:** `design.md`  
 **Assigned to:** Architect Guardian + Frontend Blacksmith + The Debugger + Documentation Monk
