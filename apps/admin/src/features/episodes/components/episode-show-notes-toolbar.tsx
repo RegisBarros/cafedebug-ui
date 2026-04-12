@@ -16,7 +16,7 @@ export function EpisodeShowNotesToolbar({ actions, disabled }: EpisodeShowNotesT
   const separatorIndices = new Set([2, 5]);
 
   return (
-    <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface-container-low px-2 py-2 text-on-surface-variant">
+    <div className="flex flex-wrap items-center gap-1 overflow-x-auto border-b border-outline-variant/50 bg-surface-neutral-soft dark:bg-white/5 px-2 py-2 text-on-surface-variant">
       {actions.map((action, index) => (
         <span key={action.label} className="contents">
           {separatorIndices.has(index) ? (

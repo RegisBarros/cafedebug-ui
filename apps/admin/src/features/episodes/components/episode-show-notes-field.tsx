@@ -78,7 +78,7 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
           Show Notes
         </label>
 
-        <div className="inline-flex items-center rounded-lg bg-surface-container-low p-1">
+        <div className="inline-flex items-center rounded-lg bg-slate-100 p-1 dark:bg-surface-container dark:border dark:border-outline-variant/50">
           <button
             className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
               editorMode === "write"
