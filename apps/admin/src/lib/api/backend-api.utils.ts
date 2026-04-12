@@ -5,14 +5,16 @@ import { getTraceIdFromHeaders } from "@/lib/observability";
 
 export type BackendErrorResult = {
   error: NormalizedApiError;
-  response: Response;
+  status: number;
+  headers: Headers;
   setCookieHeaders: string[];
   traceId?: string;
 };
 
 export type BackendSuccessResult<TData = unknown> = {
   data: TData;
-  response: Response;
+  status: number;
+  headers: Headers;
   setCookieHeaders: string[];
   traceId?: string;
 };
@@ -35,39 +37,46 @@ export const toConfigurationErrorResult = (): BackendErrorResult => ({
     },
     503
   ),
-  response: new Response(null, { status: 503 }),
+  status: 503,
+  headers: new Headers(),
   setCookieHeaders: []
 });
 
-export const normalizeBackendResult = <TData = unknown>(
-  result:
-    | { data: TData; response: Response }
-    | { error: unknown; response: Response }
-): BackendApiResult<TData> => {
-  const setCookieHeaders = extractSetCookieHeaders(result.response);
+type OrvalResponse = {
+  data: unknown;
+  status: number;
+  headers: Headers;
+};
 
-  if ("error" in result) {
+export const normalizeBackendResult = <TData = unknown>(
+  result: OrvalResponse
+): BackendApiResult<TData> => {
+  const setCookieHeaders = extractSetCookieHeaders(result);
+
+  if (result.status >= 400) {
     const normalizedError = normalizeApiError(
-      result.error,
-      result.response.status
+      result.data,
+      result.status
     );
     const traceId =
       normalizedError.traceId ??
-      getTraceIdFromHeaders(result.response.headers);
+      getTraceIdFromHeaders(result.headers);
 
     return {
       error: normalizedError,
-      response: result.response,
+      status: result.status,
+      headers: result.headers,
       setCookieHeaders,
       ...(traceId ? { traceId } : {})
     };
   }
 
-  const traceId = getTraceIdFromHeaders(result.response.headers);
+  const traceId = getTraceIdFromHeaders(result.headers);
 
   return {
-    data: result.data,
-    response: result.response,
+    data: result.data as TData,
+    status: result.status,
+    headers: result.headers,
     setCookieHeaders,
     ...(traceId ? { traceId } : {})
   };

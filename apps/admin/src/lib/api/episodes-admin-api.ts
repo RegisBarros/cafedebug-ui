@@ -1,4 +1,4 @@
-import { type components } from "@cafedebug/api-client";
+import type { EpisodeRequest } from "@cafedebug/api-client";
 
 import { getAdminApiClient } from "./admin-client";
 import {
@@ -15,7 +15,7 @@ export type BackendEpisodesQuery = {
   descending?: boolean;
 };
 
-export type EpisodeMutationInput = components["schemas"]["EpisodeRequest"];
+export type EpisodeMutationInput = EpisodeRequest;
 
 export type BackendEpisodeApiResult = BackendApiResult;
 
@@ -32,10 +32,7 @@ export const listEpisodesFromBackend = async ({
     return toConfigurationErrorResult();
   }
 
-  const response = await adminClient.episodes.list.get({
-    params: {
-      query
-    },
+  const response = await adminClient.episodes.list(query, {
     headers: withAuthCookieHeader(cookieHeader)
   });
 
@@ -55,10 +52,7 @@ export const getEpisodeFromBackend = async ({
     return toConfigurationErrorResult();
   }
 
-  const response = await adminClient.episodes.byId.get({
-    params: {
-      path: { id }
-    },
+  const response = await adminClient.episodes.get(id, {
     headers: withAuthCookieHeader(cookieHeader)
   });
 
@@ -78,8 +72,7 @@ export const createEpisodeInBackend = async ({
     return toConfigurationErrorResult();
   }
 
-  const response = await adminClient.episodes.list.create({
-    body: payload,
+  const response = await adminClient.episodes.create(payload, {
     headers: withAuthCookieHeader(cookieHeader)
   });
 
@@ -101,11 +94,7 @@ export const updateEpisodeInBackend = async ({
     return toConfigurationErrorResult();
   }
 
-  const response = await adminClient.episodes.byId.update({
-    params: {
-      path: { id }
-    },
-    body: payload,
+  const response = await adminClient.episodes.update(id, payload, {
     headers: withAuthCookieHeader(cookieHeader)
   });
 

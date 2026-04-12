@@ -1,6 +1,6 @@
-import type { NormalizedApiError, components } from "@cafedebug/api-client";
+import type { NormalizedApiError, EpisodeRequest } from "@cafedebug/api-client";
 
-export type EpisodeRequestPayload = components["schemas"]["EpisodeRequest"];
+export type EpisodeRequestPayload = EpisodeRequest;
 
 export type EpisodeRecord = {
   id: number;

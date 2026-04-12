@@ -1,10 +1,21 @@
-import type { PathBasedClient } from "../../client";
-import { adminApiPaths } from "../paths";
-import { m } from "./utils";
+import type { ForgotPasswordRequest, ChangePasswordRequest } from "../../generated/models";
+import {
+  postApiV1AccountsAdminForgotPassword,
+  postApiV1AccountsAdminChangePassword,
+  postApiV1AccountsAdminResetPassword,
+  postApiV1AccountsAdminVerifyEmail
+} from "../../generated/accounts/accounts";
 
-export const createAccountsResource = (pathClient: PathBasedClient) => ({
-  forgotPassword: m(pathClient, adminApiPaths.accounts.forgotPassword, "POST"),
-  changePassword: m(pathClient, adminApiPaths.accounts.changePassword, "POST"),
-  resetPassword: m(pathClient, adminApiPaths.accounts.resetPassword, "POST"),
-  verifyEmail: m(pathClient, adminApiPaths.accounts.verifyEmail, "POST")
+export const createAccountsResource = () => ({
+  forgotPassword: (body: ForgotPasswordRequest, options?: RequestInit) =>
+    postApiV1AccountsAdminForgotPassword(body, options),
+
+  changePassword: (body: ChangePasswordRequest, options?: RequestInit) =>
+    postApiV1AccountsAdminChangePassword(body, options),
+
+  resetPassword: (body: ChangePasswordRequest, options?: RequestInit) =>
+    postApiV1AccountsAdminResetPassword(body, options),
+
+  verifyEmail: (body: string, options?: RequestInit) =>
+    postApiV1AccountsAdminVerifyEmail(body, options)
 });

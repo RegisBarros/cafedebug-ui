@@ -1,4 +1,4 @@
-import type { components } from "@cafedebug/api-client";
+import type { EpisodeRequest } from "@cafedebug/api-client";
 
 import type {
   EpisodeEditorFormValues,
@@ -70,7 +70,7 @@ export const toEpisodeRequestPayload = ({
 }: {
   values: EpisodeEditorFormValues;
   action: EpisodeMutationAction;
-}): components["schemas"]["EpisodeRequest"] => {
+}): EpisodeRequest => {
   const title = toTrimmedValue(values.title);
   const shortDescription = toTrimmedValue(values.shortDescription);
   const description = values.description.trim();
@@ -81,7 +81,7 @@ export const toEpisodeRequestPayload = ({
   const categoryId = parseOptionalInteger(values.categoryId);
   const tags = toTagsList(values.tags);
 
-  const payload: components["schemas"]["EpisodeRequest"] = {
+  const payload: EpisodeRequest = {
     title,
     active: action === "publish"
   };

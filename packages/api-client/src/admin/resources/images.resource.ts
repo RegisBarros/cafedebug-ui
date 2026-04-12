@@ -1,8 +1,13 @@
-import type { PathBasedClient } from "../../client";
-import { adminApiPaths } from "../paths";
-import { m } from "./utils";
+import type { UploadImageRequest, DeleteImageRequest } from "../../generated/models";
+import {
+  postApiV1AdminImagesUpload,
+  postApiV1AdminImagesDelete
+} from "../../generated/admin-images/admin-images";
 
-export const createImagesResource = (pathClient: PathBasedClient) => ({
-  upload: m(pathClient, adminApiPaths.images.upload, "POST"),
-  remove: m(pathClient, adminApiPaths.images.remove, "POST")
+export const createImagesResource = () => ({
+  upload: (body: UploadImageRequest, options?: RequestInit) =>
+    postApiV1AdminImagesUpload(body, options),
+
+  remove: (body: DeleteImageRequest, options?: RequestInit) =>
+    postApiV1AdminImagesDelete(body, options)
 });

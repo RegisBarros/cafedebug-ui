@@ -4,16 +4,14 @@
  * CONFIRMED (Phase 0): The backend POST /api/v1/admin/auth/token endpoint returns
  * token data exclusively in the JSON response body. No Set-Cookie headers are emitted.
  *
- * The generated OpenAPI schema (components["schemas"]["Result"]) only contains
- * `isSuccess`, `error`, and `isFailure` — token fields are absent from the schema.
- * The actual response body includes: { accessToken, refreshToken, tokenType, expiresIn }.
- *
  * This handler:
  * 1. Attempts Strategy A first (forwarding any Set-Cookie headers defensively)
  * 2. Falls back to Strategy B: extracts tokens from JSON body and sets HttpOnly cookies
  * 3. Always sets the session signal cookie after successful token establishment
  */
 import { NextResponse } from "next/server";
+
+import { normalizeApiError } from "@cafedebug/api-client";
 
 import { getAdminApiClient } from "@/lib/api/admin-client";
 
@@ -36,6 +34,8 @@ import {
 import { loginSchema } from "../schemas/login.schema";
 import { createErrorResponse } from "../errors/createErrorResponse";
 import type { TokenResponse } from "../types/auth.types";
+
+const AUTH_TOKEN_ENDPOINT = "/api/v1/admin/auth/token";
 
 const readLoginBody = async (request: Request): Promise<unknown | undefined> => {
   try {
@@ -118,51 +118,46 @@ export async function loginHandler(request: Request) {
 
   try {
     const tokenResponse = await adminApiClient.auth.token({
-      body: {
-        email: parsedBody.data.email,
-        password: parsedBody.data.password
-      }
+      email: parsedBody.data.email,
+      password: parsedBody.data.password
     });
 
-    const normalizedTokenResponse = adminApiClient.normalizeResponse(tokenResponse);
-    const setCookieHeaders = extractSetCookieHeaders(
-      normalizedTokenResponse.response
-    );
+    const setCookieHeaders = extractSetCookieHeaders(tokenResponse);
 
-    if ("error" in normalizedTokenResponse) {
-      const responseFieldErrors = normalizedTokenResponse.error.fieldErrors;
+    if (tokenResponse.status >= 400) {
+      const normalizedError = normalizeApiError(
+        tokenResponse.data,
+        tokenResponse.status
+      );
       const traceId =
-        normalizedTokenResponse.error.traceId ??
-        getTraceIdFromHeaders(normalizedTokenResponse.response.headers);
+        normalizedError.traceId ??
+        getTraceIdFromHeaders(tokenResponse.headers);
 
       logger.warn(observabilityEvents.apiRequestFailed, {
         module: "auth",
         action: "login",
-        endpoint: adminApiClient.paths.auth.token,
-        status: normalizedTokenResponse.error.status,
+        endpoint: AUTH_TOKEN_ENDPOINT,
+        status: normalizedError.status,
         ...(traceId ? { traceId } : {})
       });
 
       return createErrorResponse({
-        detail: normalizedTokenResponse.error.detail,
-        status: normalizedTokenResponse.error.status,
-        title: normalizedTokenResponse.error.title,
-        ...(normalizedTokenResponse.error.type ? { type: normalizedTokenResponse.error.type } : {}),
+        detail: normalizedError.detail,
+        status: normalizedError.status,
+        title: normalizedError.title,
+        ...(normalizedError.type ? { type: normalizedError.type } : {}),
         ...(traceId ? { traceId } : {}),
-        ...(responseFieldErrors ? { fieldErrors: responseFieldErrors } : {}),
+        ...(normalizedError.fieldErrors ? { fieldErrors: normalizedError.fieldErrors } : {}),
         setCookieHeaders,
         clearAuthCookies: true,
         event: observabilityEvents.authLoginFailed
       });
     }
 
-    // GAP-02: Removed dead `isSuccess === false` check — the API contract has no such
-    // field in the token response. Any API errors surface via `"error" in normalizedTokenResponse`.
-
     // Strategy B: Extract tokens from the JSON response body.
     // The generated schema does not capture token fields; use a type assertion
     // against the verified TokenResponse shape from the API contract.
-    const tokenData = normalizedTokenResponse.data as unknown as TokenResponse;
+    const tokenData = tokenResponse.data as unknown as TokenResponse;
 
     if (!tokenData.accessToken || typeof tokenData.accessToken !== "string") {
       logger.error(observabilityEvents.authLoginFailed, {
@@ -223,7 +218,7 @@ export async function loginHandler(request: Request) {
     logger.error(observabilityEvents.apiRequestFailed, {
       module: "auth",
       action: "login",
-      endpoint: adminApiClient.paths.auth.token,
+      endpoint: AUTH_TOKEN_ENDPOINT,
       status: 503
     });
 
@@ -237,7 +232,7 @@ export async function loginHandler(request: Request) {
       },
       context: {
         status: 503,
-        endpoint: adminApiClient.paths.auth.token
+        endpoint: AUTH_TOKEN_ENDPOINT
       }
     });
 

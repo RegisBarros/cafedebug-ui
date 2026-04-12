@@ -1,15 +1,25 @@
-import type { PathBasedClient } from "../../client";
-import { adminApiPaths } from "../paths";
-import { m } from "./utils";
+import type { EpisodeRequest, GetApiV1AdminEpisodesParams } from "../../generated/models";
+import {
+  getApiV1AdminEpisodes,
+  getApiV1AdminEpisodesId,
+  postApiV1AdminEpisodes,
+  putApiV1AdminEpisodesId,
+  deleteApiV1AdminEpisodesId
+} from "../../generated/admin-episodes/admin-episodes";
 
-export const createEpisodesResource = (pathClient: PathBasedClient) => ({
-  list: {
-    get: m(pathClient, adminApiPaths.episodes.list, "GET"),
-    create: m(pathClient, adminApiPaths.episodes.list, "POST")
-  },
-  byId: {
-    get: m(pathClient, adminApiPaths.episodes.byId, "GET"),
-    update: m(pathClient, adminApiPaths.episodes.byId, "PUT"),
-    remove: m(pathClient, adminApiPaths.episodes.byId, "DELETE")
-  }
+export const createEpisodesResource = () => ({
+  list: (params?: GetApiV1AdminEpisodesParams, options?: RequestInit) =>
+    getApiV1AdminEpisodes(params, options),
+
+  get: (id: number, options?: RequestInit) =>
+    getApiV1AdminEpisodesId(id, options),
+
+  create: (body: EpisodeRequest, options?: RequestInit) =>
+    postApiV1AdminEpisodes(body, options),
+
+  update: (id: number, body: EpisodeRequest, options?: RequestInit) =>
+    putApiV1AdminEpisodesId(id, body, options),
+
+  remove: (id: number, options?: RequestInit) =>
+    deleteApiV1AdminEpisodesId(id, options)
 });

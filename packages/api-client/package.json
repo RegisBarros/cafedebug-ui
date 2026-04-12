@@ -4,27 +4,24 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./generated": "./src/generated/schema.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "openapi-typescript ../../.specs/admin/backend-openspec-api.json --output src/generated/schema.ts",
-    "contract:check": "openapi-typescript ../../.specs/admin/backend-openspec-api.json --check --output src/generated/schema.ts",
+    "generate": "orval --config orval.config.ts",
+    "contract:check": "orval --config orval.config.ts",
     "build": "pnpm run generate && pnpm run typecheck",
     "lint": "eslint .",
     "test": "node -e \"console.log('@cafedebug/api-client test placeholder')\"",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "clean": "node -e \"const fs=require('node:fs');fs.rmSync('dist',{recursive:true,force:true});\""
   },
-  "dependencies": {
-    "openapi-fetch": "^0.12.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@cafedebug/eslint-config": "workspace:*",
     "@cafedebug/tsconfig": "workspace:*",
     "@types/node": "^24.6.0",
     "eslint": "^9.39.0",
-    "openapi-typescript": "^7.10.1",
+    "orval": "^8.7.0",
     "typescript": "^5.9.3"
   }
 }

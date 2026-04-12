@@ -23,7 +23,7 @@ export const requestAuthToken = async (
 
   if (!adminClient) return toConfigurationErrorResult();
 
-  const response = await adminClient.auth.token({ body: input });
+  const response = await adminClient.auth.token(input);
 
   return normalizeBackendResult(response);
 };
@@ -36,10 +36,10 @@ export const requestRefreshToken = async ({
 
   if (!adminClient) return toConfigurationErrorResult();
 
-  const response = await adminClient.auth.refreshToken({
-    body: { refreshToken },
-    headers: withAuthCookieHeader(cookieHeader)
-  });
+  const response = await adminClient.auth.refreshToken(
+    { refreshToken },
+    { headers: withAuthCookieHeader(cookieHeader) }
+  );
 
   return normalizeBackendResult(response);
 };
