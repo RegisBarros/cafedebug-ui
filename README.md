@@ -1,5 +1,11 @@
 # CafeDebug Platform
 
+![image](https://user-images.githubusercontent.com/11943572/234849730-c6b41618-6c13-4a87-9b5e-5b9d16ba4474.png)
+
+
+🚧  Project 🚀 under construction (with coffee and bugs)...  ☕💻🚧
+
+
 This repository is the planning and foundation space for the CafeDebug modernization effort.
 
 CafeDebug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:

@@ -4,6 +4,8 @@ import {
   appendSetCookieHeaders,
   clearKnownAuthCookies,
   hasSessionSignalCookie,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
   setSessionCookie
 } from "@/lib/auth/next-response-cookies";
 import {
@@ -11,7 +13,11 @@ import {
   getRouteProtectionRedirect,
   isProtectedAdminPath
 } from "@/lib/auth/route-rules.js";
-import { knownRefreshCookieNames } from "@/lib/auth/session-constants";
+import {
+  knownAccessCookieNames,
+  knownRefreshCookieNames
+} from "@/lib/auth/session-constants";
+import type { TokenEnvelope } from "@/features/auth/types/auth.types";
 import { validateSessionWithSingleRefresh } from "@/lib/auth/session-strategy.js";
 import { adminRuntimeEnv } from "@/lib/env";
 import { captureException, logger, observabilityEvents } from "@/lib/observability";
@@ -23,6 +29,7 @@ type SessionValidation = {
   status: "authenticated" | "unauthenticated" | "error";
   reason?: string;
   setCookieHeaders: string[];
+  tokenEnvelope?: TokenEnvelope;
 };
 
 const toLoginRedirect = (request: NextRequest, reason: string) => {
@@ -69,6 +76,7 @@ export async function middleware(request: NextRequest) {
   const sessionValidation = (await validateSessionWithSingleRefresh({
     baseUrl: adminRuntimeEnv.apiBaseUrl,
     cookieHeader: request.headers.get("cookie") ?? "",
+    accessCookieNames: knownAccessCookieNames,
     refreshCookieNames: knownRefreshCookieNames,
     refreshPath,
     sessionProbePath
@@ -91,12 +99,36 @@ export async function middleware(request: NextRequest) {
 
       const response = NextResponse.redirect(new URL(redirectTarget, request.url));
       appendSetCookieHeaders(response, sessionValidation.setCookieHeaders);
+      if (sessionValidation.tokenEnvelope) {
+        setAccessTokenCookie(
+          response,
+          sessionValidation.tokenEnvelope.accessToken,
+          sessionValidation.tokenEnvelope.expiresIn
+        );
+        setRefreshTokenCookie(
+          response,
+          sessionValidation.tokenEnvelope.refreshToken.token,
+          sessionValidation.tokenEnvelope.refreshToken.expirationDate
+        );
+      }
       setSessionCookie(response);
       return response;
     }
 
     const response = NextResponse.next();
     appendSetCookieHeaders(response, sessionValidation.setCookieHeaders);
+    if (sessionValidation.tokenEnvelope) {
+      setAccessTokenCookie(
+        response,
+        sessionValidation.tokenEnvelope.accessToken,
+        sessionValidation.tokenEnvelope.expiresIn
+      );
+      setRefreshTokenCookie(
+        response,
+        sessionValidation.tokenEnvelope.refreshToken.token,
+        sessionValidation.tokenEnvelope.refreshToken.expirationDate
+      );
+    }
     setSessionCookie(response);
 
     return response;

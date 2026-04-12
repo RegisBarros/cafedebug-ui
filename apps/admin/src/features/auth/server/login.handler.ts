@@ -33,7 +33,7 @@ import {
 } from "@/lib/auth/next-response-cookies";
 import { loginSchema } from "../schemas/login.schema";
 import { createErrorResponse } from "../errors/createErrorResponse";
-import type { TokenResponse } from "../types/auth.types";
+import { parseTokenEnvelope } from "./token-envelope";
 
 const AUTH_TOKEN_ENDPOINT = "/api/v1/admin/auth/token";
 
@@ -154,16 +154,13 @@ export async function loginHandler(request: Request) {
       });
     }
 
-    // Strategy B: Extract tokens from the JSON response body.
-    // The generated schema does not capture token fields; use a type assertion
-    // against the verified TokenResponse shape from the API contract.
-    const tokenData = tokenResponse.data as unknown as TokenResponse;
+    const tokenData = parseTokenEnvelope(tokenResponse.data);
 
-    if (!tokenData.accessToken || typeof tokenData.accessToken !== "string") {
+    if (!tokenData) {
       logger.error(observabilityEvents.authLoginFailed, {
         module: "auth",
         action: "login",
-        status: 200,
+        status: tokenResponse.status,
         issue: "missing-access-token"
       });
 
@@ -180,7 +177,7 @@ export async function loginHandler(request: Request) {
     logger.info(observabilityEvents.authLoginSuccess, {
       module: "auth",
       action: "login",
-      status: 200
+      status: tokenResponse.status
     });
 
     addSentryBreadcrumb("Admin login success", {
@@ -188,7 +185,7 @@ export async function loginHandler(request: Request) {
       data: {
         module: "auth",
         action: "login",
-        status: 200
+        status: tokenResponse.status
       }
     });
 

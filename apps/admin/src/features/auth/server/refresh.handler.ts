@@ -1,46 +1,32 @@
 import { NextResponse } from "next/server";
 
-import { normalizeApiError } from "@cafedebug/api-client";
-
-import { getAdminApiClient } from "@/lib/api/admin-client";
+import { requestRefreshToken } from "@/lib/api/auth-admin-api";
+import { readRefreshTokenFromCookieHeader } from "@/lib/auth/backend-auth-headers.js";
 import {
   appendSetCookieHeaders,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
   setSessionCookie
 } from "@/lib/auth/next-response-cookies";
 import { knownRefreshCookieNames } from "@/lib/auth/session-constants";
 import {
-  extractSetCookieHeaders,
-  parseCookieHeader
-} from "@/lib/auth/session-strategy.js";
-import {
   addSentryBreadcrumb,
   captureException,
-  getTraceIdFromHeaders,
   logger,
   observabilityEvents
 } from "@/lib/observability";
 
 import { createErrorResponse } from "../errors/createErrorResponse";
+import { parseTokenEnvelope } from "./token-envelope";
 
 const REFRESH_TOKEN_ENDPOINT = "/api/v1/admin/auth/refresh-token";
 
-const readRefreshToken = (cookieHeader: string): string | undefined => {
-  const cookieMap = parseCookieHeader(cookieHeader);
-
-  for (const cookieName of knownRefreshCookieNames) {
-    const refreshToken = cookieMap.get(cookieName);
-
-    if (typeof refreshToken === "string" && refreshToken.length > 0) {
-      return refreshToken;
-    }
-  }
-
-  return undefined;
-};
-
 export async function refreshHandler(request: Request) {
   const cookieHeader = request.headers.get("cookie") ?? "";
-  const refreshToken = readRefreshToken(cookieHeader);
+  const refreshToken = readRefreshTokenFromCookieHeader(
+    cookieHeader,
+    knownRefreshCookieNames
+  );
 
   if (!refreshToken) {
     return createErrorResponse({
@@ -49,18 +35,6 @@ export async function refreshHandler(request: Request) {
       title: "Session expired",
       event: observabilityEvents.authRefreshMissingToken,
       clearAuthCookies: true
-    });
-  }
-
-  const adminApiClient = getAdminApiClient();
-
-  if (!adminApiClient) {
-    return createErrorResponse({
-      detail: "Admin API base URL is not configured.",
-      status: 503,
-      title: "Configuration Error",
-      event: observabilityEvents.authRefreshFailed,
-      logLevel: "error"
     });
   }
 
@@ -73,58 +47,54 @@ export async function refreshHandler(request: Request) {
   });
 
   try {
-    const refreshResponse = await adminApiClient.auth.refreshToken(
-      { refreshToken },
-      { headers: { cookie: cookieHeader } }
-    );
+    const backendResult = await requestRefreshToken({
+      refreshToken
+    });
 
-    const setCookieHeaders = extractSetCookieHeaders(refreshResponse);
+    if ("error" in backendResult) {
+      const logLevel = backendResult.error.status >= 500 ? "error" : "warn";
 
-    if (refreshResponse.status >= 400) {
-      const normalizedError = normalizeApiError(
-        refreshResponse.data,
-        refreshResponse.status
-      );
-      const traceId =
-        normalizedError.traceId ??
-        getTraceIdFromHeaders(refreshResponse.headers);
-
-      logger.warn(observabilityEvents.apiRequestFailed, {
+      logger[logLevel](observabilityEvents.apiRequestFailed, {
         module: "auth",
         action: "refresh",
         endpoint: REFRESH_TOKEN_ENDPOINT,
-        status: normalizedError.status,
-        ...(traceId ? { traceId } : {})
+        status: backendResult.error.status,
+        ...(backendResult.traceId ? { traceId: backendResult.traceId } : {})
       });
 
       return createErrorResponse({
-        detail: normalizedError.detail,
-        status: normalizedError.status,
-        title: normalizedError.title,
-        ...(traceId ? { traceId } : {}),
-        setCookieHeaders,
+        detail: backendResult.error.detail,
+        status: backendResult.error.status,
+        title: backendResult.error.title,
+        ...(backendResult.traceId ? { traceId: backendResult.traceId } : {}),
+        setCookieHeaders: backendResult.setCookieHeaders,
         clearAuthCookies: true,
-        event: observabilityEvents.authRefreshFailed
+        event: observabilityEvents.authRefreshFailed,
+        ...(logLevel === "error" ? { logLevel: "error" } : {})
       });
     }
 
-    const responseData = refreshResponse.data as { isSuccess?: boolean; error?: { message?: string } };
+    const tokenEnvelope = parseTokenEnvelope(backendResult.data);
 
-    if (responseData.isSuccess === false) {
-      const traceId = getTraceIdFromHeaders(refreshResponse.headers);
-
-      const fallbackDetail =
-        responseData.error?.message?.trim() ??
-        "Unable to refresh session. Please sign in again.";
+    if (!tokenEnvelope) {
+      logger.error(observabilityEvents.authRefreshFailed, {
+        module: "auth",
+        action: "refresh",
+        endpoint: REFRESH_TOKEN_ENDPOINT,
+        status: backendResult.status,
+        issue: "invalid-token-envelope"
+      });
 
       return createErrorResponse({
-        detail: fallbackDetail,
-        status: 401,
-        title: "Session expired",
-        ...(traceId ? { traceId } : {}),
-        setCookieHeaders,
+        detail:
+          "Authentication refresh response was incomplete. Please sign in again.",
+        status: 502,
+        title: "Upstream Error",
+        ...(backendResult.traceId ? { traceId: backendResult.traceId } : {}),
+        setCookieHeaders: backendResult.setCookieHeaders,
         clearAuthCookies: true,
-        event: observabilityEvents.authRefreshFailed
+        event: observabilityEvents.authRefreshFailed,
+        logLevel: "error"
       });
     }
 
@@ -132,12 +102,18 @@ export async function refreshHandler(request: Request) {
       module: "auth",
       action: "refresh",
       endpoint: REFRESH_TOKEN_ENDPOINT,
-      status: 200
+      status: backendResult.status
     });
 
     const response = NextResponse.json({ success: true }, { status: 200 });
 
-    appendSetCookieHeaders(response, setCookieHeaders);
+    appendSetCookieHeaders(response, backendResult.setCookieHeaders);
+    setAccessTokenCookie(response, tokenEnvelope.accessToken, tokenEnvelope.expiresIn);
+    setRefreshTokenCookie(
+      response,
+      tokenEnvelope.refreshToken.token,
+      tokenEnvelope.refreshToken.expirationDate
+    );
     setSessionCookie(response);
 
     return response;

@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchProtectedAdminRoute } from "@/lib/api/protected-route-fetch.js";
+
 import type {
   AdminRouteError,
   EpisodeRequestPayload,
@@ -68,10 +70,10 @@ const toRouteError = (
 };
 
 const fetchEpisodeApi = async <TData>(
-  input: RequestInfo | URL,
+  input: string | URL,
   init?: RequestInit
 ): Promise<ApiEnvelope<TData>> => {
-  const response = await fetch(input, {
+  const response = await fetchProtectedAdminRoute(input, {
     ...init,
     headers: {
       "content-type": "application/json",

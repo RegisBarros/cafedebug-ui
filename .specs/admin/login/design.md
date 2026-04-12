@@ -53,6 +53,11 @@ Backend API
   │     setSessionCookie(cafedebug_admin_session)
   │     return NextResponse.json({ ok: true, redirectTo: "/episodes" })
   │
+  │   Subsequent server-side admin proxy calls:
+  │     read accessToken from HttpOnly cookie
+  │     translate it to Authorization: Bearer <JWT>
+  │     call protected backend admin endpoints
+  │
   ├── 401 Unauthorized → { type, title, status, detail }
   │     normalizeApiError → { status: 401, title, detail, type? }
   │     createErrorResponse(401) + clearKnownAuthCookies
@@ -126,7 +131,7 @@ LoginForm
 
 | Backend field | Type | Frontend mapping |
 |---|---|---|
-| `accessToken` | `string` (JWT) | Stored as HttpOnly cookie `accessToken` (or forwarded via Set-Cookie) |
+| `accessToken` | `string` (JWT) | Stored as HttpOnly cookie `accessToken` (or forwarded via Set-Cookie), then translated server-side into `Authorization: Bearer <JWT>` for protected admin backend calls |
 | `refreshToken.token` | `string` | Stored as HttpOnly cookie `refreshToken` (or forwarded via Set-Cookie) |
 | `refreshToken.expirationDate` | `string` (ISO 8601 UTC) | Used as `expires` on the refresh token cookie |
 | `tokenType` | `"Bearer"` | Not stored — informational only |
@@ -306,6 +311,10 @@ setSessionCookie(response);
 This cookie is what the middleware reads (`hasSessionSignalCookie`) to quickly determine
 whether to attempt session validation. It is independent of the actual auth tokens.
 
+### Cookie-to-Bearer Translation for Backend Calls
+
+Protected admin backend calls stay server-side. The auth helper reads the incoming cookie header, resolves the access token from the known access-cookie names, and builds an Authorization bearer header for protected backend requests. Resource requests send only the bearer header. Refresh requests use body-token exchange (`{ refreshToken }`) and do not forward auth cookies or bearer auth to the backend. After refresh rotation, the session probe retry rebuilds the bearer header from the refreshed token payload before calling the backend again.
+
 ### Cookie Security Settings
 
 Controlled by `adminRuntimeEnv`:
@@ -399,4 +408,3 @@ Sentry:
 - `addSentryBreadcrumb("Admin login success", ...)` — after success (handler)
 - `addSentryBreadcrumb("Admin login form failed", ...)` — after service failure (hook)
 - `captureException(error, ...)` — only on transport errors (handler catch + hook transport branch)
-

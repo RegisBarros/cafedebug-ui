@@ -24,6 +24,26 @@ const readCookieHeader = (headers) => {
   return "";
 };
 
+const readAuthorizationHeader = (headers) => {
+  if (!headers) {
+    return "";
+  }
+
+  if (headers instanceof Headers) {
+    return headers.get("authorization") ?? "";
+  }
+
+  if (typeof headers.Authorization === "string") {
+    return headers.Authorization;
+  }
+
+  if (typeof headers.authorization === "string") {
+    return headers.authorization;
+  }
+
+  return "";
+};
+
 test("auth route rules enforce episodes-first redirects", () => {
   assert.equal(AUTH_ROUTE_RULES.login, "/login");
   assert.equal(AUTH_ROUTE_RULES.postLogin, "/episodes");
@@ -71,18 +91,37 @@ test("single refresh attempt retries exactly once after a 401", async () => {
     fetchCalls.push({ url, init });
 
     if (fetchCalls.length === 1) {
+      assert.equal(
+        readAuthorizationHeader(init?.headers),
+        "Bearer stale-token"
+      );
+      assert.equal(readCookieHeader(init?.headers), "");
       return new Response(null, { status: 401 });
     }
 
     if (fetchCalls.length === 2) {
-      const headers = new Headers();
-      headers.append("set-cookie", "accessToken=rotated-token; Path=/; HttpOnly");
-      return new Response(null, { status: 200, headers });
+      assert.equal(readAuthorizationHeader(init?.headers), "");
+      assert.equal(readCookieHeader(init?.headers), "");
+      return new Response(
+        JSON.stringify({
+          accessToken: "rotated-token",
+          refreshToken: {
+            token: "rotated-refresh",
+            expirationDate: "2026-04-13T00:00:00.000Z"
+          },
+          tokenType: "Bearer",
+          expiresIn: 3600
+        }),
+        { status: 201, headers: new Headers({ "content-type": "application/json" }) }
+      );
     }
 
     if (fetchCalls.length === 3) {
-      const cookieHeader = readCookieHeader(init?.headers);
-      assert.match(cookieHeader, /accessToken=rotated-token/);
+      assert.equal(
+        readAuthorizationHeader(init?.headers),
+        "Bearer rotated-token"
+      );
+      assert.equal(readCookieHeader(init?.headers), "");
       return new Response(null, { status: 200 });
     }
 
@@ -91,6 +130,7 @@ test("single refresh attempt retries exactly once after a 401", async () => {
 
   const result = await validateSessionWithSingleRefresh({
     fetchImpl: fetchMock,
+    accessCookieNames: ["accessToken"],
     baseUrl: "http://api.local",
     cookieHeader: "accessToken=stale-token; refreshToken=refresh-value",
     refreshCookieNames: ["refreshToken"],
@@ -110,10 +150,14 @@ test("single refresh attempt stops when refresh fails", async () => {
     fetchCalls.push({ url, init });
 
     if (fetchCalls.length === 1) {
+      assert.equal(readAuthorizationHeader(init?.headers), "");
+      assert.equal(readCookieHeader(init?.headers), "");
       return new Response(null, { status: 401 });
     }
 
     if (fetchCalls.length === 2) {
+      assert.equal(readAuthorizationHeader(init?.headers), "");
+      assert.equal(readCookieHeader(init?.headers), "");
       return new Response(null, { status: 401 });
     }
 
@@ -122,6 +166,7 @@ test("single refresh attempt stops when refresh fails", async () => {
 
   const result = await validateSessionWithSingleRefresh({
     fetchImpl: fetchMock,
+    accessCookieNames: ["accessToken"],
     baseUrl: "http://api.local",
     cookieHeader: "refreshToken=refresh-value",
     refreshCookieNames: ["refreshToken"],

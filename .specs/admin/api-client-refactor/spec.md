@@ -76,6 +76,8 @@ This is intentionally repository-like in organization, but without introducing a
 - `apps/admin` must continue to use TanStack Query in feature hooks for list/detail/mutation flows.
 - Route files remain thin; server orchestration remains in `features/*/server` or `lib/api`.
 - No direct backend `fetch` in client components.
+- Protected admin backend calls must translate the HttpOnly access-token cookie into backend bearer auth at the server/lib boundary.
+- Refresh requests must use body-token exchange (`{ refreshToken }`) without backend cookie forwarding or bearer auth.
 
 ### FR-5: Web Data Strategy
 
@@ -112,7 +114,7 @@ This is intentionally repository-like in organization, but without introducing a
 ## 7. Acceptance Criteria
 
 1. `packages/api-client` uses Orval-generated contract output and passes generation + typecheck.
-2. Admin backend adapters consume the new API-client organization without behavior regressions.
+2. Admin backend adapters consume the new API-client organization without behavior regressions, including server-side cookie-to-bearer translation for protected backend calls.
 3. Admin TanStack Query flows (listing, detail, create, update) remain functional.
 4. A documented default exists for `apps/web`: server-side data fetching first, Query only when needed.
 5. Error normalization and result handling no longer duplicate logic across feature services.

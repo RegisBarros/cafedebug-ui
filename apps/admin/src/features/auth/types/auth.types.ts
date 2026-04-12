@@ -11,12 +11,14 @@ export type RefreshTokenPayload = {
   expirationDate: string; // ISO 8601 UTC — used as cookie `expires`
 };
 
-export type TokenResponse = {
+export type TokenEnvelope = {
   accessToken: string;
   refreshToken: RefreshTokenPayload;
   tokenType: "Bearer";
   expiresIn: number; // seconds — used as cookie `maxAge`
 };
+
+export type TokenResponse = TokenEnvelope;
 
 export type LoginFieldName = "email" | "password";
 
@@ -60,4 +62,3 @@ export type LoginServiceFailureResult = {
 export type LoginServiceResult =
   | LoginServiceSuccessResult
   | LoginServiceFailureResult;
-

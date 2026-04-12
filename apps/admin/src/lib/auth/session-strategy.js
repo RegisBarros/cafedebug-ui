@@ -1,3 +1,10 @@
+import {
+  backendAuthHeaderModes,
+  buildBackendAuthHeaders,
+  parseCookieHeader,
+  readRefreshTokenFromCookieHeader
+} from "./backend-auth-headers.js";
+
 const getCookieNameAndValue = (setCookieHeaderValue) => {
   const [cookieNameAndValue] = setCookieHeaderValue.split(";");
 
@@ -33,73 +40,105 @@ const isCookieDeletionInstruction = (setCookieHeaderValue) => {
   );
 };
 
-const createRequestHeaders = (cookieHeader, includeJsonBody = false) => {
-  const headers = {
-    accept: "application/json"
-  };
-
-  if (cookieHeader) {
-    headers.cookie = cookieHeader;
-  }
-
-  if (includeJsonBody) {
-    headers["content-type"] = "application/json";
-  }
-
-  return headers;
-};
-
 const toAbsoluteUrl = (baseUrl, path) => {
   const normalizedBaseUrl = baseUrl.endsWith("/")
     ? baseUrl.slice(0, -1)
     : baseUrl;
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = path.startsWith("/") ? path : "/" + path;
 
-  return `${normalizedBaseUrl}${normalizedPath}`;
+  return normalizedBaseUrl + normalizedPath;
 };
 
-const readCookieValue = (cookieHeader, cookieName) => {
-  const cookies = parseCookieHeader(cookieHeader);
-  return cookies.get(cookieName);
+const isRecord = (value) => typeof value === "object" && value !== null;
+
+const toNonEmptyString = (value) => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalizedValue = value.trim();
+
+  return normalizedValue.length > 0 ? normalizedValue : undefined;
 };
 
-const resolveRefreshToken = (cookieHeader, refreshCookieNames) => {
-  for (const cookieName of refreshCookieNames) {
-    const cookieValue = readCookieValue(cookieHeader, cookieName);
+const toPositiveInteger = (value) =>
+  typeof value === "number" &&
+  Number.isInteger(value) &&
+  value > 0
+    ? value
+    : undefined;
 
-    if (typeof cookieValue === "string" && cookieValue.length > 0) {
-      return cookieValue;
-    }
+const toCookieHeader = (cookieMap) =>
+  Array.from(cookieMap.entries())
+    .map(([cookieName, cookieValue]) => cookieName + "=" + cookieValue)
+    .join("; ");
+
+const parseTokenEnvelope = (payload) => {
+  if (!isRecord(payload)) {
+    return undefined;
   }
 
-  return undefined;
+  const accessToken = toNonEmptyString(payload.accessToken);
+  const tokenType = toNonEmptyString(payload.tokenType);
+  const expiresIn = toPositiveInteger(payload.expiresIn);
+
+  if (!accessToken || !tokenType || tokenType.toLowerCase() !== "bearer") {
+    return undefined;
+  }
+
+  if (!expiresIn) {
+    return undefined;
+  }
+
+  const refreshTokenPayload = payload.refreshToken;
+
+  if (!isRecord(refreshTokenPayload)) {
+    return undefined;
+  }
+
+  const refreshToken = toNonEmptyString(refreshTokenPayload.token);
+  const refreshTokenExpirationDate = toNonEmptyString(
+    refreshTokenPayload.expirationDate
+  );
+
+  if (!refreshToken || !refreshTokenExpirationDate) {
+    return undefined;
+  }
+
+  return {
+    accessToken,
+    refreshToken: {
+      token: refreshToken,
+      expirationDate: refreshTokenExpirationDate
+    },
+    tokenType: "Bearer",
+    expiresIn
+  };
 };
 
-export const parseCookieHeader = (cookieHeader) => {
-  const cookieMap = new Map();
-
-  if (!cookieHeader) {
-    return cookieMap;
+const applyTokenEnvelopeToCookieHeader = (
+  cookieHeader,
+  tokenEnvelope,
+  accessCookieNames,
+  refreshCookieNames
+) => {
+  if (!tokenEnvelope) {
+    return cookieHeader;
   }
 
-  for (const chunk of cookieHeader.split(";")) {
-    const separatorIndex = chunk.indexOf("=");
+  const cookieMap = parseCookieHeader(cookieHeader);
+  const [primaryAccessCookieName] = accessCookieNames;
+  const [primaryRefreshCookieName] = refreshCookieNames;
 
-    if (separatorIndex <= 0) {
-      continue;
-    }
-
-    const cookieName = chunk.slice(0, separatorIndex).trim();
-    const cookieValue = chunk.slice(separatorIndex + 1).trim();
-
-    if (!cookieName) {
-      continue;
-    }
-
-    cookieMap.set(cookieName, cookieValue);
+  if (typeof primaryAccessCookieName === "string" && primaryAccessCookieName) {
+    cookieMap.set(primaryAccessCookieName, tokenEnvelope.accessToken);
   }
 
-  return cookieMap;
+  if (typeof primaryRefreshCookieName === "string" && primaryRefreshCookieName) {
+    cookieMap.set(primaryRefreshCookieName, tokenEnvelope.refreshToken.token);
+  }
+
+  return toCookieHeader(cookieMap);
 };
 
 export const splitSetCookieHeader = (combinedSetCookieHeader) => {
@@ -188,15 +227,22 @@ export const mergeCookieHeaderWithSetCookies = (cookieHeader, setCookieHeaders) 
     cookieMap.set(parsedCookie.cookieName, parsedCookie.cookieValue);
   }
 
-  return Array.from(cookieMap.entries())
-    .map(([cookieName, cookieValue]) => `${cookieName}=${cookieValue}`)
-    .join("; ");
+  return toCookieHeader(cookieMap);
+};
+
+const readJsonBody = async (response) => {
+  try {
+    return await response.json();
+  } catch {
+    return undefined;
+  }
 };
 
 export const validateSessionWithSingleRefresh = async ({
   fetchImpl = fetch,
   baseUrl,
   cookieHeader,
+  accessCookieNames,
   sessionProbePath,
   refreshPath,
   refreshCookieNames
@@ -216,7 +262,10 @@ export const validateSessionWithSingleRefresh = async ({
   try {
     const initialProbeResponse = await fetchImpl(probeUrl, {
       method: "GET",
-      headers: createRequestHeaders(cookieHeader),
+      headers: buildBackendAuthHeaders(cookieHeader, {
+        mode: backendAuthHeaderModes.protected,
+        accessCookieNames
+      }),
       cache: "no-store"
     });
 
@@ -225,21 +274,32 @@ export const validateSessionWithSingleRefresh = async ({
         status: initialProbeResponse.ok ? "authenticated" : "unauthenticated",
         reason: initialProbeResponse.ok
           ? undefined
-          : `probe-${initialProbeResponse.status}`,
+          : "probe-" + initialProbeResponse.status,
         refreshAttempted: false,
         setCookieHeaders: []
       };
     }
 
-    const refreshToken = resolveRefreshToken(cookieHeader, refreshCookieNames);
-    const refreshRequestBody = refreshToken
-      ? JSON.stringify({ refreshToken })
-      : undefined;
+    const refreshToken = readRefreshTokenFromCookieHeader(
+      cookieHeader,
+      refreshCookieNames
+    );
+
+    if (!refreshToken) {
+      return {
+        status: "unauthenticated",
+        reason: "refresh-token-missing",
+        refreshAttempted: false,
+        setCookieHeaders: []
+      };
+    }
 
     const refreshResponse = await fetchImpl(refreshUrl, {
       method: "POST",
-      headers: createRequestHeaders(cookieHeader, Boolean(refreshRequestBody)),
-      ...(refreshRequestBody ? { body: refreshRequestBody } : {}),
+      headers: buildBackendAuthHeaders(cookieHeader, {
+        mode: backendAuthHeaderModes.refresh
+      }),
+      body: JSON.stringify({ refreshToken }),
       cache: "no-store"
     });
 
@@ -248,19 +308,40 @@ export const validateSessionWithSingleRefresh = async ({
     if (!refreshResponse.ok) {
       return {
         status: "unauthenticated",
-        reason: `refresh-${refreshResponse.status}`,
+        reason: "refresh-" + refreshResponse.status,
         refreshAttempted: true,
         setCookieHeaders: refreshSetCookieHeaders
       };
     }
 
-    const retryCookieHeader = mergeCookieHeaderWithSetCookies(
+    const refreshPayload = await readJsonBody(refreshResponse);
+    const tokenEnvelope = parseTokenEnvelope(refreshPayload);
+
+    if (!tokenEnvelope) {
+      return {
+        status: "unauthenticated",
+        reason: "refresh-invalid-payload",
+        refreshAttempted: true,
+        setCookieHeaders: refreshSetCookieHeaders
+      };
+    }
+
+    const refreshedCookieHeader = mergeCookieHeaderWithSetCookies(
       cookieHeader,
       refreshSetCookieHeaders
     );
+    const retryCookieHeader = applyTokenEnvelopeToCookieHeader(
+      refreshedCookieHeader,
+      tokenEnvelope,
+      accessCookieNames,
+      refreshCookieNames
+    );
     const retryProbeResponse = await fetchImpl(probeUrl, {
       method: "GET",
-      headers: createRequestHeaders(retryCookieHeader),
+      headers: buildBackendAuthHeaders(retryCookieHeader, {
+        mode: backendAuthHeaderModes.protected,
+        accessCookieNames
+      }),
       cache: "no-store"
     });
 
@@ -268,9 +349,10 @@ export const validateSessionWithSingleRefresh = async ({
       status: retryProbeResponse.ok ? "authenticated" : "unauthenticated",
       reason: retryProbeResponse.ok
         ? undefined
-        : `retry-${retryProbeResponse.status}`,
+        : "retry-" + retryProbeResponse.status,
       refreshAttempted: true,
-      setCookieHeaders: refreshSetCookieHeaders
+      setCookieHeaders: refreshSetCookieHeaders,
+      ...(retryProbeResponse.ok ? { tokenEnvelope } : {})
     };
   } catch {
     return {

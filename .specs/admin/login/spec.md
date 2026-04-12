@@ -36,7 +36,7 @@ input validation through session establishment.
 | **Audience** | Admin users (authorized backoffice personnel only) |
 | **Entry point** | `/login` — the authentication gate before any protected admin route |
 | **Business criticality** | High — no admin features are accessible without a valid session |
-| **Session model** | Server-side session signal cookie (`cafedebug_admin_session`) + auth token cookies forwarded from the backend |
+| **Session model** | Server-side session signal cookie (cafedebug_admin_session) + HttpOnly auth token cookies translated into backend bearer headers on the server |
 | **Protected routes** | `/dashboard`, `/episodes`, `/settings` (and all sub-paths) |
 
 The login page is the **single authentication gate** for the entire admin app. The session
@@ -60,6 +60,7 @@ to protected routes.
 | Session signal cookie | Setting `cafedebug_admin_session` on success |
 | Token cookie strategy | Forwarding `Set-Cookie` headers from the backend response (if present) |
 | Token body extraction | Reading `accessToken` / `refreshToken` from the JSON body and setting them as HttpOnly cookies when the backend does NOT emit `Set-Cookie` headers |
+| Cookie-to-bearer translation | Building backend bearer auth from the HttpOnly access-token cookie for protected admin requests |
 | Error envelope normalization | Using `createErrorResponse` for all failure paths |
 | Observability | Structured logging and Sentry breadcrumbs at each key decision point |
 
@@ -121,7 +122,7 @@ No business logic is allowed in this file.
 
 `loginHandler` must call the backend using:
 ```ts
-adminApiClient.auth.token({ body: { email, password } })
+adminApiClient.auth.token({ email, password })
 ```
 The target endpoint is `POST /api/v1/admin/auth/token`.
 
@@ -174,7 +175,17 @@ On network failure or unexpected error:
 - The service's outer `try/catch` returns `{ ok: false, error: { kind: "transport", status: 503, ... } }`
 - The hook logs the error, captures it via Sentry, and sets `formError`
 
-### FR-10 — Post-Login Redirect
+### FR-10 — Protected Backend Auth Header Translation
+
+For protected admin backend requests made after login:
+
+1. Server-side helpers under lib/auth and lib/api must parse the incoming cookie header
+2. The access token must be resolved using the known access-cookie names
+3. Protected backend calls must send an Authorization bearer header
+4. Refresh uses body-token exchange (`{ refreshToken }`) without forwarding auth cookies to the backend
+5. Tokens must never be exposed to client components, logs, or response bodies
+
+### FR-11 — Post-Login Redirect
 
 On success, the hook calls:
 ```ts
@@ -201,6 +212,7 @@ The default redirect target is `postLoginRedirectRoute` = `"/episodes"`.
 | **Architecture** | All logic in `features/auth/` subdirectories |
 | **Accessibility** | Form inputs have ARIA attributes wired to field errors |
 | **Reliability** | The session cannot be established without a valid backend token response |
+| **Correctness** | Protected admin backend calls translate the access-token cookie into backend bearer auth on the server boundary |
 
 ---
 
@@ -251,7 +263,11 @@ Backend unreachable → catch block in handler
   → hook: captureException + setFormError("Unable to reach the authentication service...")
 ```
 
-### Scenario F — Missing API Base URL
+### Scenario F — Protected Backend Request After Login
+
+A valid HttpOnly access-token cookie is parsed server-side, translated into a backend bearer header, and used for protected admin backend requests. After refresh rotation, the retry probe rebuilds bearer auth from the rotated cookie set.
+
+### Scenario G — Missing API Base URL
 
 ```
 adminRuntimeEnv.apiBaseUrl is undefined → handler early exit
@@ -281,6 +297,8 @@ adminRuntimeEnv.apiBaseUrl is undefined → handler early exit
 | AC-13 | Access token and refresh token from the JSON body are stored as HttpOnly cookies |
 | AC-14 | Zod schema enforces email format validation (`.email()`) for UX-quality error messaging |
 | AC-15 | `loginSchema` enforces password minimum length (≥ 8 characters) for UX-quality messaging |
+| AC-16 | Protected admin backend requests send backend bearer auth resolved from the HttpOnly access-token cookie |
+| AC-17 | Session probe retry rebuilds bearer auth from rotated cookies after a successful refresh |
 
 ---
 
@@ -514,4 +532,3 @@ failure event.
 Review whether the hook's `logger.warn` call on `result.error.kind === "response"` adds
 value beyond what the handler already logs. If redundant, consider removing it from the
 hook, keeping observability at the server layer only.
-

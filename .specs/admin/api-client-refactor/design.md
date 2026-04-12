@@ -26,7 +26,8 @@
 3. **Domain API Layer** (`packages/api-client/src/admin/*`, `src/public/*`)
    - Small domain modules composing generated endpoints into app-facing APIs.
 4. **App Orchestration Layer** (`apps/*/src/features/**/services|server`, `apps/*/src/lib/api/*`)
-   - App-specific concerns like cookies, session, cache, query invalidation, and UI state.
+    - App-specific concerns like cookies, session, cache, query invalidation, and UI state.
+    - In `apps/admin`, server-side auth translation from HttpOnly access-token cookies to backend `Authorization: Bearer` headers lives at this boundary.
 
 ### 2.2 Deliberate Non-Pattern
 
@@ -108,6 +109,8 @@ Rules:
 - Query keys, invalidation, and optimistic updates stay in `features/*/hooks`.
 - API route handlers remain thin and delegate to server handlers.
 - Feature components never call backend endpoints directly.
+- Protected backend admin calls derive bearer auth server-side from the HttpOnly access-token cookie before calling the backend API.
+- Refresh flows use backend body-token exchange (`{ refreshToken }`) and avoid forwarding auth cookies/bearer to the backend.
 
 ### 5.2 `apps/web` (Server-First)
 

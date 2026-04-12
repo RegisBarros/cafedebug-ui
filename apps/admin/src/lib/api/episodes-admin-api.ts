@@ -3,7 +3,7 @@ import type { EpisodeRequest } from "@cafedebug/api-client";
 import { getAdminApiClient } from "./admin-client";
 import {
   type BackendApiResult,
-  withAuthCookieHeader,
+  withBackendAuthHeaders,
   toConfigurationErrorResult,
   normalizeBackendResult
 } from "./backend-api.utils";
@@ -33,7 +33,7 @@ export const listEpisodesFromBackend = async ({
   }
 
   const response = await adminClient.episodes.list(query, {
-    headers: withAuthCookieHeader(cookieHeader)
+    headers: withBackendAuthHeaders(cookieHeader)
   });
 
   return normalizeBackendResult(response);
@@ -53,7 +53,7 @@ export const getEpisodeFromBackend = async ({
   }
 
   const response = await adminClient.episodes.get(id, {
-    headers: withAuthCookieHeader(cookieHeader)
+    headers: withBackendAuthHeaders(cookieHeader)
   });
 
   return normalizeBackendResult(response);
@@ -73,7 +73,7 @@ export const createEpisodeInBackend = async ({
   }
 
   const response = await adminClient.episodes.create(payload, {
-    headers: withAuthCookieHeader(cookieHeader)
+    headers: withBackendAuthHeaders(cookieHeader)
   });
 
   return normalizeBackendResult(response);
@@ -95,7 +95,7 @@ export const updateEpisodeInBackend = async ({
   }
 
   const response = await adminClient.episodes.update(id, payload, {
-    headers: withAuthCookieHeader(cookieHeader)
+    headers: withBackendAuthHeaders(cookieHeader)
   });
 
   return normalizeBackendResult(response);

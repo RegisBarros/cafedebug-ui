@@ -1,5 +1,10 @@
 import { normalizeApiError, type NormalizedApiError } from "@cafedebug/api-client";
 
+import {
+  backendAuthHeaderModes,
+  buildBackendAuthHeaders
+} from "@/lib/auth/backend-auth-headers.js";
+import { knownAccessCookieNames } from "@/lib/auth/session-constants";
 import { extractSetCookieHeaders } from "@/lib/auth/session-strategy.js";
 import { getTraceIdFromHeaders } from "@/lib/observability";
 
@@ -23,10 +28,18 @@ export type BackendApiResult<TData = unknown> =
   | BackendSuccessResult<TData>
   | BackendErrorResult;
 
-export const withAuthCookieHeader = (
+export const withBackendAuthHeaders = (
   cookieHeader: string
 ): Record<string, string> =>
-  cookieHeader.length > 0 ? { cookie: cookieHeader } : {};
+  buildBackendAuthHeaders(cookieHeader, {
+    mode: backendAuthHeaderModes.protected,
+    accessCookieNames: knownAccessCookieNames
+  }) as Record<string, string>;
+
+export const withBackendRefreshHeaders = (): Record<string, string> =>
+  buildBackendAuthHeaders("", {
+    mode: backendAuthHeaderModes.refresh
+  }) as Record<string, string>;
 
 export const toConfigurationErrorResult = (): BackendErrorResult => ({
   error: normalizeApiError(

@@ -3,12 +3,18 @@ import { NextResponse } from "next/server";
 import {
   appendSetCookieHeaders,
   clearKnownAuthCookies,
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
   setSessionCookie
 } from "@/lib/auth/next-response-cookies";
-import { knownRefreshCookieNames } from "@/lib/auth/session-constants";
+import {
+  knownAccessCookieNames,
+  knownRefreshCookieNames
+} from "@/lib/auth/session-constants";
 import { validateSessionWithSingleRefresh } from "@/lib/auth/session-strategy.js";
 import { adminRuntimeEnv } from "@/lib/env";
 import { logger, observabilityEvents } from "@/lib/observability";
+import type { TokenEnvelope } from "../types/auth.types";
 
 const sessionProbePath = "/api/v1/admin/episodes?page=1&pageSize=1";
 const refreshPath = "/api/v1/admin/auth/refresh-token";
@@ -17,12 +23,14 @@ type SessionValidation = {
   status: "authenticated" | "unauthenticated" | "error";
   reason?: string;
   setCookieHeaders: string[];
+  tokenEnvelope?: TokenEnvelope;
 };
 
 export async function sessionHandler(request: Request) {
   const sessionValidation = (await validateSessionWithSingleRefresh({
     baseUrl: adminRuntimeEnv.apiBaseUrl,
     cookieHeader: request.headers.get("cookie") ?? "",
+    accessCookieNames: knownAccessCookieNames,
     refreshCookieNames: knownRefreshCookieNames,
     refreshPath,
     sessionProbePath
@@ -38,6 +46,18 @@ export async function sessionHandler(request: Request) {
 
     const response = NextResponse.json({ authenticated: true }, { status: 200 });
     appendSetCookieHeaders(response, sessionValidation.setCookieHeaders);
+    if (sessionValidation.tokenEnvelope) {
+      setAccessTokenCookie(
+        response,
+        sessionValidation.tokenEnvelope.accessToken,
+        sessionValidation.tokenEnvelope.expiresIn
+      );
+      setRefreshTokenCookie(
+        response,
+        sessionValidation.tokenEnvelope.refreshToken.token,
+        sessionValidation.tokenEnvelope.refreshToken.expirationDate
+      );
+    }
     setSessionCookie(response);
 
     return response;

@@ -1,6 +1,6 @@
 import {
   type BackendApiResult,
-  withAuthCookieHeader,
+  withBackendRefreshHeaders,
   toConfigurationErrorResult,
   normalizeBackendResult
 } from "./backend-api.utils";
@@ -13,7 +13,6 @@ export type AuthTokenInput = {
 
 export type RefreshTokenInput = {
   refreshToken: string;
-  cookieHeader?: string;
 };
 
 export const requestAuthToken = async (
@@ -29,8 +28,7 @@ export const requestAuthToken = async (
 };
 
 export const requestRefreshToken = async ({
-  refreshToken,
-  cookieHeader = ""
+  refreshToken
 }: RefreshTokenInput): Promise<BackendApiResult> => {
   const adminClient = getAdminApiClient();
 
@@ -38,7 +36,7 @@ export const requestRefreshToken = async ({
 
   const response = await adminClient.auth.refreshToken(
     { refreshToken },
-    { headers: withAuthCookieHeader(cookieHeader) }
+    { headers: withBackendRefreshHeaders() }
   );
 
   return normalizeBackendResult(response);
