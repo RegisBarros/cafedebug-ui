@@ -18,6 +18,22 @@ It merges:
 
 The output is implementation-ready for **Next.js + Tailwind**, reusable across teams, and safe for long-term scaling.
 
+### 1.1 How to use the Stitch reference
+
+Use the referenced Stitch project as the live visual companion to this specification.
+
+1. When implementing new UI, check this spec first for tokens, typography, spacing, and component contracts.
+2. If visual intent is unclear in code, verify in Stitch project `projects/1651449068364997707`.
+3. If Stitch and this document differ, treat this document as the canonical implementation baseline and log any needed update before changing UI behavior.
+4. When design changes are approved, update both the Stitch project and this file in the same delivery cycle to keep parity.
+5. During review, validate three things explicitly: token usage, theme parity (light/dark), and component contract compliance.
+
+### 1.2 Ownership and update policy
+
+- Designers own visual exploration in Stitch.
+- Engineering owns production token contracts and implementation behavior in this document.
+- Any change to foundational design decisions (color roles, typography scale, spacing scale, component contracts) must include a spec update in this file.
+
 ---
 
 ## 2) Merged Design Philosophy
