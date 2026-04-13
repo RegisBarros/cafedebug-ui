@@ -1,0 +1,22 @@
+{
+  "name": "@cafedebug/tsconfig",
+  "private": true,
+  "version": "0.1.0",
+  "exports": {
+    "./base": "./base.json",
+    "./nextjs": "./nextjs.json",
+    "./react-library": "./react-library.json"
+  },
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json"
+  ],
+  "scripts": {
+    "build": "node -e \"console.log('@cafedebug/tsconfig build placeholder')\"",
+    "lint": "node -e \"console.log('@cafedebug/tsconfig lint placeholder')\"",
+    "test": "node -e \"console.log('@cafedebug/tsconfig test placeholder')\"",
+    "typecheck": "node -e \"console.log('@cafedebug/tsconfig typecheck placeholder')\"",
+    "clean": "node -e \"console.log('@cafedebug/tsconfig clean placeholder')\""
+  }
+}

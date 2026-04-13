@@ -1,0 +1,18 @@
+{
+  "name": "@cafedebug/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"console.log('apps/web scaffold pending')\"",
+    "build": "node -e \"console.log('apps/web build placeholder')\"",
+    "lint": "node -e \"console.log('apps/web lint placeholder')\"",
+    "test": "node -e \"console.log('apps/web test placeholder')\"",
+    "typecheck": "node -e \"console.log('apps/web typecheck placeholder')\"",
+    "clean": "node -e \"console.log('apps/web clean placeholder')\""
+  },
+  "devDependencies": {
+    "@cafedebug/eslint-config": "workspace:*",
+    "@cafedebug/tsconfig": "workspace:*"
+  }
+}

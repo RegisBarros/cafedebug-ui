@@ -1,0 +1,293 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
+import { appRoutes } from "@/lib/routes";
+import { logger, observabilityEvents } from "@/lib/observability";
+import {
+  createEpisodeEditorTelemetryHooks,
+  trackApiFailure
+} from "@/lib/observability/telemetry";
+
+import { episodeEditorDefaultValues } from "../defaults";
+import { useCreateEpisode } from "./use-create-episode";
+import { useEpisodeById } from "./use-episode-by-id";
+import { useUpdateEpisode } from "./use-update-episode";
+import { episodeEditorSchema, type EpisodeEditorSchemaValues } from "../schemas/episode.schema";
+import { toEpisodeEditorDefaults, toEpisodeRequestPayload } from "../transformers";
+import type {
+  AdminRouteError,
+  EpisodeMutationAction,
+  EpisodeRecord
+} from "../types/episode.types";
+
+export type EpisodeEditorMode = "new" | "edit";
+
+type UseEpisodeEditorOptions = {
+  id: string | undefined;
+  mode: EpisodeEditorMode;
+};
+
+const parseEpisodeId = (id: string | undefined): number | null => {
+  if (!id) {
+    return null;
+  }
+
+  const parsedId = Number(id);
+  return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
+};
+
+const normalizeError = (error: unknown): AdminRouteError => {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    "title" in error &&
+    "detail" in error
+  ) {
+    return error as AdminRouteError;
+  }
+
+  return {
+    status: 500,
+    title: "Request Failed",
+    detail: "Unable to complete this operation."
+  };
+};
+
+const toTelemetryReason = (error: AdminRouteError): string =>
+  `${error.status}:${error.title}`;
+
+const formatDateInputValue = (value: string): string => {
+  if (!value) {
+    return "";
+  }
+
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value;
+  }
+
+  const year = parsedDate.getUTCFullYear();
+  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+  const hour = String(parsedDate.getUTCHours()).padStart(2, "0");
+  const minute = String(parsedDate.getUTCMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+};
+
+const toIsoDateTimeValue = (value: string): string => {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const parsedDate = new Date(trimmedValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return trimmedValue;
+  }
+
+  return parsedDate.toISOString();
+};
+
+export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
+  const router = useRouter();
+  const episodeId = parseEpisodeId(id);
+  const [submitError, setSubmitError] = useState<AdminRouteError | null>(null);
+  const [activeAction, setActiveAction] = useState<EpisodeMutationAction | null>(null);
+  const [hasPendingNavigation, setHasPendingNavigation] = useState(false);
+  const telemetry = useMemo(
+    () => createEpisodeEditorTelemetryHooks(mode === "new" ? "create" : "edit"),
+    [mode]
+  );
+
+  const episodeQuery = useEpisodeById(mode === "edit" ? episodeId : null);
+  const createEpisodeMutation = useCreateEpisode();
+  const updateEpisodeMutation = useUpdateEpisode();
+
+  const form = useForm<EpisodeEditorSchemaValues>({
+    resolver: zodResolver(episodeEditorSchema),
+    defaultValues: episodeEditorDefaultValues
+  });
+
+  useEffect(() => {
+    if (!episodeQuery.data) {
+      return;
+    }
+
+    form.reset({
+      ...toEpisodeEditorDefaults(episodeQuery.data),
+      publishedAt: formatDateInputValue(episodeQuery.data.publishedAt)
+    });
+  }, [episodeQuery.data, form]);
+
+  useEffect(() => {
+    const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
+      if (!form.formState.isDirty || hasPendingNavigation) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", beforeUnloadHandler);
+
+    return () => window.removeEventListener("beforeunload", beforeUnloadHandler);
+  }, [form.formState.isDirty, hasPendingNavigation]);
+
+  const loadError =
+    episodeQuery.error && mode === "edit" ? normalizeError(episodeQuery.error) : null;
+
+  useEffect(() => {
+    if (!loadError) {
+      return;
+    }
+
+    logger.warn(observabilityEvents.apiRequestFailed, {
+      module: "episodes",
+      action: "detail",
+      status: loadError.status,
+      ...(loadError.traceId ? { traceId: loadError.traceId } : {})
+    });
+  }, [loadError]);
+
+  const handleNavigateBack = () => {
+    if (form.formState.isDirty) {
+      const shouldLeave = window.confirm(
+        "You have unsaved changes. Leave this editor without saving?"
+      );
+
+      if (!shouldLeave) {
+        return;
+      }
+    }
+
+    setHasPendingNavigation(true);
+    router.push(appRoutes.episodes);
+  };
+
+  const handleMutationSuccess = async (action: EpisodeMutationAction) => {
+    setSubmitError(null);
+    setActiveAction(null);
+
+    if (action === "publish") {
+      telemetry.onPublishSuccess({
+        status: mode === "new" ? 201 : 200
+      });
+    } else {
+      telemetry.onSaveDraftSuccess({
+        status: mode === "new" ? 201 : 200
+      });
+    }
+
+    if (mode === "new") {
+      form.reset(episodeEditorDefaultValues);
+      router.replace(appRoutes.episodes);
+      router.refresh();
+      return;
+    }
+
+    form.reset(form.getValues());
+    router.refresh();
+  };
+
+  const handleMutationError = (action: EpisodeMutationAction, error: unknown) => {
+    const normalizedError = normalizeError(error);
+    const reason = toTelemetryReason(normalizedError);
+
+    setSubmitError(normalizedError);
+    setActiveAction(null);
+
+    trackApiFailure({
+      module: "episodes",
+      action: mode === "new" ? "create" : "update",
+      endpoint: mode === "new" ? "/api/admin/episodes" : "/api/admin/episodes/{id}",
+      method: mode === "new" ? "POST" : "PUT",
+      error: normalizedError,
+      fallbackStatus: normalizedError.status,
+      ...(normalizedError.traceId ? { traceId: normalizedError.traceId } : {})
+    });
+
+    if (action === "publish") {
+      telemetry.onPublishFailure({
+        status: normalizedError.status,
+        ...(normalizedError.traceId ? { traceId: normalizedError.traceId } : {}),
+        reason
+      });
+      return;
+    }
+
+    telemetry.onSaveDraftFailure({
+      status: normalizedError.status,
+      ...(normalizedError.traceId ? { traceId: normalizedError.traceId } : {}),
+      reason
+    });
+  };
+
+  const submitAction = (action: EpisodeMutationAction) =>
+    form.handleSubmit((values) => {
+      const payload = toEpisodeRequestPayload({
+        values: {
+          ...values,
+          publishedAt: toIsoDateTimeValue(values.publishedAt)
+        },
+        action
+      });
+
+      setSubmitError(null);
+      setActiveAction(action);
+
+      if (mode === "new") {
+        createEpisodeMutation.mutate(payload, {
+          onError: (error) => handleMutationError(action, error),
+          onSuccess: async () => {
+            await handleMutationSuccess(action);
+          }
+        });
+        return;
+      }
+
+      if (!episodeId) {
+        handleMutationError(action, {
+          status: 400,
+          title: "Bad Request",
+          detail: "Invalid episode id."
+        } satisfies AdminRouteError);
+        return;
+      }
+
+      updateEpisodeMutation.mutate(
+        { id: episodeId, payload },
+        {
+          onError: (error) => handleMutationError(action, error),
+          onSuccess: async () => {
+            await handleMutationSuccess(action);
+          }
+        }
+      );
+    });
+
+  return {
+    activeAction,
+    activeStatus: episodeQuery.data?.active ?? false,
+    episode: episodeQuery.data as EpisodeRecord | null | undefined,
+    form,
+    handleNavigateBack,
+    isInvalidEpisodeId: mode === "edit" && !episodeId,
+    isLoading: mode === "edit" && episodeQuery.isLoading,
+    isSubmitting: createEpisodeMutation.isPending || updateEpisodeMutation.isPending,
+    loadError,
+    mode,
+    retryLoad: () => episodeQuery.refetch(),
+    submitAction,
+    submitError
+  };
+}
