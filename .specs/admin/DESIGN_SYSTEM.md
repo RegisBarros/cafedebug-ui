@@ -3,6 +3,7 @@
 **Status:** Canonical specification  
 **Scope:** `apps/admin`, `packages/ui`, `packages/design-tokens`  
 **Supersedes for system decisions:** `.specs/admin/Design.md`, `.specs/admin/stitch/Stitch-DESIGN.md`
+**Stitch Project Reference:** `projects/1651449068364997707` (CafeDebug - Admin)
 
 ---
 
