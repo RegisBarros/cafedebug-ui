@@ -71,3 +71,9 @@ Implementation must follow:
 | Auth Handler Error Normalization | `Draft` | `.specs/admin/auth-error-normalization/` | Extracts shared error response building and normalizes error shapes across all auth API routes |
 | Episode Show Notes Editor (Tiptap) | `Draft` | `.specs/admin/episode-editor-tiptap/` | Replaces the Show Notes textarea with a Tiptap-based editor while preserving existing episode API behavior |
 | API Client Refactor | `Implemented` | `.specs/admin/api-client-refactor/` | Refactors API contract and client organization around Orval, with TanStack Query in admin and server-first fetching in web |
+
+### `platform`
+
+| Feature | Status | Path | Description |
+|---|---|---|---|
+| Next.js 16 Migration | `Implemented` | `.specs/platform/nextjs-16-migration/` | Framework upgrade from Next.js 15 to 16 with middleware-to-proxy migration |

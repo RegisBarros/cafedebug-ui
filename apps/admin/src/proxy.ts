@@ -47,7 +47,7 @@ const toLoginRedirect = (request: NextRequest, reason: string) => {
   return response;
 };
 
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const requestingProtectedRoute = isProtectedAdminPath(pathname);
   const requestingLoginRoute = pathname === AUTH_ROUTE_RULES.login;
@@ -59,8 +59,8 @@ export async function middleware(request: NextRequest) {
   const hasSessionCookieSignal = hasSessionSignalCookie(request);
 
   if (requestingProtectedRoute && !hasSessionCookieSignal) {
-    logger.info(observabilityEvents.middlewareSessionRedirect, {
-      module: "middleware",
+    logger.info(observabilityEvents.proxySessionRedirect, {
+      module: "proxy",
       action: "route-protection",
       pathname,
       reason: "session-required"
@@ -89,8 +89,8 @@ export async function middleware(request: NextRequest) {
     });
 
     if (redirectTarget) {
-      logger.info(observabilityEvents.middlewareSessionRedirect, {
-        module: "middleware",
+      logger.info(observabilityEvents.proxySessionRedirect, {
+        module: "proxy",
         action: "route-protection",
         pathname,
         redirectTarget,
@@ -152,8 +152,8 @@ export async function middleware(request: NextRequest) {
       `Session validation failed for ${pathname}`
     );
 
-    logger.error(observabilityEvents.middlewareSessionValidationError, {
-      module: "middleware",
+    logger.error(observabilityEvents.proxySessionValidationError, {
+      module: "proxy",
       action: "route-protection",
       pathname,
       reason: sessionValidation.reason ?? reason
@@ -162,7 +162,7 @@ export async function middleware(request: NextRequest) {
     captureException(sessionValidationError, {
       scope: {
         tags: {
-          module: "middleware",
+          module: "proxy",
           action: "route-protection"
         },
         level: "error"
@@ -173,8 +173,8 @@ export async function middleware(request: NextRequest) {
       }
     });
   } else {
-    logger.info(observabilityEvents.middlewareSessionRedirect, {
-      module: "middleware",
+    logger.info(observabilityEvents.proxySessionRedirect, {
+      module: "proxy",
       action: "route-protection",
       pathname,
       reason
