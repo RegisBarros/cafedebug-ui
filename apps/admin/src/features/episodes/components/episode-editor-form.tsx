@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
+import { useCategories } from "@/features/categories/hooks/use-categories";
+
 import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
 import type { AdminRouteError, EpisodeMutationAction } from "../types/episode.types";
 import { EpisodeEditorTopBar } from "./episode-editor-topbar";
@@ -48,6 +50,12 @@ export function EpisodeEditorForm({
   submitError
 }: EpisodeEditorFormProps) {
   const [tagDraft, setTagDraft] = useState("");
+
+  const {
+    data: categories = [],
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError
+  } = useCategories();
 
   const {
     register,
@@ -255,13 +263,15 @@ export function EpisodeEditorForm({
                     <select
                       aria-invalid={errors.categoryId ? true : undefined}
                       className={`${inputClassName} cursor-pointer appearance-none pr-12`}
+                      disabled={isCategoriesLoading || isCategoriesError}
                       {...register("categoryId")}
                     >
                       <option value="">Select a category</option>
-                      <option value="1">1 - Design</option>
-                      <option value="2">2 - Development</option>
-                      <option value="3">3 - Product</option>
-                      <option value="4">4 - Career</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={String(category.id)}>
+                          {category.name}
+                        </option>
+                      ))}
                     </select>
                     <span
                       aria-hidden="true"

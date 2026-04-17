@@ -71,6 +71,7 @@ Implementation must follow:
 | Auth Handler Error Normalization | `Draft` | `.specs/admin/auth-error-normalization/` | Extracts shared error response building and normalizes error shapes across all auth API routes |
 | Episode Show Notes Editor (Tiptap) | `Draft` | `.specs/admin/episode-editor-tiptap/` | Replaces the Show Notes textarea with a Tiptap-based editor while preserving existing episode API behavior |
 | API Client Refactor | `Implemented` | `.specs/admin/api-client-refactor/` | Refactors API contract and client organization around Orval, with TanStack Query in admin and server-first fetching in web |
+| Episode Category Selector | `Implemented` | `.specs/admin/episode-category-selector/` | Replaces hardcoded category options in the episode editor with a dynamic list fetched from the backend categories API |
 
 ### `platform`
 
