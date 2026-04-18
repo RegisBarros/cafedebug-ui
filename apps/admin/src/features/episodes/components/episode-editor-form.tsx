@@ -11,6 +11,7 @@ import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
 import type { AdminRouteError, EpisodeMutationAction } from "../types/episode.types";
 import { EpisodeEditorTopBar } from "./episode-editor-topbar";
 import { EpisodeShowNotesField } from "./episode-show-notes-field";
+import { EpisodeTitleInput } from "./episode-title-input";
 
 type EpisodeEditorFormProps = {
   activeAction: EpisodeMutationAction | null;
@@ -136,12 +137,9 @@ export function EpisodeEditorForm({
           <section className="w-full px-6 pb-32 pt-8 md:w-[60%] md:p-8 lg:w-[68%] lg:p-12">
             <div className="flex flex-col gap-8">
               <div className="space-y-4">
-                <textarea
-                  aria-invalid={errors.title ? true : undefined}
-                  className="min-h-[3.25rem] w-full resize-none border-0 border-b-2 border-transparent bg-transparent px-0 py-1.5 font-display text-2xl font-bold leading-tight text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/35 hover:border-outline-variant/60 focus:border-primary focus:ring-0 md:min-h-[3.75rem] md:text-3xl xl:text-4xl"
-                  placeholder="Episode Title..."
-                  rows={1}
-                  {...register("title")}
+                <EpisodeTitleInput
+                  hasError={!!errors.title}
+                  registration={register("title")}
                 />
                 {errors.title?.message ? (
                   <p className="text-xs text-danger">{errors.title.message}</p>

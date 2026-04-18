@@ -31,7 +31,9 @@ export function useEpisodeShowNotesEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: { levels: [1, 2, 3, 4] }
+        heading: { levels: [1, 2, 3, 4] },
+        link: false,
+        underline: false
       }),
       Link.configure({
         openOnClick: false,
@@ -247,4 +249,3 @@ export function useEpisodeShowNotesEditor({
     isReady: !!editor && !editor.isDestroyed
   };
 }
-
