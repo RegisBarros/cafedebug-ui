@@ -1,9 +1,9 @@
 # Tasks: Episode Show Notes Editor (Tiptap)
 
-**Status:** Implemented  
+**Status:** Draft  
 **Spec:** `.specs/admin/episode-editor-tiptap/spec.md`  
 **Design:** `.specs/admin/episode-editor-tiptap/design.md`  
-**Assigned to:** Frontend Blacksmith
+**Assigned to:** Master Planner -> Frontend Blacksmith -> The Debugger -> Documentation Monk
 
 ---
 
@@ -32,15 +32,15 @@
 
 - [ ] **Task:** Add Tiptap dependencies for admin app
   - **Files:** `apps/admin/package.json`, `pnpm-lock.yaml`
-  - **Expected result:** `@tiptap/react@^3`, `@tiptap/pm@^3`, `@tiptap/starter-kit@^3`, `dompurify`, `@types/dompurify` are available
+  - **Expected result:** `@tiptap/react@^3`, `@tiptap/pm@^3`, `@tiptap/starter-kit@^3`, underline/highlight/subscript/superscript/text-align/task-list/task-item support, `dompurify`, and typing packages are available
   - **Layer:** service
-  - **Architecture note:** Dependency bootstrap only; no behavior change. Tiptap v3 starter-kit includes Link extension. `@tiptap/markdown` is NOT needed (HTML persistence).
+  - **Architecture note:** Dependency bootstrap only; no behavior change. `@tiptap/markdown` is NOT needed because persistence stays HTML-based.
 
 ### Task 1.2 — Create Show Notes serialization service
 
 - [ ] **Task:** Create HTML extraction helpers
   - **Files:** `apps/admin/src/features/episodes/services/episode-show-notes-serialization.ts`
-  - **Expected result:** Pure helpers to extract HTML from editor state and detect empty content
+  - **Expected result:** Pure helpers to extract HTML from editor state, detect empty content, and normalize checklist/alignment output when needed
   - **Layer:** service
   - **Architecture note:** No React, no router, no API calls. No markdown conversion needed.
 
@@ -48,7 +48,7 @@
 
 - [ ] **Task:** Create preview sanitization boundary
   - **Files:** `apps/admin/src/features/episodes/services/episode-show-notes-sanitizer.ts`
-  - **Expected result:** DOMPurify-based allowlist sanitization for preview HTML and unsafe protocol stripping
+  - **Expected result:** DOMPurify-based allowlist sanitization for preview HTML, unsafe protocol stripping, and explicit support for headings, checklists, alignment attributes/classes, and links
   - **Layer:** service
   - **Architecture note:** Security boundary isolated in feature service
 
@@ -60,7 +60,7 @@
 
 - [ ] **Task:** Build editor orchestration hook
   - **Files:** `apps/admin/src/features/episodes/hooks/use-episode-show-notes-editor.ts`
-  - **Expected result:** Hook owns editor init, command state, HTML sync with RHF `description`, and preview HTML generation
+  - **Expected result:** Hook owns editor init, expanded command state, HTML sync with RHF `description`, and preview HTML generation
   - **Layer:** hook
   - **Architecture note:** Keep `description` as HTML string contract; no mutation/fetch logic here
 
@@ -72,6 +72,14 @@
   - **Layer:** hook
   - **Architecture note:** App Router compatibility without touching route files
 
+### Task 2.3 — Configure expanded extension set
+
+- [ ] **Task:** Add and configure required Tiptap extensions
+  - **Files:** `apps/admin/src/features/episodes/hooks/use-episode-show-notes-editor.ts`, related types/services
+  - **Expected result:** Heading, task list, underline, highlight, subscript, superscript, text alignment, and link support are configured with explicit node/mark rules
+  - **Layer:** hook
+  - **Architecture note:** Restrict unsupported nodes and keep alignment limited to approved text blocks
+
 ---
 
 ## Phase 3 — UI Composition and Integration
@@ -80,7 +88,7 @@
 
 - [ ] **Task:** Build stateless Show Notes toolbar
   - **Files:** `apps/admin/src/features/episodes/components/episode-show-notes-toolbar.tsx`
-  - **Expected result:** Buttons for bold, italic, link, quote, code, bulleted list, numbered list with active/disabled states
+  - **Expected result:** Controls for heading, bulleted list, numbered list, checklist, quote, bold, italic, strikethrough, inline code, underline, highlight, link, superscript, subscript, and four alignments with active/disabled states
   - **Layer:** component
   - **Architecture note:** Presentation-only component
 
@@ -114,13 +122,21 @@
 
 ### Task 4.1 — Add service-level tests
 
-- [ ] **Task:** Test markdown/html conversion and sanitization
+- [ ] **Task:** Test HTML serialization and sanitization
   - **Files:** `apps/admin/tests/episode-show-notes-serialization.test.mjs`, `apps/admin/tests/episode-show-notes-sanitizer.test.mjs`
-  - **Expected result:** Round-trip and sanitizer behavior covered for supported formatting and unsafe input vectors
+  - **Expected result:** Round-trip and sanitizer behavior covered for supported formatting, checklist/alignment cases, and unsafe input vectors
   - **Layer:** service
   - **Architecture note:** Keep tests deterministic and isolated
 
-### Task 4.2 — Protect existing payload compatibility
+### Task 4.2 — Add editor command coverage
+
+- [ ] **Task:** Verify expanded toolbar command behavior
+  - **Files:** targeted hook/component tests under `apps/admin/tests/` or feature-local tests
+  - **Expected result:** Heading, checklist, underline, highlight, sub/superscript, alignment, and link behavior are validated without relying on manual-only coverage
+  - **Layer:** hook/component
+  - **Architecture note:** Focus on feature behavior, not Tiptap internals
+
+### Task 4.3 — Protect existing payload compatibility
 
 - [ ] **Task:** Extend payload regression coverage
   - **Files:** `apps/admin/tests/episodes-editor-payload.test.mjs`
@@ -128,7 +144,7 @@
   - **Layer:** service
   - **Architecture note:** No backend contract drift
 
-### Task 4.3 — Route and boundary audit
+### Task 4.4 — Route and boundary audit
 
 - [ ] **Task:** Validate no architectural leakage
   - **Files:** `apps/admin/src/app/(admin)/episodes/new/page.tsx`, `apps/admin/src/app/(admin)/episodes/[id]/edit/page.tsx`, `apps/admin/src/app/api/admin/episodes/route.ts`, `apps/admin/src/app/api/admin/episodes/[id]/route.ts`
@@ -156,6 +172,14 @@
   - **Layer:** documentation
   - **Architecture note:** Keep SDD lifecycle consistency
 
+### Task 5.3 — Provide governance handoff notes
+
+- [ ] **Task:** Record explicit handoff output for implementation and validation
+  - **Files:** `.specs/admin/episode-editor-tiptap/spec.md`, `.specs/admin/episode-editor-tiptap/design.md`, `.specs/admin/episode-editor-tiptap/tasks.md`
+  - **Expected result:** Each artifact documents what changed, where it changed, unresolved risks, and approval status for the next responsible agent
+  - **Layer:** documentation
+  - **Architecture note:** Required by `AGENTS.md` delegation and handoff contract
+
 ---
 
 ## Execution Order
@@ -165,15 +189,18 @@
 3. Task 1.3  
 4. Task 2.1  
 5. Task 2.2  
-6. Task 3.1  
-7. Task 3.2  
-8. Task 3.3  
-9. Task 3.4  
-10. Task 4.1  
-11. Task 4.2  
-12. Task 4.3  
-13. Task 5.1  
-14. Task 5.2
+6. Task 2.3  
+7. Task 3.1  
+8. Task 3.2  
+9. Task 3.3  
+10. Task 3.4  
+11. Task 4.1  
+12. Task 4.2  
+13. Task 4.3  
+14. Task 4.4  
+15. Task 5.1  
+16. Task 5.2  
+17. Task 5.3
 
 ---
 
@@ -189,7 +216,7 @@
 
 ### Behavior
 
-- [ ] Toolbar commands work for bold, italic, link, quote, inline code, bulleted list, numbered list
+- [ ] Toolbar commands work for heading, bulleted list, numbered list, checklist, quote, bold, italic, strikethrough, inline code, underline, highlight, link, superscript, subscript, and alignment
 - [ ] Write/Preview toggling preserves unsaved content
 - [ ] Edit mode loads existing HTML `description` into Tiptap editor and syncs without reset loops
 - [ ] Save Draft and Publish submit HTML string as `description` in payload
@@ -210,6 +237,7 @@
 - [ ] Keyboard operation works for toolbar and mode toggle
 - [ ] `description` error is visible and semantically tied to the field
 - [ ] Focus-visible states are present in light and dark themes
+- [ ] Toolbar remains operable and readable at narrower admin breakpoints
 
 ### UX and Theme Parity
 
@@ -217,6 +245,7 @@
 - [ ] Semantic token classes are used (no hardcoded hex values)
 - [ ] Toolbar active/disabled states reflect editor state
 - [ ] Preview empty-state message remains clear and consistent with existing UX
+- [ ] Toolbar order matches the approved reference image
 
 ### Regression
 
@@ -233,6 +262,8 @@
 - [ ] Edit flow sync loads existing HTML into editor without overwriting active typing after initial `form.reset`
 - [ ] Save draft/publish submit expected `description` HTML string payload
 - [ ] Empty editor produces empty or minimal HTML string
+- [ ] Checklist HTML round-trips without losing checked state semantics
+- [ ] Alignment commands only affect supported block types
 
 ---
 
@@ -251,4 +282,5 @@
 - [ ] `description` remains HTML string compatible with existing backend storage and payload transformer
 - [ ] Existing editor lifecycle states and submit flows remain intact
 - [ ] Light/dark parity preserved with token-based styling
+- [ ] Expanded toolbar matches the approved reference set for this phase, excluding image insertion
 - [ ] Admin lint/typecheck/test gates pass

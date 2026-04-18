@@ -6,7 +6,7 @@ import { EditorContent } from "@tiptap/react";
 
 import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
 import { useEpisodeShowNotesEditor } from "../hooks/use-episode-show-notes-editor";
-import { EpisodeShowNotesToolbar } from "./episode-show-notes-toolbar";
+import { EpisodeShowNotesToolbar, type ToolbarItem } from "./episode-show-notes-toolbar";
 import { EpisodeShowNotesPreview } from "./episode-show-notes-preview";
 
 type EditorMode = "write" | "preview";
@@ -19,10 +19,17 @@ type EpisodeShowNotesFieldProps = {
 const editorClassName =
   "min-h-[520px] w-full" +
   " [&_.tiptap]:min-h-[520px] [&_.tiptap]:p-4 [&_.tiptap]:text-sm [&_.tiptap]:leading-relaxed [&_.tiptap]:text-on-surface [&_.tiptap]:outline-none" +
+  // Headings — Tailwind preflight resets these, so explicit styles are required
+  " [&_.tiptap_h1]:text-2xl [&_.tiptap_h1]:font-bold [&_.tiptap_h1]:leading-tight [&_.tiptap_h1]:mb-2 [&_.tiptap_h1]:mt-4" +
+  " [&_.tiptap_h2]:text-xl [&_.tiptap_h2]:font-bold [&_.tiptap_h2]:leading-tight [&_.tiptap_h2]:mb-2 [&_.tiptap_h2]:mt-3" +
+  " [&_.tiptap_h3]:text-lg [&_.tiptap_h3]:font-semibold [&_.tiptap_h3]:leading-snug [&_.tiptap_h3]:mb-1 [&_.tiptap_h3]:mt-3" +
+  " [&_.tiptap_h4]:text-base [&_.tiptap_h4]:font-semibold [&_.tiptap_h4]:leading-snug [&_.tiptap_h4]:mb-1 [&_.tiptap_h4]:mt-2" +
   " [&_.tiptap_blockquote]:border-l-4 [&_.tiptap_blockquote]:border-outline-variant [&_.tiptap_blockquote]:pl-4 [&_.tiptap_blockquote]:text-on-surface-variant" +
   " [&_.tiptap_code]:rounded [&_.tiptap_code]:bg-surface-container-low [&_.tiptap_code]:px-1.5 [&_.tiptap_code]:py-0.5 [&_.tiptap_code]:font-mono [&_.tiptap_code]:text-xs" +
   " [&_.tiptap_ol]:list-decimal [&_.tiptap_ol]:pl-6 [&_.tiptap_ul]:list-disc [&_.tiptap_ul]:pl-6" +
   " [&_.tiptap_a]:text-primary [&_.tiptap_a]:underline" +
+  " [&_.tiptap_mark]:bg-warning/30 [&_.tiptap_mark]:text-on-surface" +
+  " [&_.tiptap_ul[data-type=taskList]]:list-none [&_.tiptap_ul[data-type=taskList]]:pl-0" +
   " [&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_p.is-editor-empty:first-child::before]:float-left [&_.tiptap_p.is-editor-empty:first-child::before]:h-0 [&_.tiptap_p.is-editor-empty:first-child::before]:text-on-surface-variant/45 [&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]";
 
 export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProps) {
@@ -45,6 +52,7 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
     editor,
     commands,
     activeStates,
+    activeHeadingLevel,
     previewHtml,
     updatePreviewHtml,
     isReady
@@ -58,17 +66,46 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
     setEditorMode("preview");
   }, [updatePreviewHtml]);
 
-  const toolbarActions = useMemo(
+  const toolbarItems = useMemo<ToolbarItem[]>(
     () => [
-      { label: "Bold", icon: "format_bold", active: activeStates.bold, onAction: commands.toggleBold },
-      { label: "Italic", icon: "format_italic", active: activeStates.italic, onAction: commands.toggleItalic },
-      { label: "Link", icon: "link", active: activeStates.link, onAction: commands.setLink },
-      { label: "Quote", icon: "format_quote", active: activeStates.blockquote, onAction: commands.toggleBlockquote },
-      { label: "Code", icon: "code", active: activeStates.code, onAction: commands.toggleCode },
-      { label: "Bulleted List", icon: "format_list_bulleted", active: activeStates.bulletList, onAction: commands.toggleBulletList },
-      { label: "Numbered List", icon: "format_list_numbered", active: activeStates.orderedList, onAction: commands.toggleOrderedList }
+      // ── Group 1: Structure ────────────────────────────────────────────────
+      {
+        kind: "heading-dropdown",
+        label: "Heading",
+        activeLevel: activeHeadingLevel,
+        onHeadingChange: (level) => {
+          if (level === 0) commands.setParagraph();
+          else commands.setHeading(level);
+        }
+      },
+      {
+        kind: "list-dropdown",
+        label: "List",
+        activeBullet: activeStates.bulletList,
+        activeOrdered: activeStates.orderedList,
+        activeTask: activeStates.taskList,
+        onBulletList: commands.toggleBulletList,
+        onOrderedList: commands.toggleOrderedList,
+        onTaskList: commands.toggleTaskList
+      },
+      { kind: "separator", label: "sep-1" },
+      // ── Group 2: Text marks ───────────────────────────────────────────────
+      { kind: "button", label: "Bold", icon: "format_bold", active: activeStates.bold, onAction: commands.toggleBold },
+      { kind: "button", label: "Italic", icon: "format_italic", active: activeStates.italic, onAction: commands.toggleItalic },
+      { kind: "button", label: "Strikethrough", icon: "strikethrough_s", active: activeStates.strike, onAction: commands.toggleStrike },
+      { kind: "button", label: "Underline", icon: "format_underlined", active: activeStates.underline, onAction: commands.toggleUnderline },
+      { kind: "button", label: "Highlight", icon: "ink_highlighter", active: activeStates.highlight, onAction: commands.toggleHighlight },
+      { kind: "button", label: "Inline Code", icon: "code", active: activeStates.code, onAction: commands.toggleCode },
+      { kind: "button", label: "Quote", icon: "format_quote", active: activeStates.blockquote, onAction: commands.toggleBlockquote },
+      { kind: "button", label: "Link", icon: "link", active: activeStates.link, onAction: commands.setLink },
+      { kind: "separator", label: "sep-2" },
+      // ── Group 3: Alignment ────────────────────────────────────────────────
+      { kind: "button", label: "Align Left", icon: "format_align_left", active: activeStates.alignLeft, onAction: () => commands.setTextAlign("left") },
+      { kind: "button", label: "Align Center", icon: "format_align_center", active: activeStates.alignCenter, onAction: () => commands.setTextAlign("center") },
+      { kind: "button", label: "Align Right", icon: "format_align_right", active: activeStates.alignRight, onAction: () => commands.setTextAlign("right") },
+      { kind: "button", label: "Justify", icon: "format_align_justify", active: activeStates.alignJustify, onAction: () => commands.setTextAlign("justify") }
     ],
-    [activeStates, commands]
+    [activeStates, activeHeadingLevel, commands]
   );
 
   return (
@@ -85,11 +122,11 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
                 ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
                 : "bg-transparent text-on-surface-variant hover:text-on-surface"
             }`}
+            type="button"
             onClick={(event) => {
               event.preventDefault();
               setEditorMode("write");
             }}
-            type="button"
           >
             Write
           </button>
@@ -99,11 +136,11 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
                 ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
                 : "bg-transparent text-on-surface-variant hover:text-on-surface"
             }`}
+            type="button"
             onClick={(event) => {
               event.preventDefault();
               handleSwitchToPreview();
             }}
-            type="button"
           >
             Preview
           </button>
@@ -112,8 +149,8 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
 
       <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
         <EpisodeShowNotesToolbar
-          actions={toolbarActions}
           disabled={!isReady || editorMode === "preview"}
+          items={toolbarItems}
         />
 
         {editorMode === "write" ? (

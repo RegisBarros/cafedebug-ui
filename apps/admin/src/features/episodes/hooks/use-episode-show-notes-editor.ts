@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
 
 import { getEditorHtml, isHtmlContentEmpty } from "../services/episode-show-notes-serialization";
 import { sanitizeShowNotesHtml } from "../services/episode-show-notes-sanitizer";
@@ -23,14 +31,22 @@ export function useEpisodeShowNotesEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        link: {
-          openOnClick: false,
-          HTMLAttributes: {
-            rel: "noopener noreferrer nofollow",
-            target: "_blank"
-          }
+        heading: { levels: [1, 2, 3, 4] }
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          rel: "noopener noreferrer nofollow",
+          target: "_blank"
         }
-      })
+      }),
+      Highlight,
+      Subscript,
+      Superscript,
+      TaskList,
+      TaskItem.configure({ nested: false }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Underline
     ],
     content: value || "",
     immediatelyRender: false,
@@ -70,20 +86,17 @@ export function useEpisodeShowNotesEditor({
     setPreviewHtml(isHtmlContentEmpty(html) ? "" : sanitizeShowNotesHtml(html));
   }, [editor]);
 
-  const toggleBold = useCallback(() => {
-    editor?.chain().focus().toggleBold().run();
-  }, [editor]);
+  // ── Structure commands ──────────────────────────────────────────────────────
 
-  const toggleItalic = useCallback(() => {
-    editor?.chain().focus().toggleItalic().run();
-  }, [editor]);
+  const setHeading = useCallback(
+    (level: 1 | 2 | 3 | 4) => {
+      editor?.chain().focus().toggleHeading({ level }).run();
+    },
+    [editor]
+  );
 
-  const toggleCode = useCallback(() => {
-    editor?.chain().focus().toggleCode().run();
-  }, [editor]);
-
-  const toggleBlockquote = useCallback(() => {
-    editor?.chain().focus().toggleBlockquote().run();
+  const setParagraph = useCallback(() => {
+    editor?.chain().focus().setParagraph().run();
   }, [editor]);
 
   const toggleBulletList = useCallback(() => {
@@ -92,6 +105,40 @@ export function useEpisodeShowNotesEditor({
 
   const toggleOrderedList = useCallback(() => {
     editor?.chain().focus().toggleOrderedList().run();
+  }, [editor]);
+
+  const toggleTaskList = useCallback(() => {
+    editor?.chain().focus().toggleTaskList().run();
+  }, [editor]);
+
+  const toggleBlockquote = useCallback(() => {
+    editor?.chain().focus().toggleBlockquote().run();
+  }, [editor]);
+
+  // ── Text mark commands ──────────────────────────────────────────────────────
+
+  const toggleBold = useCallback(() => {
+    editor?.chain().focus().toggleBold().run();
+  }, [editor]);
+
+  const toggleItalic = useCallback(() => {
+    editor?.chain().focus().toggleItalic().run();
+  }, [editor]);
+
+  const toggleStrike = useCallback(() => {
+    editor?.chain().focus().toggleStrike().run();
+  }, [editor]);
+
+  const toggleCode = useCallback(() => {
+    editor?.chain().focus().toggleCode().run();
+  }, [editor]);
+
+  const toggleUnderline = useCallback(() => {
+    editor?.chain().focus().toggleUnderline().run();
+  }, [editor]);
+
+  const toggleHighlight = useCallback(() => {
+    editor?.chain().focus().toggleHighlight().run();
   }, [editor]);
 
   const setLink = useCallback(() => {
@@ -114,32 +161,90 @@ export function useEpisodeShowNotesEditor({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
 
+  // ── Sub/superscript commands ────────────────────────────────────────────────
+
+  const toggleSuperscript = useCallback(() => {
+    editor?.chain().focus().toggleSuperscript().run();
+  }, [editor]);
+
+  const toggleSubscript = useCallback(() => {
+    editor?.chain().focus().toggleSubscript().run();
+  }, [editor]);
+
+  // ── Alignment commands ──────────────────────────────────────────────────────
+
+  const setTextAlign = useCallback(
+    (alignment: string) => {
+      editor?.chain().focus().setTextAlign(alignment).run();
+    },
+    [editor]
+  );
+
+  // ── Aggregated return values ────────────────────────────────────────────────
+
   const commands = {
-    toggleBold,
-    toggleItalic,
-    toggleCode,
-    toggleBlockquote,
+    setHeading,
+    setParagraph,
     toggleBulletList,
     toggleOrderedList,
-    setLink
+    toggleTaskList,
+    toggleBlockquote,
+    toggleBold,
+    toggleItalic,
+    toggleStrike,
+    toggleCode,
+    toggleUnderline,
+    toggleHighlight,
+    setLink,
+    toggleSuperscript,
+    toggleSubscript,
+    setTextAlign
   };
 
   const activeStates = {
     bold: editor?.isActive("bold") ?? false,
     italic: editor?.isActive("italic") ?? false,
+    strike: editor?.isActive("strike") ?? false,
     code: editor?.isActive("code") ?? false,
+    underline: editor?.isActive("underline") ?? false,
+    highlight: editor?.isActive("highlight") ?? false,
     blockquote: editor?.isActive("blockquote") ?? false,
     bulletList: editor?.isActive("bulletList") ?? false,
     orderedList: editor?.isActive("orderedList") ?? false,
-    link: editor?.isActive("link") ?? false
+    taskList: editor?.isActive("taskList") ?? false,
+    link: editor?.isActive("link") ?? false,
+    heading1: editor?.isActive("heading", { level: 1 }) ?? false,
+    heading2: editor?.isActive("heading", { level: 2 }) ?? false,
+    heading3: editor?.isActive("heading", { level: 3 }) ?? false,
+    heading4: editor?.isActive("heading", { level: 4 }) ?? false,
+    superscript: editor?.isActive("superscript") ?? false,
+    subscript: editor?.isActive("subscript") ?? false,
+    alignLeft: editor?.isActive({ textAlign: "left" }) ?? false,
+    alignCenter: editor?.isActive({ textAlign: "center" }) ?? false,
+    alignRight: editor?.isActive({ textAlign: "right" }) ?? false,
+    alignJustify: editor?.isActive({ textAlign: "justify" }) ?? false
   };
+
+  const activeHeadingLevel = (
+    editor?.isActive("heading", { level: 1 })
+      ? 1
+      : editor?.isActive("heading", { level: 2 })
+        ? 2
+        : editor?.isActive("heading", { level: 3 })
+          ? 3
+          : editor?.isActive("heading", { level: 4 })
+            ? 4
+            : 0
+  ) as 0 | 1 | 2 | 3 | 4;
 
   return {
     editor,
     commands,
     activeStates,
+    activeHeadingLevel,
     previewHtml,
     updatePreviewHtml,
     isReady: !!editor && !editor.isDestroyed
   };
 }
+
