@@ -1,15 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { html } from "@codemirror/lang-html";
+import { EditorView } from "@codemirror/view";
 import type { UseFormReturn } from "react-hook-form";
 import { EditorContent } from "@tiptap/react";
 
 import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
 import { useEpisodeShowNotesEditor } from "../hooks/use-episode-show-notes-editor";
 import { EpisodeShowNotesToolbar, type ToolbarItem } from "./episode-show-notes-toolbar";
-import { EpisodeShowNotesPreview } from "./episode-show-notes-preview";
 
-type EditorMode = "write" | "preview";
+type EditorMode = "write" | "html";
 
 type EpisodeShowNotesFieldProps = {
   form: UseFormReturn<EpisodeEditorSchemaValues>;
@@ -34,8 +36,27 @@ const editorClassName =
 
 export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProps) {
   const [editorMode, setEditorMode] = useState<EditorMode>("write");
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const description = form.watch("description");
+
+  useEffect(() => {
+    const resolveTheme = () => {
+      setIsDarkTheme(document.documentElement.getAttribute("data-theme") === "dark");
+    };
+
+    resolveTheme();
+
+    const observer = new MutationObserver(resolveTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"]
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleChange = useCallback(
     (html: string) => {
@@ -53,18 +74,25 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
     commands,
     activeStates,
     activeHeadingLevel,
-    previewHtml,
-    updatePreviewHtml,
+    sourceHtml,
+    updateSourceHtml,
+    flushSourceToEditor,
+    syncSourceFromEditor,
     isReady
   } = useEpisodeShowNotesEditor({
     value: description,
     onChange: handleChange
   });
 
-  const handleSwitchToPreview = useCallback(() => {
-    updatePreviewHtml();
-    setEditorMode("preview");
-  }, [updatePreviewHtml]);
+  const handleSwitchToWrite = useCallback(() => {
+    flushSourceToEditor();
+    setEditorMode("write");
+  }, [flushSourceToEditor]);
+
+  const handleSwitchToHtml = useCallback(() => {
+    void syncSourceFromEditor();
+    setEditorMode("html");
+  }, [syncSourceFromEditor]);
 
   const toolbarItems = useMemo<ToolbarItem[]>(
     () => [
@@ -125,31 +153,31 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
             type="button"
             onClick={(event) => {
               event.preventDefault();
-              setEditorMode("write");
+              handleSwitchToWrite();
             }}
           >
             Write
           </button>
           <button
             className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60 ${
-              editorMode === "preview"
+              editorMode === "html"
                 ? "bg-surface-container-lowest text-on-surface shadow-sm ring-1 ring-outline-variant/50"
                 : "bg-transparent text-on-surface-variant hover:text-on-surface"
             }`}
             type="button"
             onClick={(event) => {
               event.preventDefault();
-              handleSwitchToPreview();
+              handleSwitchToHtml();
             }}
           >
-            Preview
+            Code
           </button>
         </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-ambient">
         <EpisodeShowNotesToolbar
-          disabled={!isReady || editorMode === "preview"}
+          disabled={!isReady || editorMode === "html"}
           items={toolbarItems}
         />
 
@@ -161,7 +189,24 @@ export function EpisodeShowNotesField({ form, error }: EpisodeShowNotesFieldProp
           />
         ) : (
           <div className="min-h-[520px] p-4">
-            <EpisodeShowNotesPreview html={previewHtml} />
+            <CodeMirror
+              aria-label="Episode show notes HTML source"
+              basicSetup={{
+                lineNumbers: true,
+                foldGutter: true,
+                highlightActiveLine: true,
+                autocompletion: true
+              }}
+              className="rounded-lg border border-outline-variant/60 bg-surface text-on-surface [&_.cm-editor]:bg-surface [&_.cm-editor]:text-on-surface [&_.cm-scroller]:bg-surface [&_.cm-content]:text-on-surface [&_.cm-gutters]:border-r-outline-variant/50 [&_.cm-gutters]:bg-surface-container-low [&_.cm-gutters]:text-on-surface-variant [&_.cm-activeLine]:bg-surface-container-low [&_.cm-activeLineGutter]:bg-surface-container-low"
+              extensions={[html(), EditorView.lineWrapping]}
+              minHeight="488px"
+              theme={isDarkTheme ? "dark" : "light"}
+              value={sourceHtml}
+              onChange={updateSourceHtml}
+            />
+            <p className="mt-3 text-xs text-on-surface-variant">
+              Advanced mode: Tiptap may normalize unsupported HTML to match its schema.
+            </p>
           </div>
         )}
       </div>

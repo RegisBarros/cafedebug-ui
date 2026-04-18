@@ -12,8 +12,11 @@ import TaskList from "@tiptap/extension-task-list";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 
-import { getEditorHtml, isHtmlContentEmpty } from "../services/episode-show-notes-serialization";
-import { sanitizeShowNotesHtml } from "../services/episode-show-notes-sanitizer";
+import {
+  formatHtmlSourceForDisplay,
+  getEditorHtml,
+  syncEditorFromHtmlSource
+} from "../services/episode-show-notes-serialization";
 
 type UseEpisodeShowNotesEditorOptions = {
   value: string;
@@ -24,9 +27,12 @@ export function useEpisodeShowNotesEditor({
   value,
   onChange
 }: UseEpisodeShowNotesEditorOptions) {
-  const [previewHtml, setPreviewHtml] = useState("");
+  const [sourceHtml, setSourceHtml] = useState(value);
   const lastSyncedRef = useRef<string>(value);
   const isInternalUpdate = useRef(false);
+  const isSourceUpdate = useRef(false);
+  const hasSourceEditsRef = useRef(false);
+  const sourceSyncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -56,17 +62,65 @@ export function useEpisodeShowNotesEditor({
       const html = getEditorHtml(currentEditor);
       lastSyncedRef.current = html;
       isInternalUpdate.current = true;
+      setSourceHtml(html);
       onChange(html);
     }
   });
 
+  const applySourceHtmlToEditor = useCallback(
+    (nextHtml: string) => {
+      if (!editor || editor.isDestroyed) {
+        return;
+      }
+
+      try {
+        const canonicalHtml = syncEditorFromHtmlSource(editor, nextHtml);
+        lastSyncedRef.current = canonicalHtml;
+        setSourceHtml(canonicalHtml);
+        hasSourceEditsRef.current = false;
+
+        if (canonicalHtml !== nextHtml) {
+          isInternalUpdate.current = true;
+          onChange(canonicalHtml);
+        }
+      } catch {
+        return;
+      }
+    },
+    [editor, onChange]
+  );
+
+  const clearSourceSyncTimeout = useCallback(() => {
+    if (!sourceSyncTimeoutRef.current) {
+      return;
+    }
+
+    clearTimeout(sourceSyncTimeoutRef.current);
+    sourceSyncTimeoutRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearSourceSyncTimeout();
+    };
+  }, [clearSourceSyncTimeout]);
+
   useEffect(() => {
     if (!editor || editor.isDestroyed) {
+      lastSyncedRef.current = value;
+      setSourceHtml(value);
       return;
     }
 
     if (isInternalUpdate.current) {
       isInternalUpdate.current = false;
+      setSourceHtml(value);
+      return;
+    }
+
+    if (isSourceUpdate.current) {
+      isSourceUpdate.current = false;
+      lastSyncedRef.current = value;
       return;
     }
 
@@ -75,18 +129,48 @@ export function useEpisodeShowNotesEditor({
     }
 
     lastSyncedRef.current = value;
-    editor.commands.setContent(value || "");
+    setSourceHtml(value);
+    editor.commands.setContent(value || "", { emitUpdate: false });
   }, [editor, value]);
 
-  const updatePreviewHtml = useCallback(() => {
-    if (!editor) {
-      setPreviewHtml("");
+  const syncSourceFromEditor = useCallback(async () => {
+    if (!editor || editor.isDestroyed) {
+      hasSourceEditsRef.current = false;
+      setSourceHtml(await formatHtmlSourceForDisplay(value));
       return;
     }
 
     const html = getEditorHtml(editor);
-    setPreviewHtml(isHtmlContentEmpty(html) ? "" : sanitizeShowNotesHtml(html));
-  }, [editor]);
+    const formattedHtml = await formatHtmlSourceForDisplay(html);
+    lastSyncedRef.current = html;
+    hasSourceEditsRef.current = false;
+    setSourceHtml(formattedHtml);
+  }, [editor, value]);
+
+  const flushSourceToEditor = useCallback(() => {
+    clearSourceSyncTimeout();
+
+    if (!hasSourceEditsRef.current) {
+      return;
+    }
+
+    applySourceHtmlToEditor(sourceHtml);
+  }, [applySourceHtmlToEditor, clearSourceSyncTimeout, sourceHtml]);
+
+  const updateSourceHtml = useCallback(
+    (nextHtml: string) => {
+      setSourceHtml(nextHtml);
+      isSourceUpdate.current = true;
+      hasSourceEditsRef.current = true;
+      onChange(nextHtml);
+
+      clearSourceSyncTimeout();
+      sourceSyncTimeoutRef.current = setTimeout(() => {
+        applySourceHtmlToEditor(nextHtml);
+      }, 200);
+    },
+    [applySourceHtmlToEditor, clearSourceSyncTimeout, onChange]
+  );
 
   // ── Structure commands ──────────────────────────────────────────────────────
 
@@ -244,8 +328,10 @@ export function useEpisodeShowNotesEditor({
     commands,
     activeStates,
     activeHeadingLevel,
-    previewHtml,
-    updatePreviewHtml,
+    sourceHtml,
+    updateSourceHtml,
+    flushSourceToEditor,
+    syncSourceFromEditor,
     isReady: !!editor && !editor.isDestroyed
   };
 }
