@@ -146,7 +146,7 @@ function HeadingDropdown({
         aria-haspopup="listbox"
         aria-label="Heading level"
         className={[
-          "flex items-center gap-0.5 rounded-lg px-2 py-1.5 text-xs font-semibold transition",
+          "flex items-center gap-0.5 rounded-lg px-1.5 py-1.5 transition",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/60",
           "disabled:cursor-not-allowed disabled:opacity-50",
           isActive ? "bg-primary/15 text-primary" : "hover:bg-surface-container-low hover:text-on-surface"
@@ -155,7 +155,7 @@ function HeadingDropdown({
         type="button"
         onClick={toggle}
       >
-        <span className="font-semibold">{triggerLabel}</span>
+        <span className="text-[18px] leading-none font-semibold">{triggerLabel}</span>
         <svg aria-hidden="true" className="h-3 w-3 opacity-60" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
           <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
