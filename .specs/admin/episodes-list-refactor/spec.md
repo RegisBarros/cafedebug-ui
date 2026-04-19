@@ -187,7 +187,7 @@ features/episodes/
 ## 6. API Contract
 
 ```
-GET /api/admin/episodes?page={n}&pageSize={n}&sortBy={field}&descending={bool}
+GET /api/v1/admin/episodes?search={string}&page={n}&pageSize={n}&sortBy={field}&descending={bool}
 ```
 
 Response shape (via `EpisodesPageData`):
@@ -204,7 +204,7 @@ Response shape (via `EpisodesPageData`):
 }
 ```
 
-No changes needed to the API route or service layer.
+> **Note:** The `search` param was introduced in the Episode List Search feature (`.specs/admin/episode-search/`). The API route and service layer were updated as part of that spec.
 
 ---
 

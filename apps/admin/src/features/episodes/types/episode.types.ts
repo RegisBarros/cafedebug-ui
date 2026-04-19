@@ -23,6 +23,7 @@ export type EpisodesQueryParams = {
   pageSize: number;
   sortBy: string;
   descending: boolean;
+  search?: string;
 };
 
 export type EpisodesPageData = {
