@@ -6,9 +6,9 @@
 🚧  Project 🚀 under construction (with coffee and bugs)...  ☕💻🚧
 
 
-This repository is the planning and foundation space for the CafeDebug modernization effort.
+This repository is the planning and foundation space for the Cafe Debug modernization effort.
 
-CafeDebug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:
+Cafe Debug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:
 
 - the public website
 - the admin backoffice
