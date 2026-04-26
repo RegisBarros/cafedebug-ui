@@ -34,7 +34,7 @@ What we confirmed from those sources:
 
 ## Product Goals
 
-- modernize the website without losing the recognizable CafeDebug identity
+- modernize the website without losing the recognizable Cafe Debug identity
 - create a separate admin app for episodes, banners, media, and related content
 - keep the website responsive on mobile and desktop
 - support white-label theming for colors, logo, and future brand variations
@@ -128,7 +128,7 @@ Keep reusable design primitives in `packages/ui`, not duplicated under both apps
 
 ## Website Modernization Direction
 
-The new website should preserve the recognizable CafeDebug feel while modernizing the UI:
+The new website should preserve the recognizable Cafe Debug feel while modernizing the UI:
 
 - keep the dark header/footer and warm orange brand accents
 - keep core sections like banners, latest episodes, team, and contact/community
@@ -154,7 +154,7 @@ White-label support should be based on configuration, not branching:
 - brand tokens in `packages/design-tokens`
 - logo and site metadata in a brand config file
 - Tailwind theme aliases that resolve to CSS variables
-- no app component should hardcode a CafeDebug-specific color or logo path
+- no app component should hardcode a Cafe Debug-specific color or logo path
 
 ## Website and Admin Scope
 
