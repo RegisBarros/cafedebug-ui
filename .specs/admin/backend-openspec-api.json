@@ -2558,8 +2558,9 @@
             "type": "string",
             "format": "date-time"
           },
-          "active": {
-            "type": "boolean"
+          "status": {
+            "type": "string",
+            "nullable": true
           },
           "number": {
             "type": "integer",

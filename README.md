@@ -231,7 +231,7 @@ Use this section when you want to run the admin app locally as a contributor.
 
 #### Prerequisites
 
-- Node.js `>= 20`
+- Node.js `>= 22`
 - pnpm `>= 10`
 - a running backend API reachable by `ADMIN_API_BASE_URL` (default `http://localhost:8080`)
 
@@ -383,12 +383,18 @@ This project should be AI-friendly without becoming AI-dependent.
 
 ## Validation Gates (Root + CI)
 
-Use the root validation commands before merge and in CI:
+CafeDebug CI now exposes a single admin-only validation workflow in `.github/workflows/validation-gates.yml`.
 
-- `pnpm gate:contract` → verifies OpenAPI generated client is up to date (`orval --config orval.config.ts`)
-- `pnpm gate:quality` → runs `lint`, `typecheck`, and `build`
-- `pnpm gate:states` → runs admin loading/empty/error state coverage checks
-- `pnpm gate:validation` (or `pnpm ci:validation`) → executes all gates in order
+Use these root commands locally to match CI:
+
+- `pnpm ci:admin:build` → runs `@cafedebug/admin` build
+- `pnpm ci:admin:test` → runs `@cafedebug/admin` tests
+- `pnpm ci:admin:validate` → runs `@cafedebug/admin` lint, then typecheck
+- `pnpm ci:validation` → runs the full admin sequence in order: build → test → validate
+
+Branch protection for `main` should require the single `admin-validation` job from the `Validation Gates` workflow.
+
+`apps/web`, `packages/api-client`, and other packages are not part of this required CI gate.
 
 ## Phased Plan
 
