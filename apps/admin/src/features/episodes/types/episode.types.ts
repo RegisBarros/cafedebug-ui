@@ -2,6 +2,12 @@ import type { NormalizedApiError, EpisodeRequest } from "@cafedebug/api-client";
 
 export type EpisodeRequestPayload = EpisodeRequest;
 
+export const episodeStatuses = ["draft", "scheduled", "published", "archived"] as const;
+
+export type EpisodeStatus = (typeof episodeStatuses)[number];
+export type EpisodeDisplayStatus = EpisodeStatus | "unknown";
+
+
 export type EpisodeRecord = {
   id: number;
   title: string;
@@ -11,7 +17,7 @@ export type EpisodeRecord = {
   imageUrl: string;
   tags: string[];
   publishedAt: string;
-  active: boolean;
+  status: EpisodeDisplayStatus;
   number: number | null;
   categoryId: number | null;
   createdAt: string;
@@ -50,7 +56,7 @@ export type EpisodeEditorFormValues = {
   categoryId: string;
 };
 
-export type EpisodeMutationAction = "save-draft" | "publish";
+export type EpisodeMutationAction = "save-draft" | "archive" | "publish";
 
 export type EpisodesMutationResult = {
   id?: number;

@@ -24,6 +24,7 @@ import { episodeEditorSchema, type EpisodeEditorSchemaValues } from "../schemas/
 import { toEpisodeEditorDefaults, toEpisodeRequestPayload } from "../transformers";
 import type {
   AdminRouteError,
+  EpisodeDisplayStatus,
   EpisodeMutationAction,
   EpisodeRecord
 } from "../types/episode.types";
@@ -65,24 +66,47 @@ const normalizeError = (error: unknown): AdminRouteError => {
 const toTelemetryReason = (error: AdminRouteError): string =>
   `${error.status}:${error.title}`;
 
+const DATE_TIME_WITH_MINUTES_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+const DATE_TIME_WITH_SECONDS_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+const DATE_TIME_EXTRACT_PATTERN =
+  /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/;
+
 const formatDateInputValue = (value: string): string => {
-  if (!value) {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
     return "";
   }
 
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return value;
+  if (DATE_TIME_WITH_SECONDS_PATTERN.test(trimmedValue)) {
+    return trimmedValue;
   }
 
-  const year = parsedDate.getUTCFullYear();
-  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(parsedDate.getUTCDate()).padStart(2, "0");
-  const hour = String(parsedDate.getUTCHours()).padStart(2, "0");
-  const minute = String(parsedDate.getUTCMinutes()).padStart(2, "0");
+  if (DATE_TIME_WITH_MINUTES_PATTERN.test(trimmedValue)) {
+    return `${trimmedValue}:00`;
+  }
 
-  return `${year}-${month}-${day}T${hour}:${minute}`;
+  const extractedDateTime = DATE_TIME_EXTRACT_PATTERN.exec(trimmedValue);
+
+  if (extractedDateTime) {
+    const [, minutesValue, secondsValue] = extractedDateTime;
+    return `${minutesValue}:${secondsValue ?? "00"}`;
+  }
+
+  const parsedDate = new Date(trimmedValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return trimmedValue;
+  }
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  const hour = String(parsedDate.getHours()).padStart(2, "0");
+  const minute = String(parsedDate.getMinutes()).padStart(2, "0");
+  const second = String(parsedDate.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
 };
 
 const toIsoDateTimeValue = (value: string): string => {
@@ -92,13 +116,28 @@ const toIsoDateTimeValue = (value: string): string => {
     return "";
   }
 
+  if (DATE_TIME_WITH_SECONDS_PATTERN.test(trimmedValue)) {
+    return trimmedValue;
+  }
+
+  if (DATE_TIME_WITH_MINUTES_PATTERN.test(trimmedValue)) {
+    return `${trimmedValue}:00`;
+  }
+
+  const extractedDateTime = DATE_TIME_EXTRACT_PATTERN.exec(trimmedValue);
+
+  if (extractedDateTime) {
+    const [, minutesValue, secondsValue] = extractedDateTime;
+    return `${minutesValue}:${secondsValue ?? "00"}`;
+  }
+
   const parsedDate = new Date(trimmedValue);
 
   if (Number.isNaN(parsedDate.getTime())) {
     return trimmedValue;
   }
 
-  return parsedDate.toISOString();
+  return parsedDate.toISOString().slice(0, 19);
 };
 
 export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
@@ -238,6 +277,10 @@ export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
       telemetry.onPublishSuccess({
         status: mode === "new" ? 201 : 200
       });
+    } else if (action === "archive") {
+      telemetry.onArchiveSuccess({
+        status: mode === "new" ? 201 : 200
+      });
     } else {
       telemetry.onSaveDraftSuccess({
         status: mode === "new" ? 201 : 200
@@ -274,6 +317,15 @@ export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
 
     if (action === "publish") {
       telemetry.onPublishFailure({
+        status: normalizedError.status,
+        ...(normalizedError.traceId ? { traceId: normalizedError.traceId } : {}),
+        reason
+      });
+      return;
+    }
+
+    if (action === "archive") {
+      telemetry.onArchiveFailure({
         status: normalizedError.status,
         ...(normalizedError.traceId ? { traceId: normalizedError.traceId } : {}),
         reason
@@ -366,15 +418,18 @@ export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
       );
     });
 
+  const status: EpisodeDisplayStatus =
+    mode === "new" ? "draft" : episodeQuery.data?.status ?? "unknown";
+
   return {
     activeAction,
-    activeStatus: episodeQuery.data?.active ?? false,
     episode: episodeQuery.data as EpisodeRecord | null | undefined,
     fileSelectionError,
     form,
     handleFileSelected,
     handleNavigateBack,
     imagePreviewUrl,
+    isArchiveDisabled: mode !== "edit" || status === "archived",
     isInvalidEpisodeId: mode === "edit" && !episodeId,
     isLoading: mode === "edit" && episodeQuery.isLoading,
     isSubmitting:
@@ -385,6 +440,7 @@ export function useEpisodeEditor({ mode, id }: UseEpisodeEditorOptions) {
     loadError,
     mode,
     retryLoad: () => episodeQuery.refetch(),
+    status,
     submitAction,
     submitError
   };

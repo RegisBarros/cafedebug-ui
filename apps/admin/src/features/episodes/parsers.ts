@@ -1,6 +1,16 @@
-import type { EpisodeRecord, EpisodesPageData, EpisodesQueryParams } from "./types/episode.types";
+import type {
+  EpisodeDisplayStatus,
+  EpisodeRecord,
+  EpisodesPageData,
+  EpisodesQueryParams
+} from "./types/episode.types";
 
 type UnknownRecord = Record<string, unknown>;
+
+const supportedEpisodeStatuses = new Set(["draft", "scheduled", "published", "archived"]);
+
+const isEpisodeStatus = (value: string): value is Exclude<EpisodeDisplayStatus, "unknown"> =>
+  supportedEpisodeStatuses.has(value);
 
 const isRecord = (value: unknown): value is UnknownRecord =>
   typeof value === "object" && value !== null;
@@ -52,6 +62,16 @@ const resolveResultPayload = (source: unknown): unknown => {
   return typeof directValue === "undefined" ? source : directValue;
 };
 
+const toEpisodeDisplayStatus = (value: unknown): EpisodeDisplayStatus => {
+  const status = toTrimmedString(value);
+
+  if (!status) {
+    return "unknown";
+  }
+
+  return isEpisodeStatus(status) ? status : "unknown";
+};
+
 const readEpisodeRecord = (
   source: unknown,
   fallbackId?: number
@@ -69,12 +89,6 @@ const readEpisodeRecord = (
   if (typeof id !== "number") {
     return null;
   }
-
-  const active =
-    toBoolean(source.active) ??
-    toBoolean(source.isActive) ??
-    toBoolean(source.published) ??
-    false;
 
   const title =
     toTrimmedString(source.title) ??
@@ -105,7 +119,7 @@ const readEpisodeRecord = (
     imageUrl,
     tags: toStringList(source.tags),
     publishedAt,
-    active,
+    status: toEpisodeDisplayStatus(source.status),
     number,
     categoryId,
     createdAt,

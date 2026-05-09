@@ -8,19 +8,20 @@ import type { UseFormReturn } from "react-hook-form";
 import { useCategories } from "@/features/categories/hooks/use-categories";
 
 import type { EpisodeEditorSchemaValues } from "../schemas/episode.schema";
-import type { AdminRouteError, EpisodeMutationAction } from "../types/episode.types";
+import type { AdminRouteError, EpisodeDisplayStatus, EpisodeMutationAction } from "../types/episode.types";
 import { EpisodeEditorTopBar } from "./episode-editor-topbar";
 import { EpisodeShowNotesField } from "./episode-show-notes-field";
 import { EpisodeTitleInput } from "./episode-title-input";
 
 type EpisodeEditorFormProps = {
   activeAction: EpisodeMutationAction | null;
-  activeStatus: boolean;
+  currentStatus: EpisodeDisplayStatus;
   fileSelectionError: string | null;
   form: UseFormReturn<EpisodeEditorSchemaValues>;
   imagePreviewUrl: string | null;
   isSubmitting: boolean;
   isUploadingImage: boolean;
+  isArchiveDisabled: boolean;
   mode: "new" | "edit";
   onCancel: () => void;
   onFileSelected: (file: File | null) => void;
@@ -47,12 +48,13 @@ const metadataSectionClassName = "space-y-5";
 
 export function EpisodeEditorForm({
   activeAction,
-  activeStatus,
+  currentStatus,
   fileSelectionError,
   form,
   imagePreviewUrl,
   isSubmitting,
   isUploadingImage,
+  isArchiveDisabled,
   mode,
   onCancel,
   onFileSelected,
@@ -135,9 +137,9 @@ export function EpisodeEditorForm({
   return (
     <div className="flex min-h-screen flex-col bg-surface">
       <EpisodeEditorTopBar
-        active={mode === "edit" ? activeStatus : false}
         mode={mode}
         onBack={onCancel}
+        status={currentStatus}
       />
 
       {submitError ? (
@@ -337,6 +339,7 @@ export function EpisodeEditorForm({
                     <input
                       aria-invalid={errors.publishedAt ? true : undefined}
                       className={iconInputClassName}
+                      step={1}
                       type="datetime-local"
                       {...register("publishedAt")}
                     />
@@ -427,6 +430,20 @@ export function EpisodeEditorForm({
                   ? "Saving Draft..."
                   : "Save Draft"}
               </button>
+
+              {mode === "edit" ? (
+                <button
+                  className="inline-flex items-center justify-center rounded-lg border border-status-archived-border bg-status-archived-surface px-5 py-2.5 text-sm font-semibold text-status-archived-on shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isSubmitting || isArchiveDisabled}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    onSubmitAction("archive")();
+                  }}
+                  type="button"
+                >
+                  {isSubmitting && activeAction === "archive" ? "Archiving..." : "Archive"}
+                </button>
+              ) : null}
 
               <button
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-on-primary shadow-sm transition hover:bg-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring disabled:cursor-not-allowed disabled:opacity-60"
