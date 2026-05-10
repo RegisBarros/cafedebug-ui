@@ -343,6 +343,7 @@ Lifecycle badge rules:
 - Geometry: full pill (`--radius-full`)
 - Typography: `Space Grotesk`, `11px`, `600`
 - Labels stay title-case
+- Light theme `published` uses a neutral gray chip with dark text (`--color-status-published-surface: #f3f4f6`, `--color-status-published-on: #1a1a1a`) to match Stitch episodes-list references.
 - `unknown` is intentionally neutral and outlined to expose contract drift without appearing destructive
 - Badges must always include text labels; color alone is never sufficient.
 

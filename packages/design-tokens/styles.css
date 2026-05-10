@@ -62,8 +62,8 @@
   --color-outline-variant: 220 220 220;
   --color-focus-ring: rgb(234 88 12 / 45%);
 
-  --color-status-published-surface: #1a1a1a;
-  --color-status-published-on: #ffffff;
+  --color-status-published-surface: #f3f4f6;
+  --color-status-published-on: #1a1a1a;
   --color-status-draft-surface: rgb(255 107 53 / 10%);
   --color-status-draft-on: #ff6b35;
   --color-status-scheduled-surface: rgb(67 97 238 / 10%);
