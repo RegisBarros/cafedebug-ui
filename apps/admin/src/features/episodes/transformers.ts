@@ -102,7 +102,9 @@ export const toEpisodeEditorDefaults = (
   };
 };
 
-const toStatusForAction = (action: EpisodeMutationAction): EpisodeRequest["status"] => {
+const toStatusForAction = (
+  action: EpisodeMutationAction
+): NonNullable<EpisodeRequest["status"]> => {
   if (action === "save-draft") {
     return "draft";
   }
