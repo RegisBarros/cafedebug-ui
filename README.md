@@ -8,9 +8,9 @@
 🚧  Project 🚀 under construction (with coffee and bugs)...  ☕💻🚧
 
 
-This repository is the planning and foundation space for the CafeDebug modernization effort.
+This repository is the planning and foundation space for the Cafe Debug modernization effort.
 
-CafeDebug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:
+Cafe Debug is a podcast and community project about software development, software architecture, developer life, project management, and software engineering. The target state for this repository is a public monorepo that contains:
 
 - the public website
 - the admin backoffice
@@ -25,7 +25,6 @@ The repo is currently in the architecture and project-definition phase. The firs
 The modernization plan is based on the current public assets and repositories:
 
 - live website: `https://cafedebug.com.br`
-- legacy frontend: [`JessicaNathany/cafedebug.legacy`](https://github.com/JessicaNathany/cafedebug.legacy)
 - backend API: [`JessicaNathany/cafedebug-backend.api`](https://github.com/JessicaNathany/cafedebug-backend.api)
 
 What we confirmed from those sources:
@@ -37,7 +36,7 @@ What we confirmed from those sources:
 
 ## Product Goals
 
-- modernize the website without losing the recognizable CafeDebug identity
+- modernize the website without losing the recognizable Cafe Debug identity
 - create a separate admin app for episodes, banners, media, and related content
 - keep the website responsive on mobile and desktop
 - support white-label theming for colors, logo, and future brand variations
@@ -131,7 +130,7 @@ Keep reusable design primitives in `packages/ui`, not duplicated under both apps
 
 ## Website Modernization Direction
 
-The new website should preserve the recognizable CafeDebug feel while modernizing the UI:
+The new website should preserve the recognizable Cafe Debug feel while modernizing the UI:
 
 - keep the dark header/footer and warm orange brand accents
 - keep core sections like banners, latest episodes, team, and contact/community
@@ -157,7 +156,7 @@ White-label support should be based on configuration, not branching:
 - brand tokens in `packages/design-tokens`
 - logo and site metadata in a brand config file
 - Tailwind theme aliases that resolve to CSS variables
-- no app component should hardcode a CafeDebug-specific color or logo path
+- no app component should hardcode a Cafe Debug-specific color or logo path
 
 ## Website and Admin Scope
 
