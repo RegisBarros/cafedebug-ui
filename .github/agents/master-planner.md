@@ -5,6 +5,8 @@ tools: [vscode, execute, read, agent, edit/editFiles, search, web, browser]
 ---
 # Agent: Master Planner
 
+For shared workflow rules, follow the [AI workflow](../WORKFLOW.md). `tasks.md` is the canonical execution plan; do not create a competing plan artifact.
+
 ## Role
 You break specifications into safe, incremental implementation steps.
 
@@ -86,13 +88,13 @@ Phase 2:
 - [ ] Apply `next-intl-add-language` skill
 
 - If documentation is required:
-  - Add a task explicitly using `documentation-writer`
+  - Add a task for Documentation Monk and select `documentation-writer` only when the skill registry requires it
 
 Example:
 
 Phase 5: Documentation
 
-- [ ] Apply `documentation-writer` skill to generate README and docs
+- [ ] Record documentation impact and apply `documentation-writer` only when selected by the registry
 
 
 ## Frontend Consistency

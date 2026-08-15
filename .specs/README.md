@@ -1,6 +1,6 @@
 # Specs Directory
 
-This repository follows **Spec-Driven Development (SDD)** for all non-trivial work.
+This repository follows **Spec-Driven Development (SDD)** for all non-fast-path work. The canonical agent lifecycle, change classes, handoff record, and validation matrix are in [`.github/WORKFLOW.md`](../.github/WORKFLOW.md).
 
 Specs ensure humans, Copilot, and AI agents stay aligned before implementation begins.
 
@@ -8,8 +8,8 @@ Specs ensure humans, Copilot, and AI agents stay aligned before implementation b
 
 ## Spec-Driven Workflow
 
-All features must follow this lifecycle:
-Specify → Design → Tasks → Execute
+Standard work follows this lifecycle:
+Discovery → Specify → Design → Tasks → Execute → Validate → Document → Final gate
 
 ### 1. spec.md (Specify)
 
@@ -92,6 +92,7 @@ reference.
 
 | Feature | Status | Path | Description |
 | --- | --- | --- | --- |
+| AI Workflow and Developer Experience | `Implemented` | `.specs/platform/ai-workflow-developer-experience/` | Canonical evidence-first agent workflow, deterministic skill selection, auditable handoffs, and contributor validation guidance. |
 | Next.js 16 Migration | `Implemented` | `.specs/platform/nextjs-16-migration/` | Framework upgrade from Next.js 15 to 16 with middleware-to-proxy migration |
 | Node.js & TypeScript Upgrade | `Implemented` | `.specs/platform/node-ts-upgrade/` | Node.js 20 to 22, TypeScript 5.9 to 6.0 with tsconfig and CI updates |
 | GitHub Actions CI Validation Redesign | `Implemented` | `.specs/platform/ci-validation-redesign/` | Revises CI to one admin-only validation job with sequential build, test, and validate steps |

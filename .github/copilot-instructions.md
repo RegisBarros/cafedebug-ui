@@ -2,12 +2,7 @@
 
 ## Quick Orientation
 
-Before generating code, use these documents in this order:
-
-1. [AGENTS.md](../AGENTS.md) for governance, lifecycle, and handoff policy.
-2. [README.md](../README.md) for product goals, architecture decisions, and stack truth.
-3. [.specs/README.md](../.specs/README.md) for spec-driven workflow.
-4. This file for executable coding constraints and anti-patterns.
+Follow the canonical [AI workflow](WORKFLOW.md) before generating code. It defines the read order, evidence-first decision gate, change classification, skills, handoffs, and validation. This file is the source of truth for executable coding constraints and anti-patterns.
 
 For strategic context while applying these rules:
 

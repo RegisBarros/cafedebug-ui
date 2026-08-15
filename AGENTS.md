@@ -9,14 +9,18 @@ It is intentionally focused on governance, lifecycle, and handoffs.
 - Applies when work moves across phases (spec -> plan -> implementation -> validation -> documentation).
 - For direct coding behavior and architecture rules, use `README.md` and `.github/copilot-instructions.md`.
 
-## Read Order
+## Canonical Workflow
 
-Before non-trivial work:
+[`/.github/WORKFLOW.md`](.github/WORKFLOW.md) is the canonical policy for read order, discovery, change classification, role ownership, skill selection, handoffs, and validation. Every agent profile must defer to it for shared workflow rules.
 
-1. `README.md`
-2. relevant docs under `.specs/`
-3. `.github/copilot-instructions.md`
-4. `AGENTS.md` (required when delegating across agents or coordinating phase handoffs)
+Before non-fast-path work, read in this order:
+
+1. `AGENTS.md`
+2. `README.md`
+3. the relevant `.specs/<domain>/<feature>/` package, if it exists
+4. `.github/copilot-instructions.md`
+5. the applicable skill registry entry and `SKILL.md`
+6. the task-specific `.github/agents/` profile
 
 ## Source-of-Truth Boundaries
 
@@ -29,13 +33,16 @@ Before non-trivial work:
 
 ## Required Lifecycle
 
-All non-trivial work must follow this sequence:
+All non-fast-path work follows the policy lifecycle:
 
-1. Specification
-2. Planning
-3. Implementation
-4. Debug/validation
-5. Documentation
+1. Discovery
+2. Specification (`spec.md`)
+3. Design (`design.md`)
+4. Planning (`tasks.md`)
+5. Implementation
+6. Debug/validation
+7. Documentation
+8. Final gate
 
 Hard rules:
 
@@ -51,6 +58,7 @@ Hard rules:
 - **Frontend Blacksmith**: implements according to plan and architecture constraints.
 - **The Debugger**: validates correctness, architecture compliance, and edge cases.
 - **Documentation Monk**: aligns docs with delivered behavior and architecture.
+- **Pipeline Sentinel**: conditionally reviews GitHub Actions, releases, and dependency-security changes.
 
 ## Delegation and Handoff Contract
 
@@ -60,6 +68,7 @@ Each delegation must include:
 - relevant files/spec references
 - constraints (architecture, design system, skills)
 - expected output format
+- selected skills from `.github/skills/registry.md`
 
 Each handoff must include:
 
@@ -67,6 +76,8 @@ Each handoff must include:
 - where it changed (paths)
 - unresolved risks or blockers
 - explicit approval/rejection status
+
+For Standard, Visual web, Platform/CI, and API-integration work, use `.specs/workflow-state-template.md` as `workflow-state.md` in the feature package. It is the persistent record for phase state, acceptance evidence, decisions, and risks.
 
 ## Enforcement Rules
 
@@ -81,3 +92,4 @@ Each handoff must include:
 - Validation confirms behavior and architectural compliance.
 - Documentation reflects final behavior and extension points.
 - Guidance references are consistent across `README.md`, `.github/copilot-instructions.md`, and this file.
+- Required skills, validation evidence, and final approval are recorded in `workflow-state.md`.

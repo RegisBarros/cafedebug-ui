@@ -51,10 +51,10 @@ O que confirmamos dessas fontes:
 | Estilização | `Tailwind CSS v4` + variáveis CSS | Melhor ajuste para tokens de design white-label e temas compartilhados. |
 | Componentes | `shadcn/ui` + primitivos customizados | Usar como camada base, não como identidade visual. |
 | Contrato de API | `Orval` (cliente fetch) | Gerar funções de endpoint da API tipadas e modelos a partir da saída Swagger/OpenAPI do backend. |
-| Busca de dados | `fetch` do servidor por padrão no website, `TanStack Query` em admin/fluxos pesados do cliente | Manter o site público SEO-primeiro e o admin produtividade-primeiro. |
+| Busca de dados | Composição de rotas do website usa loaders/serviços de servidor da feature; `TanStack Query` em admin/fluxos pesados do cliente | Manter o site público SEO-primeiro e o admin produtividade-primeiro sem fetch direto em páginas/componentes. |
 | Formulários | `React Hook Form` + `Zod` | DX forte para formulários administrativos e validação. |
 | Testes | `Vitest`, `React Testing Library`, `Playwright`, `MSW` | Cobertura unitária, de componente, e2e e mock de API. |
-| Qualidade | `ESLint`, `Prettier`, `Husky`, `lint-staged`, `commitlint` | Bons padrões para um repo open-source. |
+| Qualidade | `ESLint` + scripts de validação reproduzíveis com `pnpm` | Verificações explícitas que contribuidores e agentes de IA podem executar localmente. |
 | Contêineres | `Dockerfile` multi-estágio por app | Manter deployment consistente entre apps. |
 | Hospedagem | AWS EC2 + stack Docker Swarm + proxy reverso | Proxy recomendado: `Traefik` para roteamento multi-serviço no Swarm. |
 
@@ -90,8 +90,7 @@ infra/
   swarm/                  # Manifestos de deploy do stack Docker
   scripts/                # Scripts de build/deploy/ops
 
-docs/
-  CONTRIBUTING.md
+CONTRIBUTING.md
   design-system.md
 
 .specs/
@@ -385,18 +384,23 @@ Expectativas dev vs prod:
 
 Este projeto deve ser amigável à IA sem se tornar dependente de IA.
 
-1. [AGENTS.md](./AGENTS.md) define governança, ciclo de vida e regras de handoff.
-2. [.github/copilot-instructions.md](./.github/copilot-instructions.md) define restrições de codificação executáveis.
-3. [.specs/README.md](./.specs/README.md) define o fluxo de trabalho orientado por spec e entregáveis necessários.
+1. [CONTRIBUTING.md](./CONTRIBUTING.md) é o ponto de entrada prático para contribuidores humanos e de IA.
+2. [AGENTS.md](./AGENTS.md) e [.github/WORKFLOW.md](./.github/WORKFLOW.md) definem governança, ciclo de vida, skills e handoffs.
+3. [.github/copilot-instructions.md](./.github/copilot-instructions.md) define restrições de codificação executáveis.
+4. [.specs/README.md](./.specs/README.md) define o formato e o índice dos pacotes de spec.
 
 ## Portões de Validação (Raiz + CI)
 
-Use os comandos de validação da raiz antes do merge e no CI:
+O CI obrigatório continua sendo o fluxo admin-only em `.github/workflows/validation-gates.yml`. Use estes comandos da raiz:
 
-- `pnpm gate:contract` → verifica se o cliente gerado OpenAPI está atualizado (`orval --config orval.config.ts`)
-- `pnpm gate:quality` → executa `lint`, `typecheck` e `build`
-- `pnpm gate:states` → executa verificações de cobertura de estados loading/empty/error do admin
-- `pnpm gate:validation` (ou `pnpm ci:validation`) → executa todos os portões em ordem
+- `pnpm ci:admin:build` → executa o build de `@cafedebug/admin`
+- `pnpm ci:admin:test` → executa os testes de `@cafedebug/admin`
+- `pnpm ci:admin:validate` → executa lint e typecheck de `@cafedebug/admin`
+- `pnpm ci:validation` → executa a sequência admin completa: build → test → validate
+- `pnpm ci:web:validation` → executa build → test → lint/typecheck do web localmente
+- `pnpm ci:api-client:validation` → executa build → test → lint/typecheck do cliente de API localmente
+
+O status obrigatório para `main` é `Validation Gates / admin-gate`. Web e API client não fazem parte desse gate obrigatório atual; consulte [CONTRIBUTING.md](./CONTRIBUTING.md) para a matriz completa e as evidências de handoff.
 
 ## Plano Faseado
 

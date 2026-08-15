@@ -54,10 +54,10 @@ What we confirmed from those sources:
 | Styling | `Tailwind CSS v4` + CSS variables | Best fit for white-label design tokens and shared theming. |
 | Components | `shadcn/ui` + custom primitives | Use as a base layer, not as the visual identity. |
 | API contract | `Orval` (fetch client) | Generate typed API endpoint functions and models from the backend Swagger/OpenAPI output. |
-| Data fetching | Server `fetch` by default on the website, `TanStack Query` in admin/client-heavy flows | Keep the public website SEO-first and the admin productivity-first. |
+| Data fetching | Website route composition uses feature server loaders/services; `TanStack Query` in admin/client-heavy flows | Keep the public website SEO-first and the admin productivity-first without direct page/component fetching. |
 | Forms | `React Hook Form` + `Zod` | Strong DX for admin forms and validation. |
 | Testing | `Vitest`, `React Testing Library`, `Playwright`, `MSW` | Unit, component, e2e, and API-mocking coverage. |
-| Quality | `ESLint`, `Prettier`, `Husky`, `lint-staged`, `commitlint` | Good defaults for an open-source repo. |
+| Quality | `ESLint` + reproducible `pnpm` validation scripts | Current, explicit quality checks contributors and AI agents can run locally. |
 | Containers | Multi-stage `Dockerfile` per app | Keep deployment consistent across apps. |
 | Hosting | AWS EC2 + Docker Swarm stack + reverse proxy | Recommended proxy: `Traefik` for multi-service routing in Swarm. |
 
@@ -92,8 +92,7 @@ infra/
   swarm/                  # Docker stack deploy manifests
   scripts/                # Build/deploy/ops scripts
 
-docs/
-  CONTRIBUTING.md
+CONTRIBUTING.md
 
 .specs/
   README.md
@@ -420,9 +419,10 @@ Dev vs prod expectations:
 
 This project should be AI-friendly without becoming AI-dependent.
 
-1. [AGENTS.md](./AGENTS.md) defines governance, lifecycle, and handoff rules.
-2. [.github/copilot-instructions.md](./.github/copilot-instructions.md) defines executable coding constraints.
-3. [.specs/README.md](./.specs/README.md) defines the spec-driven workflow and required deliverables.
+1. [CONTRIBUTING.md](./CONTRIBUTING.md) is the practical human/AI contributor entry point.
+2. [AGENTS.md](./AGENTS.md) and [.github/WORKFLOW.md](./.github/WORKFLOW.md) define governance, lifecycle, skills, and handoffs.
+3. [.github/copilot-instructions.md](./.github/copilot-instructions.md) defines executable coding constraints.
+4. [.specs/README.md](./.specs/README.md) defines the spec package format and index.
 
 ## Validation Gates (Root + CI)
 
@@ -434,6 +434,13 @@ Use these root commands locally to match CI:
 - `pnpm ci:admin:test` → runs `@cafedebug/admin` tests
 - `pnpm ci:admin:validate` → runs `@cafedebug/admin` lint, then typecheck
 - `pnpm ci:validation` → runs the full admin sequence in order: build → test → validate
+
+Additional local validation is available by change scope:
+
+- `pnpm ci:web:validation` → web build → test → lint/typecheck
+- `pnpm ci:api-client:validation` → API-client build → test → lint/typecheck
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the complete validation matrix and required handoff evidence.
 
 Branch protection for `main` should require the single `admin-gate` job from the `Validation Gates` workflow.
 

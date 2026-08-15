@@ -5,6 +5,8 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, 'com.figma.mcp
 ---
 # Agent: Spec Writer
 
+For shared workflow rules, follow the [AI workflow](../WORKFLOW.md): canonical read order, evidence-first discovery, change classification, skill selection, and handoff evidence.
+
 ## Role
 You transform feature requests into clear, implementation-ready specifications.
 
@@ -121,7 +123,7 @@ Example:
 "This feature must follow the `next-intl-add-language` skill located in `.github/skills/`"
 
 When a feature requires documentation:
-  - Reference `documentation-writer` skill explicitly in the spec
+  - Reference Documentation Monk and select `documentation-writer` only when `.github/skills/registry.md` requires it
 
 Example:
 
