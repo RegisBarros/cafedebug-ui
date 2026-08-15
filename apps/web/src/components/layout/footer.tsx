@@ -15,7 +15,7 @@ const footerColumns = [
       { label: "Vagas", status: "Em breve" }
     ]
   },
-  { title: "Comunidade", links: [{ label: "Time" }, { label: "Discord" }, { label: "Sobre" }, { label: "Contato" }] },
+  { title: "Comunidade", links: [{ label: "Debuggers", href: "/debuggers" }, { label: "Discord" }, { label: "Sobre" }, { label: "Contato" }] },
   { title: "Empresa", links: [{ label: "Publicidade" }, { label: "Newsletter" }, { label: "Imprensa" }, { label: "RSS Feed" }] }
 ] as const;
 

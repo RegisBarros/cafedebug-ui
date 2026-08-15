@@ -40,12 +40,14 @@ test("site footer preserves Pencil content, typography, a live episodes link, an
     assert.match(source, new RegExp(`title: "${heading}"`));
   }
 
-  for (const placeholder of ["Notícias", "Eventos", "Vagas", "Time", "Discord", "Sobre", "Contato", "Publicidade", "Newsletter", "Imprensa", "RSS Feed"]) {
+  for (const placeholder of ["Notícias", "Eventos", "Vagas", "Discord", "Sobre", "Contato", "Publicidade", "Newsletter", "Imprensa", "RSS Feed"]) {
     assert.match(source, new RegExp(`"${placeholder}"`));
   }
 
   assert.match(source, /aria-disabled="true"/);
   assert.match(source, /\{ label: "Episódios", href: "\/episodes" \}/);
+  assert.match(source, /\{ label: "Debuggers", href: "\/debuggers" \}/);
+  assert.doesNotMatch(source, /\{ label: "Time" \}/);
   assert.match(source, /<Link[^>]+href=\{item\.href\}/);
 });
 
