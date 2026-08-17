@@ -109,3 +109,4 @@ reference.
 | Compact Persistent Episode Player | `Implemented` | `.specs/web/compact-persistent-player/` | Evolves the shared sticky footer player with accessible seek, common playback controls, responsive priority, and one persistent audio owner. |
 | Episode Card Play Discovery | `Implemented` | `.specs/web/episode-card-play-discovery/` | Shared hover/focus/touch Play discovery contract for every website Episode Card, preserving Pencil anatomy, routing/play semantics, themes and reduced-motion behavior. |
 | Debuggers Page | `Implemented` | `.specs/web/debuggers-page/` | Mock-only `/debuggers` with Pencil-backed people groups, Beta shell reuse, canonical `Debuggers` navigation, SEO, and recorded visual/content-source validation. |
+| Contact Page | `Ready for review` | `.specs/web/contact-page/` | Mock-only `/contact` with Beta Header/Footer reuse, deterministic contact/community/business content, and recorded Pencil/browser validation. |
